@@ -1,17 +1,18 @@
 import { Box, Card, Grid, Typography, Divider } from "@mui/material";
 
-import WalletIcon from "@mui/icons-material/Wallet";
-import AirlineStopsIcon from "@mui/icons-material/AirlineStops";
 import SocialDistanceIcon from "@mui/icons-material/SocialDistance";
 import { RouteStat } from "../RouteStats/RouteStats";
 import { RoutePath } from "../RoutePath/RoutePath";
-import type { PathDetailed, RouteResponse } from "../../types/routes";
+import type { RouteResponse } from "../../types/routes";
+import RequestQuoteOutlinedIcon from "@mui/icons-material/RequestQuoteOutlined";
+import FmdGoodOutlinedIcon from "@mui/icons-material/FmdGoodOutlined";
+import { getAllCities } from "../../utils/cities";
 
 export function BestRouteCard({
   route,
   image,
 }: Readonly<{ image: string; route: RouteResponse }>) {
-  const cities = route.pathDetailed.map((p: PathDetailed) => p.city);
+  const cities = getAllCities(route.pathDetailed);
 
   return (
     <Card
@@ -45,7 +46,7 @@ export function BestRouteCard({
             }}
           >
             <Box>
-              <Typography variant="h3">{cities.join(" → ")}</Typography>
+              <Typography variant="h5">{cities.join(" → ")}</Typography>
 
               <Typography variant="body1" color="text.secondary" sx={{ mt: 1 }}>
                 Best balance between price, distance and experience
@@ -59,10 +60,13 @@ export function BestRouteCard({
                 flexWrap: "wrap",
               }}
             >
-              <RouteStat icon={<WalletIcon color="primary" />} label={`€${route.cost}`} />
+              <RouteStat
+                icon={<RequestQuoteOutlinedIcon color="primary" />}
+                label={`€${route.cost}`}
+              />
 
               <RouteStat
-                icon={<AirlineStopsIcon color="primary" />}
+                icon={<FmdGoodOutlinedIcon color="primary" />}
                 label={`${route.path.length - 1} flights`}
               />
 

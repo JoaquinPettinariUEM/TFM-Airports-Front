@@ -1,20 +1,32 @@
 import { Box, Card, Chip, Divider, Stack, Typography } from "@mui/material";
 
 import FlightIcon from "@mui/icons-material/Flight";
-import WalletIcon from "@mui/icons-material/Wallet";
 import StraightenIcon from "@mui/icons-material/Straighten";
 
 import type { RouteResponse } from "../../types/routes";
 import { RouteCardImage } from "../RouteCardImage/RouteCardImage";
+import { getAllCities } from "../../utils/cities";
+import { InfoChip } from "../InfoChip/InfoChip";
 
 type Props = {
   route: RouteResponse;
   previewCity: string;
+  bestPrice: number;
+  mainColor: string;
+  bgColor: string;
 };
 
-export function RouteCard({ route, previewCity }: Readonly<Props>) {
-  const departure = route.pathDetailed[0];
-  const arrival = route.pathDetailed[route.pathDetailed.length - 1];
+export function RouteCard({
+  route,
+  previewCity,
+  bestPrice,
+  mainColor,
+  bgColor,
+}: Readonly<Props>) {
+  const cities = getAllCities(route.pathDetailed);
+  const departure = cities[0];
+  const arrival = cities[route.pathDetailed.length - 1];
+  const difference = route.cost - bestPrice;
 
   return (
     <Card
@@ -35,22 +47,39 @@ export function RouteCard({ route, previewCity }: Readonly<Props>) {
             mb: 1,
           }}
         >
-          {departure.city} → {arrival.city}
+          {departure} → {arrival}
         </Typography>
 
-        <Typography
-          variant="body1"
+        {previewCity && (
+          <Typography
+            variant="body1"
+            sx={{
+              color: "#9CA3AF",
+              mb: 2,
+            }}
+          >
+            Via {previewCity}
+          </Typography>
+        )}
+
+        <Box
           sx={{
-            color: "#9CA3AF",
+            display: "flex",
+            justifyContent: "space-between",
+            width: "100%",
+            alignItems: "center",
             mb: 2,
           }}
         >
-          Discover {previewCity} during your trip
-        </Typography>
+          <Typography variant="h5" sx={{ color: mainColor }}>
+            €{route.cost}
+          </Typography>
+          {difference > 0 && (
+            <InfoChip textColor={mainColor} bgColor={bgColor} label={`+€${difference}`} />
+          )}
+        </Box>
 
         <Stack direction="row" spacing={1} sx={{ mb: 2 }}>
-          <Chip icon={<WalletIcon />} label={`€${route.cost}`} />
-
           <Chip icon={<FlightIcon />} label={`${route.path.length - 1} flights`} />
 
           <Chip icon={<StraightenIcon />} label={`${route.distance} km`} />
@@ -63,11 +92,7 @@ export function RouteCard({ route, previewCity }: Readonly<Props>) {
           }}
         />
 
-        <Stack direction="row" spacing={1}>
-          {route.pathDetailed.map(airport => (
-            <Chip key={airport._id} label={airport.city} size="small" />
-          ))}
-        </Stack>
+        <Typography variant="body2">{route.path?.join(" → ")}</Typography>
       </Box>
     </Card>
   );

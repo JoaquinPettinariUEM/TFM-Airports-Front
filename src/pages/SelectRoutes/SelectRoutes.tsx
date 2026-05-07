@@ -1,4 +1,4 @@
-import { Box, CircularProgress, Container, Grid, Typography } from "@mui/material";
+import { Alert, Box, CircularProgress, Container, Grid, Typography } from "@mui/material";
 
 import EmojiEventsIcon from "@mui/icons-material/EmojiEvents";
 import { head, last } from "lodash";
@@ -11,6 +11,7 @@ import { useRoutePreviewCities } from "../../hooks/useRoutePreviewCities";
 import { RouteCard } from "../../components/RouteCard/RouteCard";
 import RouteMainTitle from "../../components/RouteMainTitle/RouteMainTitle";
 import { getAllCities } from "../../utils/cities";
+import { routeCardThemes } from "../../utils/colors";
 
 function MyRoutes() {
   const [searchParams] = useSearchParams();
@@ -29,13 +30,13 @@ function MyRoutes() {
   const suggestedRoutes = useMemo(() => routesWithImages.slice(1, 5), [routesWithImages]);
 
   const { departure, arrival } = useMemo(() => {
-    const cities = getAllCities(bestRoute.route.pathDetailed);
+    const cities = getAllCities(bestRoute?.route?.pathDetailed);
 
     return {
       departure: head(cities) ?? "",
       arrival: last(cities) ?? "",
     };
-  }, [bestRoute.route]);
+  }, [bestRoute]);
 
   if (isLoading || !routes || !bestRoute || !routesWithImages) {
     return <CircularProgress />;
@@ -68,17 +69,29 @@ function MyRoutes() {
         </Typography>
 
         <BestRouteCard route={bestRoute.route} image={bestRoute.previewCity} />
-
+        <Alert variant="outlined" severity="success" sx={{ mt: 2 }}>
+          Great Choice! This route offers the best balance of price, time and interesting
+          cities.
+        </Alert>
         <Typography variant="h5" sx={{ mt: 6, mb: 3 }}>
           More suggestions
         </Typography>
 
         <Grid container spacing={3}>
-          {suggestedRoutes.map(({ route, previewCity }, index) => (
-            <Grid key={index} size={{ xs: 12, md: 6, lg: 3 }}>
-              <RouteCard route={route} previewCity={previewCity} />
-            </Grid>
-          ))}
+          {suggestedRoutes.map(({ route, previewCity }, index) => {
+            const theme = routeCardThemes[index % routeCardThemes.length];
+            return (
+              <Grid key={index} size={{ xs: 12, md: 6, lg: 3 }}>
+                <RouteCard
+                  route={route}
+                  previewCity={previewCity}
+                  bestPrice={bestRoute.route.cost}
+                  mainColor={theme.mainColor}
+                  bgColor={theme.bgColor}
+                />
+              </Grid>
+            );
+          })}
         </Grid>
       </Container>
     </Box>

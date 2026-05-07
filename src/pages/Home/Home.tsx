@@ -36,7 +36,11 @@ const HomeComponent = styled("section")({
     content: '""',
     position: "absolute",
     inset: 0,
-    backgroundColor: "rgba(0,0,0,0.6)",
+    background: `linear-gradient(
+      to bottom,
+      rgba(2,6,23,0.65),
+      rgba(2,6,23,0.85)
+    )`,
     zIndex: 1,
   },
   "& > *": {

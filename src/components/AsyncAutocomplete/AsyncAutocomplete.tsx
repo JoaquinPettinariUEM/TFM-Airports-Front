@@ -22,8 +22,9 @@ export function AsyncAutocomplete<T>({
   isOptionEqualToValue,
 }: Readonly<AsyncAutocompleteProps<T>>) {
   const [inputValue, setInputValue] = useState("");
+  const [query, setQuery] = useState("");
 
-  const { data = [], isLoading } = useFetch(inputValue);
+  const { data = [], isLoading } = useFetch(query);
 
   return (
     <Autocomplete
@@ -31,7 +32,17 @@ export function AsyncAutocomplete<T>({
       value={value}
       onChange={(_, newValue) => onChange(newValue)}
       inputValue={inputValue}
-      onInputChange={(_, newInputValue) => setInputValue(newInputValue)}
+      onInputChange={(_, newInputValue, reason) => {
+        setInputValue(newInputValue);
+
+        if (reason === "input") {
+          setQuery(newInputValue);
+        }
+
+        if (reason === "clear") {
+          setQuery("");
+        }
+      }}
       options={data}
       loading={isLoading}
       isOptionEqualToValue={isOptionEqualToValue}

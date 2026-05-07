@@ -4,7 +4,7 @@ import Header from "../Header/Header";
 
 const Layout = () => {
   return (
-    <Grid>
+    <Grid sx={{ height: "100vh" }}>
       <Header />
       <Outlet />
     </Grid>

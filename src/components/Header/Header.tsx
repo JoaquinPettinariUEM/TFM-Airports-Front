@@ -9,7 +9,12 @@ function Header() {
         <Box onClick={() => navigate("/")} sx={{ cursor: "pointer" }}>
           <h1 className="tp-header-title">Travel Planner</h1>
         </Box>
-        <Button size={"small"} variant="text" onClick={() => navigate("/create/route")}>
+        <Button
+          size={"small"}
+          variant="text"
+          color="secondary"
+          onClick={() => navigate("/create/route")}
+        >
           Create your route
         </Button>
       </Container>

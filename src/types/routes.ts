@@ -6,6 +6,13 @@ export type RouteByQueryResponse = {
   label: string;
 };
 
+export type CreateRouteForm = {
+  from: RouteByQueryResponse | null;
+  to: RouteByQueryResponse | null;
+  budget?: number;
+  maxStops?: number;
+};
+
 export type RouteResponse = {
   path: string[];
   cost: number;
@@ -25,4 +32,11 @@ export type PathDetailed = {
 export type Location = {
   lat: number;
   lon: number;
+};
+
+export type GetRoutesParams = {
+  from: string;
+  to: string;
+  budget?: number;
+  maxStops?: number;
 };

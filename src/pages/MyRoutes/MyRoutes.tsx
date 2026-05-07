@@ -1,6 +1,14 @@
+import { Box, CircularProgress, Container, Grid, Typography } from "@mui/material";
+
+import EmojiEventsIcon from "@mui/icons-material/EmojiEvents";
+
 import { useSearchParams } from "react-router-dom";
+import { useMemo } from "react";
+
 import { useGetRoutes } from "../../api/travelPlanApi";
-import { CircularProgress } from "@mui/material";
+import { BestRouteCard } from "../../components/BestRouteCard/BestRouteCard";
+import { useRoutePreviewCities } from "../../hooks/useRoutePreviewCities";
+import { RouteCard } from "../../components/RouteCard/RouteCard";
 
 function MyRoutes() {
   const [searchParams] = useSearchParams();
@@ -13,10 +21,56 @@ function MyRoutes() {
 
   const { data: routes, isLoading } = useGetRoutes(params);
 
-  if (isLoading) return <CircularProgress />;
-  console.log(routes);
+  const routesWithImages = useRoutePreviewCities(routes?.slice(0, 5) ?? []);
 
-  return <h1>My Routes</h1>;
+  const bestRoute = useMemo(() => routesWithImages[0], [routesWithImages]);
+  const suggestedRoutes = useMemo(() => routesWithImages.slice(1, 5), [routesWithImages]);
+
+  if (isLoading || !routes || !bestRoute || !routesWithImages) {
+    return <CircularProgress />;
+  }
+
+  return (
+    <Box
+      sx={{
+        background: "linear-gradient(to bottom, #0B1020, #111827)",
+        color: "white",
+        py: 4,
+      }}
+    >
+      <Container maxWidth="lg">
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            gap: 1,
+          }}
+        >
+          <EmojiEventsIcon color="primary" />
+
+          <Typography variant="h4">Best route for you</Typography>
+        </Box>
+
+        <Typography variant="body1" color="text.secondary" sx={{ mt: 1 }}>
+          Our algorithm found the best balance between price, distance and experience.
+        </Typography>
+
+        <BestRouteCard route={bestRoute.route} image={bestRoute.previewCity} />
+
+        <Typography variant="h5" sx={{ mt: 6, mb: 3 }}>
+          More suggestions
+        </Typography>
+
+        <Grid container spacing={3}>
+          {suggestedRoutes.map(({ route, previewCity }, index) => (
+            <Grid key={index} size={{ xs: 12, md: 6, lg: 3 }}>
+              <RouteCard route={route} previewCity={previewCity} />
+            </Grid>
+          ))}
+        </Grid>
+      </Container>
+    </Box>
+  );
 }
 
 export default MyRoutes;

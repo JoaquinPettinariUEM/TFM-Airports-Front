@@ -16,7 +16,7 @@ function Home() {
 }
 
 const HomeComponent = styled("section")({
-  height: "100vh",
+  flex: 1,
   width: "100%",
   backgroundImage: `url(${BackgroundImage})`,
   backgroundRepeat: "no-repeat",

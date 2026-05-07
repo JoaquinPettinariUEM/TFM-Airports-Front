@@ -23,13 +23,10 @@ function Header() {
 }
 
 const HeaderComponent = styled(Box)({
-  position: "fixed",
   display: "flex",
   flexDirection: "column",
-  top: 0,
-  paddingBottom: 10,
   width: "100%",
-  zIndex: 100,
+  backgroundColor: "#111827",
   ".tp-header-container": {
     display: "flex",
     justifyContent: "space-between",

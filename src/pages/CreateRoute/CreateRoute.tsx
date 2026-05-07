@@ -59,7 +59,7 @@ function CreateRoute() {
 }
 
 const BackgroundComponent = styled("section")({
-  height: "100vh",
+  height: "100%",
   width: "100%",
   backgroundImage: `url(${BackgroundImage})`,
   backgroundRepeat: "no-repeat",

@@ -1,67 +1,62 @@
-import { Box } from "@mui/material";
+import { Box, styled, Typography, Divider } from "@mui/material";
+import type { PathDetailed } from "../../types/routes";
+import Brightness1OutlinedIcon from "@mui/icons-material/Brightness1Outlined";
 
 type Props = {
-  cities: string[];
+  routes: PathDetailed[];
 };
 
-export function RoutePath({ cities }: Readonly<Props>) {
+export function RoutePath({ routes }: Readonly<Props>) {
   return (
-    <Box
-      sx={{
-        display: "flex",
-        alignItems: "center",
-        flexWrap: "wrap",
-        gap: 1.5,
-      }}
-    >
-      {cities.map((city, index) => {
-        const isLast = index === cities.length - 1;
-
-        return (
-          <Box
-            key={city + index}
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              gap: 1.5,
-            }}
-          >
-            <Box
-              sx={{
-                px: 2,
-                py: 1,
-                borderRadius: "999px",
-
-                background:
-                  index === 0 || isLast
-                    ? "linear-gradient(135deg, #7C3AED, #9333EA)"
-                    : "#1F2937",
-
-                color: "white",
-
-                fontWeight: 700,
-                fontSize: 14,
-
-                boxShadow:
-                  index === 0 || isLast ? "0 0 20px rgba(124,58,237,.35)" : "none",
-              }}
-            >
-              {city}
-            </Box>
-
-            {!isLast && (
+    <Box sx={{ display: "flex", gap: 2, width: "100%" }}>
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "start",
+          gap: 1,
+          width: "100%",
+        }}
+      >
+        {routes.map((route, index) => {
+          const isLast = index === routes.length - 1;
+          return (
+            <Box key={route._id} sx={{ display: "flex", gap: 2, width: "100%" }}>
               <Box
-                sx={{
-                  width: 40,
-                  height: 2,
-                  background: "linear-gradient(90deg, #7C3AED, rgba(124,58,237,0.2))",
-                  borderRadius: 999,
-                }}
-              />
-            )}
-          </Box>
-        );
-      })}
+                sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}
+              >
+                <Brightness1OutlinedIcon
+                  sx={{
+                    fontSize: 14,
+                    color: "#A78BFA",
+                    paddingTop: 1,
+                  }}
+                />
+                {!isLast && <TimelineDivider />}
+              </Box>
+              <Typography variant="h5" sx={{ width: 50 }}>
+                {route._id}
+              </Typography>
+              <Box sx={{ display: "flex", flexDirection: "column", gap: 1, flex: 1 }}>
+                <Typography variant="body1">{route.name}</Typography>
+                <Typography variant="body2">
+                  {route.city} - {route.country}
+                </Typography>
+                <Divider />
+              </Box>
+            </Box>
+          );
+        })}
+      </Box>
     </Box>
   );
 }
+
+const TimelineDivider = styled("span")({
+  width: "2px",
+  height: "100%",
+
+  background: "linear-gradient(to bottom, rgba(167,139,250,0.9), rgba(167,139,250,0.1))",
+
+  borderRadius: "999px",
+});

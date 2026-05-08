@@ -1,4 +1,4 @@
-import { Box, Card, Grid, Typography, Divider } from "@mui/material";
+import { Box, Card, Grid, Typography, Divider, Button } from "@mui/material";
 
 import SocialDistanceIcon from "@mui/icons-material/SocialDistance";
 import { RouteStat } from "../RouteStats/RouteStats";
@@ -6,6 +6,7 @@ import { RoutePath } from "../RoutePath/RoutePath";
 import type { RouteResponse } from "../../types/routes";
 import RequestQuoteOutlinedIcon from "@mui/icons-material/RequestQuoteOutlined";
 import FmdGoodOutlinedIcon from "@mui/icons-material/FmdGoodOutlined";
+import EastIcon from "@mui/icons-material/East";
 import { getAllCities } from "../../utils/cities";
 
 export function BestRouteCard({
@@ -78,7 +79,11 @@ export function BestRouteCard({
 
             <Divider />
 
-            <RoutePath cities={cities} />
+            <RoutePath routes={route.pathDetailed} />
+
+            <Button variant="contained" sx={{ width: 200 }} endIcon={<EastIcon />}>
+              View full details
+            </Button>
           </Box>
         </Grid>
       </Grid>

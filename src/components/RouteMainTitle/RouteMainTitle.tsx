@@ -15,9 +15,9 @@ function RouteMainTitle({ from, to, budget, maxStops }: Readonly<Props>) {
     <Box sx={{ display: "flex", flexDirection: "column", gap: 2, pb: 4 }}>
       <Typography variant="h5">{[from, to].join(" → ")}</Typography>
       <Box sx={{ display: "flex", gap: 2 }}>
-        <RouteStat icon={<WalletIcon color="primary" />} label={`Budget: €${budget}`} />
+        <RouteStat icon={<WalletIcon color="inherit" />} label={`Budget: €${budget}`} />
         <RouteStat
-          icon={<AirlineStopsOutlinedIcon color="primary" />}
+          icon={<AirlineStopsOutlinedIcon color="inherit" />}
           label={`Stops: ${maxStops}`}
         />
       </Box>

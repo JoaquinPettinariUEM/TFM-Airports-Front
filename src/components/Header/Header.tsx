@@ -27,6 +27,7 @@ const HeaderComponent = styled(Box)({
   flexDirection: "column",
   width: "100%",
   backgroundColor: "#111827",
+  zIndex: 100,
   ".tp-header-container": {
     display: "flex",
     justifyContent: "space-between",

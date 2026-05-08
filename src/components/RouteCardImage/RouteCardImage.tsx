@@ -15,6 +15,11 @@ export function RouteCardImage({ city }: Readonly<Props>) {
         height: 220,
         objectFit: "cover",
         display: "block",
+        transition: "transform 0.4s ease",
+
+        ".MuiCard-root:hover &": {
+          transform: "scale(1.04)",
+        },
       }}
     />
   );

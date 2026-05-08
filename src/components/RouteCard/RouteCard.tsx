@@ -1,4 +1,4 @@
-import { Box, Card, Chip, Divider, Stack, Typography } from "@mui/material";
+import { Box, Button, Card, Chip, Divider, Stack, Typography } from "@mui/material";
 
 import FlightIcon from "@mui/icons-material/Flight";
 import StraightenIcon from "@mui/icons-material/Straighten";
@@ -7,6 +7,7 @@ import type { RouteResponse } from "../../types/routes";
 import { RouteCardImage } from "../RouteCardImage/RouteCardImage";
 import { getAllCities } from "../../utils/cities";
 import { InfoChip } from "../InfoChip/InfoChip";
+import EastIcon from "@mui/icons-material/East";
 
 type Props = {
   route: RouteResponse;
@@ -27,6 +28,10 @@ export function RouteCard({
   const departure = cities[0];
   const arrival = cities[route.pathDetailed.length - 1];
   const difference = route.cost - bestPrice;
+  const stopCities = cities.slice(1, -1);
+
+  const viaText =
+    stopCities.length > 0 ? `Via ${stopCities.join(" & ")}` : "Direct flight";
 
   return (
     <Card
@@ -35,11 +40,21 @@ export function RouteCard({
         borderRadius: 1,
         backgroundColor: "#111827",
         color: "white",
+        height: "100%",
+        display: "flex",
+        flexDirection: "column",
+        transition: "all 0.25s ease",
+        cursor: "pointer",
+
+        "&:hover": {
+          transform: "translateY(-3px)",
+          boxShadow: `0 0 0 1px ${mainColor}, 0 20px 40px rgba(0,0,0,0.35)`,
+        },
       }}
     >
       <RouteCardImage city={previewCity} />
 
-      <Box sx={{ p: 3 }}>
+      <Box sx={{ p: 3, flex: 1, display: "flex", flexDirection: "column" }}>
         <Typography
           variant="h5"
           sx={{
@@ -50,17 +65,15 @@ export function RouteCard({
           {departure} → {arrival}
         </Typography>
 
-        {previewCity && (
-          <Typography
-            variant="body1"
-            sx={{
-              color: "#9CA3AF",
-              mb: 2,
-            }}
-          >
-            Via {previewCity}
-          </Typography>
-        )}
+        <Typography
+          variant="body1"
+          sx={{
+            color: "#9CA3AF",
+            mb: 2,
+          }}
+        >
+          {viaText}
+        </Typography>
 
         <Box
           sx={{
@@ -87,12 +100,18 @@ export function RouteCard({
 
         <Divider
           sx={{
-            borderColor: "#1F2937",
             mb: 2,
           }}
         />
+        <Typography variant="body2" sx={{ marginBottom: 2 }}>
+          {route.path?.join(" → ")}
+        </Typography>
 
-        <Typography variant="body2">{route.path?.join(" → ")}</Typography>
+        <Box sx={{ marginTop: "auto" }}>
+          <Button variant="outlined" fullWidth endIcon={<EastIcon />}>
+            View Details
+          </Button>
+        </Box>
       </Box>
     </Card>
   );

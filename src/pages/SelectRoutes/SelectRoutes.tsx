@@ -1,9 +1,19 @@
-import { Alert, Box, CircularProgress, Container, Grid, Typography } from "@mui/material";
+import {
+  Alert,
+  Box,
+  Button,
+  CircularProgress,
+  Container,
+  Grid,
+  Grow,
+  Typography,
+} from "@mui/material";
 
 import EmojiEventsIcon from "@mui/icons-material/EmojiEvents";
 import { head, last } from "lodash";
 import { useSearchParams } from "react-router-dom";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
+import DoneAllIcon from "@mui/icons-material/DoneAll";
 
 import { useGetRoutes } from "../../api/travelPlanApi";
 import { BestRouteCard } from "../../components/BestRouteCard/BestRouteCard";
@@ -12,6 +22,10 @@ import { RouteCard } from "../../components/RouteCard/RouteCard";
 import RouteMainTitle from "../../components/RouteMainTitle/RouteMainTitle";
 import { getAllCities } from "../../utils/cities";
 import { routeCardThemes } from "../../utils/colors";
+import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
+
+const BEST_ROUTE_INDEX = 1;
+const ROUTES_PER_LOAD = 4;
 
 function MyRoutes() {
   const [searchParams] = useSearchParams();
@@ -21,13 +35,25 @@ function MyRoutes() {
     budget: Number(searchParams.get("budget") ?? 500),
     maxStops: Number(searchParams.get("maxStops") ?? 2),
   };
-
   const { data: routes, isLoading } = useGetRoutes(params);
 
-  const routesWithImages = useRoutePreviewCities(routes?.slice(0, 5) ?? []);
+  const [visibleRoutes, setVisibleRoutes] = useState(ROUTES_PER_LOAD);
 
-  const bestRoute = useMemo(() => routesWithImages[0], [routesWithImages]);
-  const suggestedRoutes = useMemo(() => routesWithImages.slice(1, 5), [routesWithImages]);
+  const routesWithImages = useRoutePreviewCities(
+    routes?.slice(0, visibleRoutes + BEST_ROUTE_INDEX) ?? []
+  );
+
+  const bestRoute = routesWithImages[0];
+
+  const suggestedRoutes = routesWithImages.slice(
+    BEST_ROUTE_INDEX,
+    visibleRoutes + BEST_ROUTE_INDEX
+  );
+
+  const remainingRoutes = Math.max(
+    (routes?.length ?? 0) - (visibleRoutes + BEST_ROUTE_INDEX),
+    0
+  );
 
   const { departure, arrival } = useMemo(() => {
     const cities = getAllCities(bestRoute?.route?.pathDetailed);
@@ -38,7 +64,7 @@ function MyRoutes() {
     };
   }, [bestRoute]);
 
-  if (isLoading || !routes || !bestRoute || !routesWithImages) {
+  if (isLoading || !routes || !bestRoute || !routesWithImages || !suggestedRoutes) {
     return <CircularProgress />;
   }
 
@@ -59,7 +85,7 @@ function MyRoutes() {
             gap: 1,
           }}
         >
-          <EmojiEventsIcon color="primary" />
+          <EmojiEventsIcon color="warning" />
 
           <Typography variant="h5">Best route for you</Typography>
         </Box>
@@ -73,22 +99,46 @@ function MyRoutes() {
           Great Choice! This route offers the best balance of price, time and interesting
           cities.
         </Alert>
-        <Typography variant="h5" sx={{ mt: 6, mb: 3 }}>
-          More suggestions
-        </Typography>
+
+        <Box sx={{ display: "flex", justifyContent: "space-between", mt: 6, mb: 3 }}>
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              gap: 1,
+            }}
+          >
+            <DoneAllIcon />
+            <Typography variant="h5">Other smart alternatives</Typography>
+          </Box>
+          {remainingRoutes > 0 && (
+            <Button
+              variant="outlined"
+              startIcon={<ArrowDownwardIcon />}
+              onClick={() => setVisibleRoutes(prev => prev + 4)}
+            >
+              Show more ({remainingRoutes})
+            </Button>
+          )}
+        </Box>
 
         <Grid container spacing={3}>
           {suggestedRoutes.map(({ route, previewCity }, index) => {
             const theme = routeCardThemes[index % routeCardThemes.length];
+
             return (
-              <Grid key={index} size={{ xs: 12, md: 6, lg: 3 }}>
-                <RouteCard
-                  route={route}
-                  previewCity={previewCity}
-                  bestPrice={bestRoute.route.cost}
-                  mainColor={theme.mainColor}
-                  bgColor={theme.bgColor}
-                />
+              <Grid key={route.score} size={{ xs: 12, md: 6, lg: 3 }}>
+                <Grow in timeout={400 + index * 120} style={{ height: "100%" }}>
+                  <Box>
+                    <RouteCard
+                      route={route}
+                      previewCity={previewCity}
+                      bestPrice={bestRoute.route.cost}
+                      mainColor={theme.mainColor}
+                      bgColor={theme.bgColor}
+                    />
+                  </Box>
+                </Grow>
               </Grid>
             );
           })}

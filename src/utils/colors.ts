@@ -28,15 +28,15 @@ export const routeCardThemes = [
     bgColor: colors.greenBg,
   },
   {
+    mainColor: colors.violetPrimary,
+    bgColor: colors.violetBg,
+  },
+  {
     mainColor: colors.yellowPrimary,
     bgColor: colors.yellowBg,
   },
   {
     mainColor: colors.bluePrimary,
     bgColor: colors.blueBg,
-  },
-  {
-    mainColor: colors.violetPrimary,
-    bgColor: colors.violetBg,
   },
 ];

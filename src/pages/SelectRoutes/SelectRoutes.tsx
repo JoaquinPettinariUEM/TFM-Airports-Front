@@ -115,7 +115,8 @@ function MyRoutes() {
             <Button
               variant="outlined"
               startIcon={<ArrowDownwardIcon />}
-              onClick={() => setVisibleRoutes(prev => prev + 4)}
+              onClick={() => setVisibleRoutes(prev => prev + ROUTES_PER_LOAD)}
+              sx={{ px: 3 }}
             >
               Show more ({remainingRoutes})
             </Button>

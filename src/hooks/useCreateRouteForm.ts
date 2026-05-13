@@ -25,7 +25,7 @@ export function useCreateRouteForm() {
     if (!form.from || !form.to) return;
 
     navigate(
-      `/my-routes?from=${form.from.id}&to=${form.to.id}&budget=${form.budget}&maxStops=${form.maxStops}`
+      `/searched/routes?from=${form.from.id}&to=${form.to.id}&budget=${form.budget}&maxStops=${form.maxStops}`
     );
   };
 

@@ -46,6 +46,8 @@ export type Location = {
 export type GetRoutesParams = {
   from: string;
   to: string;
+  tripDays: string;
+  startDate: string;
   budget?: number;
   maxStops?: number;
 };

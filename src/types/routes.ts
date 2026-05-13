@@ -13,15 +13,24 @@ export type CreateRouteForm = {
   maxStops?: number;
 };
 
-export type RouteResponse = {
+export type RoutesResponse = {
+  airports: Airports;
+  routes: RouteListItemResponse[];
+};
+
+export type Airports = Record<string, AirportResponse>;
+
+export type RouteListItemResponse = {
+  id: string;
   path: string[];
   cost: number;
   distance: number;
   score: number;
-  pathDetailed: PathDetailed[];
+  previewCity: string;
+  badge: RouteBadge;
 };
 
-export type PathDetailed = {
+export type AirportResponse = {
   _id: string;
   name: string;
   city: string;
@@ -40,3 +49,13 @@ export type GetRoutesParams = {
   budget?: number;
   maxStops?: number;
 };
+
+export type GetRouteByKeyParams = {
+  pathKey: string;
+  startDate: string;
+  tripDays: string;
+  budget?: number;
+  maxStop?: number;
+};
+
+export type RouteBadge = "Best Balance" | "Best Price" | "Fastest" | "Smart Choice";

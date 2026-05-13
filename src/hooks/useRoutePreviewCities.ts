@@ -1,15 +1,22 @@
-import type { RouteResponse } from "../types/routes";
+import type { AirportResponse, RouteListItemResponse } from "../types/routes";
 
-export function useRoutePreviewCities(routes: RouteResponse[]) {
+export function useRoutePreviewCities(
+  routes: RouteListItemResponse[],
+  airports: Record<string, AirportResponse>
+) {
   const usedCities = new Set<string>();
 
   return routes.map(route => {
-    const middleCities = route.pathDetailed.slice(1, -1).map(p => p.city);
+    const middleCities = route.path
+      .slice(1, -1)
+      .map(id => airports[id]?.city)
+      .filter(Boolean);
 
     const previewCity =
-      middleCities.find(city => !usedCities.has(city)) ??
+      middleCities.find(city => city && !usedCities.has(city)) ??
       middleCities[0] ??
-      route.pathDetailed[0]?.city;
+      airports[route.path[0]]?.city ??
+      "";
 
     if (previewCity) {
       usedCities.add(previewCity);
@@ -17,6 +24,7 @@ export function useRoutePreviewCities(routes: RouteResponse[]) {
 
     return {
       route,
+
       previewCity,
     };
   });

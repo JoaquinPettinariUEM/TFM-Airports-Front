@@ -1,9 +1,9 @@
 import { Box, styled, Typography, Divider } from "@mui/material";
-import type { PathDetailed } from "../../types/routes";
+import type { AirportResponse } from "../../types/routes";
 import Brightness1OutlinedIcon from "@mui/icons-material/Brightness1Outlined";
 
 type Props = {
-  routes: PathDetailed[];
+  routes: AirportResponse[];
 };
 
 export function RoutePath({ routes }: Readonly<Props>) {

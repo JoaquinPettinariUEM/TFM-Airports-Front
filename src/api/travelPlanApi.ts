@@ -2,9 +2,10 @@ import { useQuery } from "@tanstack/react-query";
 import { api } from "./axios";
 import { apiRoutes } from "./apiRoutes";
 import type {
+  GetRouteByKeyParams,
   GetRoutesParams,
   RouteByQueryResponse,
-  RouteResponse,
+  RoutesResponse,
 } from "../types/routes";
 import { useDebouncedValue } from "../hooks/useDebouncedValue";
 
@@ -14,8 +15,16 @@ const getAirportsByQuery = async (query: string): Promise<RouteByQueryResponse[]
   return data;
 };
 
-const getRoutes = async (params: GetRoutesParams | null): Promise<RouteResponse[]> => {
+const getRoutes = async (params: GetRoutesParams | null): Promise<RoutesResponse> => {
   const { data } = await api.get(apiRoutes.routes, {
+    params,
+  });
+
+  return data;
+};
+
+const getRouteByKey = async (params: GetRouteByKeyParams | null) => {
+  const { data } = await api.get(`${apiRoutes.routes}/${params?.pathKey}`, {
     params,
   });
 
@@ -37,6 +46,14 @@ export const useGetRoutes = (params: GetRoutesParams | null) => {
   return useQuery({
     queryKey: ["routes", params],
     queryFn: () => getRoutes(params),
+    enabled: !!params,
+  });
+};
+
+export const useGetRouteByKey = (params: GetRouteByKeyParams | null) => {
+  return useQuery({
+    queryKey: ["route", params?.pathKey],
+    queryFn: () => getRouteByKey(params),
     enabled: !!params,
   });
 };

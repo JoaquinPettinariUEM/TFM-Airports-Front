@@ -3,32 +3,36 @@ import { Box, Button, Card, Chip, Divider, Stack, Typography } from "@mui/materi
 import FlightIcon from "@mui/icons-material/Flight";
 import StraightenIcon from "@mui/icons-material/Straighten";
 
-import type { RouteResponse } from "../../types/routes";
 import { RouteCardImage } from "../RouteCardImage/RouteCardImage";
-import { getAllCities } from "../../utils/cities";
 import { InfoChip } from "../InfoChip/InfoChip";
 import EastIcon from "@mui/icons-material/East";
+import type { RouteListItemResponse } from "../../types/routes";
 
 type Props = {
-  route: RouteResponse;
+  route: RouteListItemResponse;
   previewCity: string;
   bestPrice: number;
+  departure: string;
+  arrival: string;
+  airportsOfRoute: string[];
   mainColor: string;
   bgColor: string;
+  viewDetailsRoute: (routes: string[]) => void;
 };
 
 export function RouteCard({
   route,
   previewCity,
   bestPrice,
+  departure,
+  airportsOfRoute,
+  arrival,
   mainColor,
   bgColor,
+  viewDetailsRoute,
 }: Readonly<Props>) {
-  const cities = getAllCities(route.pathDetailed);
-  const departure = cities[0];
-  const arrival = cities[route.pathDetailed.length - 1];
   const difference = route.cost - bestPrice;
-  const stopCities = cities.slice(1, -1);
+  const stopCities = airportsOfRoute.slice(1, -1);
 
   const viaText =
     stopCities.length > 0 ? `Via ${stopCities.join(" & ")}` : "Direct flight";
@@ -108,7 +112,12 @@ export function RouteCard({
         </Typography>
 
         <Box sx={{ marginTop: "auto" }}>
-          <Button variant="outlined" fullWidth endIcon={<EastIcon />}>
+          <Button
+            variant="outlined"
+            fullWidth
+            endIcon={<EastIcon />}
+            onClick={() => viewDetailsRoute(route.path)}
+          >
             View Details
           </Button>
         </Box>

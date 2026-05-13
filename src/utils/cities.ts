@@ -1,5 +1,5 @@
-import type { PathDetailed } from "../types/routes";
+import type { AirportResponse } from "../types/routes";
 
-export const getAllCities = (path: PathDetailed[]) => {
-  return path?.map((path: PathDetailed) => path.city);
+export const getAllCities = (path: AirportResponse[]) => {
+  return path?.map((path: AirportResponse) => path.city);
 };

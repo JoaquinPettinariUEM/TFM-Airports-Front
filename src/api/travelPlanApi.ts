@@ -24,7 +24,7 @@ const getRoutes = async (params: GetRoutesParams | null): Promise<RoutesResponse
 };
 
 const getRouteByKey = async (params: GetRouteByKeyParams | null) => {
-  const { data } = await api.get(`${apiRoutes.routes}/${params?.pathKey}`, {
+  const { data } = await api.get(`${apiRoutes.routeDetail}/${params?.pathKey}`, {
     params,
   });
 

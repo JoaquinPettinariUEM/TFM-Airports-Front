@@ -11,6 +11,8 @@ export type CreateRouteForm = {
   to: RouteByQueryResponse | null;
   budget?: number;
   maxStops?: number;
+  startDate?: Date;
+  endDate?: Date;
 };
 
 export type RoutesResponse = {

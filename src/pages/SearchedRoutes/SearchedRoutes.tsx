@@ -1,13 +1,4 @@
-import {
-  Alert,
-  Box,
-  Button,
-  CircularProgress,
-  Container,
-  Grid,
-  Grow,
-  Typography,
-} from "@mui/material";
+import { Alert, Box, Button, Container, Grid, Grow, Typography } from "@mui/material";
 
 import EmojiEventsIcon from "@mui/icons-material/EmojiEvents";
 import DoneAllIcon from "@mui/icons-material/DoneAll";
@@ -24,6 +15,7 @@ import { routeCardThemes } from "../../utils/colors";
 import { useSearchedRoutes } from "../../hooks/useSearchedRoutes";
 
 import { AlternativesHeader, PageWrapper, SectionHeader } from "./styled";
+import BackdropLoading from "../../components/BackdropLoading/BackdropLoading";
 
 const ROUTES_PER_LOAD = 4;
 
@@ -65,7 +57,7 @@ function SearchedRoutes() {
   };
 
   if (isLoading) {
-    return <CircularProgress />;
+    return <BackdropLoading />;
   }
 
   if (!bestRoute || !departure || !arrival) {

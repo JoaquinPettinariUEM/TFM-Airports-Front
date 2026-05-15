@@ -3,6 +3,7 @@ import BackgroundImage from "../../assets/bs_wallpaper.jpg";
 import { AirportFinder } from "../../components/AirportFinder/AirportFinder";
 import NumberField from "../../components/NumberField/NumberField";
 import { useCreateRouteForm } from "../../hooks/useCreateRouteForm";
+import { DateRangeField } from "../../components/DateRangeField/DateRangeField";
 
 function CreateRoute() {
   const { form, updateField, submit } = useCreateRouteForm();
@@ -10,10 +11,11 @@ function CreateRoute() {
   return (
     <BackgroundComponent>
       <Container
-        maxWidth="lg"
+        maxWidth="md"
         sx={{
           height: "100%",
           display: "flex",
+          gap: 2,
           flexDirection: "column",
           justifyContent: "center",
         }}
@@ -33,9 +35,19 @@ function CreateRoute() {
             label="Final Airport"
           />
 
+          <DateRangeField
+            startDate={form.startDate}
+            endDate={form.endDate}
+            onChange={({ startDate, endDate }) => {
+              updateField("startDate", startDate);
+              updateField("endDate", endDate);
+            }}
+          />
+
           <NumberField
             label="Budget"
             value={form.budget}
+            defaultValue={300}
             min={0}
             max={10000}
             onValueChange={value => updateField("budget", value ?? 1000)}
@@ -89,7 +101,8 @@ const BackgroundComponent = styled("section")({
 
 const FormCard = styled(Card)({
   padding: 16,
-  display: "flex",
+  display: "grid",
+  gridTemplateColumns: "repeat(2, 1fr)",
   gap: 16,
 
   backdropFilter: "blur(18px)",

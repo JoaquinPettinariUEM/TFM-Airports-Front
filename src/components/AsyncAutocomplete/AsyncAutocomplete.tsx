@@ -28,7 +28,6 @@ export function AsyncAutocomplete<T>({
 
   return (
     <Autocomplete
-      sx={{ width: 300 }}
       value={value}
       onChange={(_, newValue) => onChange(newValue)}
       inputValue={inputValue}
@@ -47,6 +46,11 @@ export function AsyncAutocomplete<T>({
       loading={isLoading}
       isOptionEqualToValue={isOptionEqualToValue}
       getOptionLabel={getOptionLabel}
+      slotProps={{
+        popper: {
+          sx: { background: "grey", borderRadius: "8px" },
+        },
+      }}
       renderInput={params => (
         <TextField
           {...params}

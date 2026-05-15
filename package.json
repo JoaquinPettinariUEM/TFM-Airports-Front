@@ -21,6 +21,7 @@
     "dayjs": "^1.11.19",
     "lodash": "^4.17.23",
     "react": "^19.2.5",
+    "react-date-range": "^2.0.1",
     "react-dom": "^19.2.5",
     "react-router-dom": "^6.30.3",
     "tailwindcss": "^4.1.18"
@@ -30,6 +31,7 @@
     "@types/lodash": "^4.17.23",
     "@types/node": "^24.12.2",
     "@types/react": "^19.2.14",
+    "@types/react-date-range": "^1.4.10",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.1",
     "eslint": "^10.2.1",

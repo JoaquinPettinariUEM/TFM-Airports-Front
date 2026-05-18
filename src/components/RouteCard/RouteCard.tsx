@@ -7,7 +7,7 @@ import EastIcon from "@mui/icons-material/East";
 import { RouteCardImage } from "../RouteCardImage/RouteCardImage";
 import { InfoChip } from "../InfoChip/InfoChip";
 
-import type { AirportResponse, RouteListItemResponse } from "../../types/routes";
+import type { AirportResponse, RouteMapped } from "../../types/routes";
 import { getRouteCities } from "../../utils/cities";
 import {
   BottomAction,
@@ -17,13 +17,13 @@ import {
 } from "../../pages/SearchedRoutes/styled";
 
 type Props = {
-  route: RouteListItemResponse;
+  route: RouteMapped;
   previewCity: string;
   bestPrice: number;
   mainColor: string;
   bgColor: string;
   airports: Record<string, AirportResponse>;
-  viewDetailsRoute: (routes: string[]) => void;
+  viewDetailsRoute: (routes: RouteMapped) => void;
 };
 
 export function RouteCard({
@@ -91,7 +91,7 @@ export function RouteCard({
             variant="outlined"
             fullWidth
             endIcon={<EastIcon />}
-            onClick={() => viewDetailsRoute(route.path)}
+            onClick={() => viewDetailsRoute(route)}
           >
             View Details
           </Button>

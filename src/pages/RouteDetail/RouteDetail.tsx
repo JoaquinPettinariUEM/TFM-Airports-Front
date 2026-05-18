@@ -1,20 +1,13 @@
-import { useParams, useSearchParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useGetRouteByKey } from "../../api/travelPlanApi";
+import { useRouteStore } from "../../store/routeStore";
 
 function RouteDetail() {
-  const [searchParams] = useSearchParams();
+  const { airports, selectedRoute } = useRouteStore();
   const { id } = useParams();
 
-  const paramsToQuery = {
-    pathKey: id ?? "",
-    tripDays: searchParams.get("tripDays") ?? "",
-    startDate: searchParams.get("startDate") ?? "",
-    budget: Number(searchParams.get("budget") ?? 500),
-    maxStops: Number(searchParams.get("maxStops") ?? 2),
-  };
-
-  const { data } = useGetRouteByKey(paramsToQuery);
-  console.log(data);
+  const { data } = useGetRouteByKey(id ?? "");
+  console.log(airports, selectedRoute, data);
 
   return <h1>Route Detail</h1>;
 }

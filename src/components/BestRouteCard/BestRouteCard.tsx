@@ -8,15 +8,15 @@ import EastIcon from "@mui/icons-material/East";
 import { RouteStat } from "../RouteStats/RouteStats";
 import { RoutePath } from "../RoutePath/RoutePath";
 
-import type { AirportResponse, RouteListItemResponse } from "../../types/routes";
+import type { AirportResponse, RouteMapped } from "../../types/routes";
 
 type Props = {
-  route: RouteListItemResponse;
+  route: RouteMapped;
   departure: AirportResponse;
   arrival: AirportResponse;
   image: string;
   airports: AirportResponse[];
-  viewDetailsRoute: (routes: string[]) => void;
+  viewDetailsRoute: (routes: RouteMapped) => void;
 };
 
 export function BestRouteCard({
@@ -131,7 +131,7 @@ export function BestRouteCard({
               <Button
                 variant="contained"
                 endIcon={<EastIcon />}
-                onClick={() => viewDetailsRoute(route.path)}
+                onClick={() => viewDetailsRoute(route)}
                 sx={{
                   borderRadius: 3,
                   px: 4,

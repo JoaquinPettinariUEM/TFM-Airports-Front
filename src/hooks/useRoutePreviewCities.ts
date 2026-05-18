@@ -11,6 +11,7 @@ export function useRoutePreviewCities(
       .slice(1, -1)
       .map(id => airports[id]?.city)
       .filter(Boolean);
+    const citiesInfo = route.path.map(code => airports[code]);
 
     const previewCity =
       middleCities.find(city => city && !usedCities.has(city)) ??
@@ -23,7 +24,7 @@ export function useRoutePreviewCities(
     }
 
     return {
-      route,
+      route: { ...route, citiesInfo },
 
       previewCity,
     };

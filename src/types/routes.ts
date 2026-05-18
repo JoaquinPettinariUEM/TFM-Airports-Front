@@ -30,6 +30,19 @@ export type RouteListItemResponse = {
   score: number;
   previewCity: string;
   badge: RouteBadge;
+  flights: Flight[];
+};
+
+export type RouteMapped = RouteListItemResponse & { citiesInfo: AirportResponse[] };
+
+export type Flight = {
+  from: string;
+  to: string;
+  departureDate: string;
+  arrivalDate: string;
+  durationMinutes: number;
+  stayDays: number;
+  day: string;
 };
 
 export type AirportResponse = {
@@ -52,14 +65,6 @@ export type GetRoutesParams = {
   startDate: string;
   budget?: number;
   maxStops?: number;
-};
-
-export type GetRouteByKeyParams = {
-  pathKey: string;
-  startDate: string;
-  tripDays: string;
-  budget?: number;
-  maxStop?: number;
 };
 
 export type RouteBadge = "Best Balance" | "Best Price" | "Fastest" | "Smart Choice";

@@ -4,7 +4,7 @@ import EmojiEventsIcon from "@mui/icons-material/EmojiEvents";
 import DoneAllIcon from "@mui/icons-material/DoneAll";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 
-import { createSearchParams, useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 import { BestRouteCard } from "../../components/BestRouteCard/BestRouteCard";
 import { RouteCard } from "../../components/RouteCard/RouteCard";
@@ -16,11 +16,14 @@ import { useSearchedRoutes } from "../../hooks/useSearchedRoutes";
 
 import { AlternativesHeader, PageWrapper, SectionHeader } from "./styled";
 import BackdropLoading from "../../components/BackdropLoading/BackdropLoading";
+import type { RouteMapped } from "../../types/routes";
+import { useRouteStore } from "../../store/routeStore";
 
 const ROUTES_PER_LOAD = 4;
 
 function SearchedRoutes() {
   const [searchParams] = useSearchParams();
+  const { setSelectedRoute, setAirports } = useRouteStore();
 
   const navigate = useNavigate();
 
@@ -44,16 +47,13 @@ function SearchedRoutes() {
     arrival,
   } = useSearchedRoutes(params);
 
-  const viewDetailsRoute = (routePath: string[]) => {
-    navigate({
-      pathname: `/route/details/${routePath.join("->")}`,
-      search: createSearchParams({
-        startDate: params.startDate,
-        budget: String(params.budget),
-        maxStops: String(params.maxStops),
-        tripDays: String(params.tripDays),
-      }).toString(),
-    });
+  const viewDetailsRoute = (route: RouteMapped) => {
+    setAirports(airports);
+    setSelectedRoute(route);
+    const citiesString = route.citiesInfo
+      .map(airport => encodeURIComponent(airport.city))
+      .join(",");
+    navigate(`/route/details/${citiesString}`);
   };
 
   if (isLoading) {

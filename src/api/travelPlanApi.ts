@@ -2,7 +2,6 @@ import { useQuery } from "@tanstack/react-query";
 import { api } from "./axios";
 import { apiRoutes } from "./apiRoutes";
 import type {
-  GetRouteByKeyParams,
   GetRoutesParams,
   RouteByQueryResponse,
   RoutesResponse,
@@ -23,10 +22,8 @@ const getRoutes = async (params: GetRoutesParams | null): Promise<RoutesResponse
   return data;
 };
 
-const getRouteByKey = async (params: GetRouteByKeyParams | null) => {
-  const { data } = await api.get(`${apiRoutes.routeDetail}/${params?.pathKey}`, {
-    params,
-  });
+const getRouteByKey = async (cities: string | null) => {
+  const { data } = await api.get(`${apiRoutes.routeDetail}?cities=${cities}`);
 
   return data;
 };
@@ -47,12 +44,14 @@ export const useGetRoutes = (params: GetRoutesParams | null) => {
     queryKey: ["routes", params],
     queryFn: () => getRoutes(params),
     enabled: !!params,
+    refetchOnReconnect: false,
+    refetchOnWindowFocus: false,
   });
 };
 
-export const useGetRouteByKey = (params: GetRouteByKeyParams | null) => {
+export const useGetRouteByKey = (params: string | null) => {
   return useQuery({
-    queryKey: ["route", params?.pathKey],
+    queryKey: ["route", params],
     queryFn: () => getRouteByKey(params),
     enabled: !!params,
   });

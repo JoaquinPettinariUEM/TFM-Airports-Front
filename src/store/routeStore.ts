@@ -1,17 +1,17 @@
 import { create } from "zustand";
-import type { Airports, RouteListItemResponse } from "../types/routes";
+import type { Airports, EnrichedRouteDetail } from "../types/routes";
 
 interface RouteStore {
   airports: Airports;
-  selectedRoute?: RouteListItemResponse;
+  selectedRoute?: EnrichedRouteDetail;
   setAirports: (airports: Airports) => void;
-  setSelectedRoute: (route: RouteListItemResponse) => void;
+  setSelectedRoute: (route: EnrichedRouteDetail) => void;
 }
 
 export const useRouteStore = create<RouteStore>(set => ({
   airports: {},
   selectedRoute: undefined,
   setAirports: (airports: Airports) => set(() => ({ airports })),
-  setSelectedRoute: (selectedRoute: RouteListItemResponse) =>
+  setSelectedRoute: (selectedRoute: EnrichedRouteDetail) =>
     set(() => ({ selectedRoute })),
 }));

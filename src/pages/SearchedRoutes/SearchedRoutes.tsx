@@ -4,7 +4,7 @@ import EmojiEventsIcon from "@mui/icons-material/EmojiEvents";
 import DoneAllIcon from "@mui/icons-material/DoneAll";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { createSearchParams, useNavigate, useSearchParams } from "react-router-dom";
 
 import { BestRouteCard } from "../../components/BestRouteCard/BestRouteCard";
 import { RouteCard } from "../../components/RouteCard/RouteCard";
@@ -18,12 +18,14 @@ import { AlternativesHeader, PageWrapper, SectionHeader } from "./styled";
 import BackdropLoading from "../../components/BackdropLoading/BackdropLoading";
 import type { RouteMapped } from "../../types/routes";
 import { useRouteStore } from "../../store/routeStore";
+import { useEnrichRoute } from "../../api/travelPlanApi";
 
 const ROUTES_PER_LOAD = 4;
 
 function SearchedRoutes() {
   const [searchParams] = useSearchParams();
   const { setSelectedRoute, setAirports } = useRouteStore();
+  const { mutate: enrichRouteMutation, isPending } = useEnrichRoute();
 
   const navigate = useNavigate();
 
@@ -49,14 +51,22 @@ function SearchedRoutes() {
 
   const viewDetailsRoute = (route: RouteMapped) => {
     setAirports(airports);
-    setSelectedRoute(route);
-    const citiesString = route.citiesInfo
-      .map(airport => encodeURIComponent(airport.city))
-      .join(",");
-    navigate(`/route/details/${citiesString}`);
+    enrichRouteMutation(route, {
+      onSuccess: response => {
+        setSelectedRoute(response);
+        navigate({
+          pathname: `/route/details`,
+          search: createSearchParams({
+            ...params,
+            budget: String(params.budget),
+            maxStops: String(params.maxStops),
+          }).toString(),
+        });
+      },
+    });
   };
 
-  if (isLoading) {
+  if (isLoading || isPending) {
     return <BackdropLoading />;
   }
 

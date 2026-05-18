@@ -1,9 +1,11 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { api } from "./axios";
 import { apiRoutes } from "./apiRoutes";
 import type {
+  EnrichedRouteDetail,
   GetRoutesParams,
   RouteByQueryResponse,
+  RouteMapped,
   RoutesResponse,
 } from "../types/routes";
 import { useDebouncedValue } from "../hooks/useDebouncedValue";
@@ -22,8 +24,10 @@ const getRoutes = async (params: GetRoutesParams | null): Promise<RoutesResponse
   return data;
 };
 
-const getRouteByKey = async (cities: string | null) => {
-  const { data } = await api.get(`${apiRoutes.routeDetail}?cities=${cities}`);
+const enrichRoute = async (
+  body: RouteMapped | undefined
+): Promise<EnrichedRouteDetail> => {
+  const { data } = await api.post(apiRoutes.routeDetail, body);
 
   return data;
 };
@@ -49,10 +53,8 @@ export const useGetRoutes = (params: GetRoutesParams | null) => {
   });
 };
 
-export const useGetRouteByKey = (params: string | null) => {
-  return useQuery({
-    queryKey: ["route", params],
-    queryFn: () => getRouteByKey(params),
-    enabled: !!params,
+export const useEnrichRoute = () => {
+  return useMutation({
+    mutationFn: (params: RouteMapped) => enrichRoute(params),
   });
 };

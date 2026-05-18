@@ -67,4 +67,22 @@ export type GetRoutesParams = {
   maxStops?: number;
 };
 
+export type EnrichedRouteDetail = RouteListItemResponse & {
+  citiesInfo: {
+    coordinates: Location;
+    _id: string;
+    slug: string;
+    name: string;
+    country: string;
+    description: string;
+    summary: string;
+    image: string;
+    wikipediaUrl: string;
+    source: string;
+    cachedAt: string;
+    createdAt: string;
+    updatedAt: string;
+  }[];
+};
+
 export type RouteBadge = "Best Balance" | "Best Price" | "Fastest" | "Smart Choice";

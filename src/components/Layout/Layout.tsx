@@ -4,7 +4,14 @@ import Header from "../Header/Header";
 
 const Layout = () => {
   return (
-    <Grid sx={{ height: "100vh", display: "flex", flexDirection: "column" }}>
+    <Grid
+      sx={{
+        minHeight: "m100vh",
+        display: "flex",
+        flexDirection: "column",
+        background: "linear-gradient(to bottom, #0B1020, #111827)",
+      }}
+    >
       <Header />
       <Outlet />
     </Grid>

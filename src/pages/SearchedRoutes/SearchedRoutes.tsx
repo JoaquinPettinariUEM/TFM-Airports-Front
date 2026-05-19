@@ -15,10 +15,10 @@ import { routeCardThemes } from "../../utils/colors";
 import { useSearchedRoutes } from "../../hooks/useSearchedRoutes";
 
 import { AlternativesHeader, PageWrapper, SectionHeader } from "./styled";
-import BackdropLoading from "../../components/BackdropLoading/BackdropLoading";
 import type { RouteMapped } from "../../types/routes";
 import { useRouteStore } from "../../store/routeStore";
 import { useEnrichRoute } from "../../api/travelPlanApi";
+import { TravelLoadingScreen } from "../../components/TravelLoadingScreen/TravelLoadingScreen";
 
 const ROUTES_PER_LOAD = 4;
 
@@ -67,7 +67,7 @@ function SearchedRoutes() {
   };
 
   if (isLoading || isPending) {
-    return <BackdropLoading />;
+    return <TravelLoadingScreen from={params.from} to={params.to} />;
   }
 
   if (!bestRoute || !departure || !arrival) {

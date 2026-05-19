@@ -60,6 +60,7 @@ export function DateRangeField({ startDate, endDate, onChange }: Readonly<Props>
           <DateRange
             editableDateInputs={false}
             showDateDisplay={false}
+            minDate={new Date()}
             onChange={item =>
               onChange({
                 startDate: item.selection.startDate ?? new Date(),

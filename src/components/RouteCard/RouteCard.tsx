@@ -1,4 +1,4 @@
-import { Button, Chip, Divider, Stack, Typography } from "@mui/material";
+import { Button, Chip, Divider, Stack, Typography, styled } from "@mui/material";
 
 import FlightIcon from "@mui/icons-material/Flight";
 import StraightenIcon from "@mui/icons-material/Straighten";
@@ -48,43 +48,32 @@ export function RouteCard({
     stopCities.length > 0 ? `Via ${stopCities.join(" & ")}` : "Direct flight";
 
   return (
-    <StyledRouteCard maincolor={mainColor}>
+    <StyledRouteCard mainColor={mainColor}>
       <RouteCardImage city={previewCity} />
 
       <CardContent>
-        <Typography variant="h5" sx={{ mb: 1 }}>
-          {departure} → {arrival}
-        </Typography>
+        <TitleText variant="h5">{[departure, arrival].join(" -> ")}</TitleText>
 
-        <Typography variant="body1" color="#9CA3AF" sx={{ mb: 2 }}>
-          {viaText}
-        </Typography>
+        <SubtitleText variant="body1">{viaText}</SubtitleText>
 
         <PriceRow>
           <Typography variant="h5" color={mainColor}>
-            €{route.cost}
+            {`EUR ${route.cost}`}
           </Typography>
 
           {difference > 0 && (
-            <InfoChip textColor={mainColor} bgColor={bgColor} label={`+€${difference}`} />
+            <InfoChip textColor={mainColor} bgColor={bgColor} label={`+EUR ${difference}`} />
           )}
         </PriceRow>
 
-        <Stack
-          direction="row"
-          spacing={1}
-          sx={{ mb: 2, justifyContent: "space-between" }}
-        >
+        <StatsStack direction="row" spacing={1}>
           <Chip icon={<FlightIcon />} label={`${route.path.length - 1} flights`} />
-
           <Chip icon={<StraightenIcon />} label={`${route.distance} km`} />
-        </Stack>
+        </StatsStack>
 
-        <Divider sx={{ mb: 2 }} />
+        <ContentDivider />
 
-        <Typography variant="body2" sx={{ mb: 2 }}>
-          {route.path.join(" → ")}
-        </Typography>
+        <PathText variant="body2">{route.path.join(" -> ")}</PathText>
 
         <BottomAction>
           <Button
@@ -100,3 +89,25 @@ export function RouteCard({
     </StyledRouteCard>
   );
 }
+
+const TitleText = styled(Typography)({
+  marginBottom: 8,
+});
+
+const SubtitleText = styled(Typography)(({ theme }) => ({
+  color: theme.palette.text.secondary,
+  marginBottom: 16,
+}));
+
+const StatsStack = styled(Stack)({
+  marginBottom: 16,
+  justifyContent: "space-between",
+});
+
+const ContentDivider = styled(Divider)({
+  marginBottom: 16,
+});
+
+const PathText = styled(Typography)({
+  marginBottom: 16,
+});

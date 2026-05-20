@@ -2,6 +2,10 @@
   --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
   --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
   --mono: ui-monospace, Consolas, monospace;
+  --tp-bg-start: #0B1020;
+  --tp-bg-end: #111827;
+  --tp-text-primary: #F8FAFC;
+  --tp-shadow-hover: 0 20px 40px rgba(0,0,0,0.35);
 
   @media (max-width: 1024px) {
     font-size: 16px;

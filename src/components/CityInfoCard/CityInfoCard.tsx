@@ -1,4 +1,4 @@
-import { Box, Divider, Paper, Typography } from "@mui/material";
+import { Box, Divider, Paper, Typography, styled } from "@mui/material";
 import { format } from "date-fns";
 import type { EnrichedRouteDetail, Flight } from "../../types/routes";
 
@@ -24,114 +24,108 @@ export function CityInfoCard({
   isLast,
 }: Readonly<CityInfoCardProps>) {
   return (
-    <Paper
-      elevation={0}
-      sx={{
-        width: "100%",
-        p: 4,
-        borderRadius: "28px",
-        background: "rgba(255,255,255,0.03)",
-        border: "1px solid rgba(255,255,255,0.08)",
-        backdropFilter: "blur(20px)",
-        color: "white",
-      }}
-    >
-      <Typography
-        variant="h4"
-        sx={{
-          fontWeight: 700,
-          color: theme.mainColor,
-        }}
-      >
+    <StyledPaper elevation={0}>
+      <CityName variant="h4" mainColor={theme.mainColor}>
         {city.name}
-      </Typography>
+      </CityName>
 
-      <Typography
-        sx={{
-          mt: 1,
-          color: "rgba(255,255,255,0.6)",
-        }}
-      >
-        {city.description}
-      </Typography>
+      <CityDescription>{city.description}</CityDescription>
 
-      <Box
-        sx={{
-          display: "grid",
-          gridTemplateColumns: "1fr 1fr",
-          gap: 4,
-          mt: 5,
-        }}
-      >
-        <Info
-          label="Arrival"
-          value={flight ? format(new Date(flight.arrivalDate), "HH:mm") : "-"}
-        />
-
+      <InfoGrid>
+        <Info label="Arrival" value={flight ? format(new Date(flight.arrivalDate), "HH:mm") : "-"} />
         <Info label="Stay" value={flight ? `${flight.stayDays} days` : "-"} />
-      </Box>
+      </InfoGrid>
 
-      <Divider
-        sx={{
-          my: 4,
-          borderColor: "rgba(255,255,255,0.08)",
-        }}
-      />
+      <ContentDivider />
 
-      <Typography
-        sx={{
-          color: "rgba(255,255,255,0.72)",
-          lineHeight: 1.8,
-        }}
-      >
-        {city.summary}
-      </Typography>
+      <CitySummary>{city.summary}</CitySummary>
 
       {!isLast && flight && (
-        <Box
-          sx={{
-            mt: 5,
-            p: 3,
-            borderRadius: "20px",
-            border: `1px solid ${theme.mainColor}50`,
-            background: theme.bgColor,
-          }}
-        >
-          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-            <Typography color="rgba(255,255,255,0.7)">
-              Flight to next destination
-            </Typography>
-
-            <Typography
-              sx={{
-                fontWeight: 700,
-                color: theme.mainColor,
-              }}
-            >
+        <FlightBox mainColor={theme.mainColor} bgColor={theme.bgColor}>
+          <FlightRow>
+            <Typography color="text.secondary">Flight to next destination</Typography>
+            <FlightDuration mainColor={theme.mainColor}>
               {Math.floor(flight.durationMinutes / 60)}h {flight.durationMinutes % 60}m
-            </Typography>
-          </Box>
-        </Box>
+            </FlightDuration>
+          </FlightRow>
+        </FlightBox>
       )}
-    </Paper>
+    </StyledPaper>
   );
 }
 
 function Info({ label, value }: Readonly<InfoProps>) {
   return (
     <Box>
-      <Typography
-        sx={{
-          color: "rgba(255,255,255,0.5)",
-          fontSize: 14,
-        }}
-      >
-        {label}
-      </Typography>
-
-      <Typography variant="h5" sx={{ fontWeight: 700, mt: 1 }}>
-        {value}
-      </Typography>
+      <InfoLabel>{label}</InfoLabel>
+      <InfoValue variant="h5">{value}</InfoValue>
     </Box>
   );
 }
+
+const StyledPaper = styled(Paper)(({ theme }) => ({
+  width: "100%",
+  padding: 32,
+  textAlign: "left",
+  borderRadius: "28px",
+  background: theme.palette.background.paper,
+  border: `1px solid ${theme.palette.divider}`,
+  backdropFilter: "blur(20px)",
+  color: theme.palette.text.primary,
+}));
+
+const CityName = styled(Typography)<{ mainColor: string }>(({ mainColor }) => ({
+  fontWeight: 700,
+  color: mainColor,
+}));
+
+const CityDescription = styled(Typography)(({ theme }) => ({
+  marginTop: 8,
+  color: theme.palette.text.secondary,
+}));
+
+const InfoGrid = styled(Box)({
+  display: "grid",
+  gridTemplateColumns: "1fr 1fr",
+  gap: 32,
+  marginTop: 40,
+});
+
+const ContentDivider = styled(Divider)(({ theme }) => ({
+  marginTop: 32,
+  marginBottom: 32,
+  borderColor: theme.palette.divider,
+}));
+
+const CitySummary = styled(Typography)(({ theme }) => ({
+  color: theme.palette.text.secondary,
+  lineHeight: 1.8,
+}));
+
+const FlightBox = styled(Box)<{ mainColor: string; bgColor: string }>(({ mainColor, bgColor }) => ({
+  marginTop: 40,
+  padding: 24,
+  borderRadius: "20px",
+  border: `1px solid ${mainColor}50`,
+  background: bgColor,
+}));
+
+const FlightRow = styled(Box)({
+  display: "flex",
+  justifyContent: "space-between",
+});
+
+const FlightDuration = styled(Typography)<{ mainColor: string }>(({ mainColor }) => ({
+  fontWeight: 700,
+  color: mainColor,
+}));
+
+const InfoLabel = styled(Typography)(({ theme }) => ({
+  color: theme.palette.text.secondary,
+  fontSize: 14,
+}));
+
+const InfoValue = styled(Typography)({
+  fontWeight: 700,
+  marginTop: 8,
+});

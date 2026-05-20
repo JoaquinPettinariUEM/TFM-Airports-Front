@@ -1,4 +1,4 @@
-import { Chip } from "@mui/material";
+import { Chip, styled, useTheme } from "@mui/material";
 import type { ReactElement } from "react";
 
 type Props = {
@@ -8,28 +8,35 @@ type Props = {
   textColor?: string;
 };
 
+const StyledChip = styled(Chip)<{ bgColor: string; textColor: string }>(
+  ({ bgColor, textColor }) => ({
+    backgroundColor: bgColor,
+    color: textColor,
+    fontWeight: 400,
+    fontSize: 16,
+    borderRadius: "10px",
+    "& .MuiChip-icon": {
+      color: textColor,
+    },
+  })
+);
+
 export function InfoChip({
   icon,
   label,
-  bgColor = "#1F2937",
-  textColor = "#F9FAFB",
+  bgColor,
+  textColor,
 }: Readonly<Props>) {
+  const theme = useTheme();
+  const resolvedBgColor = bgColor ?? theme.palette.background.paper;
+  const resolvedTextColor = textColor ?? theme.palette.text.primary;
+
   return (
-    <Chip
+    <StyledChip
       avatar={icon}
       label={label}
-      sx={{
-        backgroundColor: bgColor,
-        color: textColor,
-
-        fontWeight: 400,
-        fontSize: 16,
-        borderRadius: "10px",
-
-        "& .MuiChip-icon": {
-          color: textColor,
-        },
-      }}
+      bgColor={resolvedBgColor}
+      textColor={resolvedTextColor}
     />
   );
 }

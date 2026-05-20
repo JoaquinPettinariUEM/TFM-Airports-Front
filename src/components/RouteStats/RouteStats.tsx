@@ -1,4 +1,4 @@
-import { Box, Typography } from "@mui/material";
+import { Box, Typography, styled } from "@mui/material";
 
 type Props = {
   icon: React.ReactNode;
@@ -7,16 +7,16 @@ type Props = {
 
 export function RouteStat({ icon, label }: Readonly<Props>) {
   return (
-    <Box
-      sx={{
-        display: "flex",
-        alignItems: "center",
-        gap: 1,
-      }}
-    >
+    <StatRow>
       {icon}
 
       <Typography variant="body1">{label}</Typography>
-    </Box>
+    </StatRow>
   );
 }
+
+const StatRow = styled(Box)({
+  display: "flex",
+  alignItems: "center",
+  gap: 8,
+});

@@ -1,4 +1,4 @@
-import { Box, Container } from "@mui/material";
+import { Box, Container, styled } from "@mui/material";
 import { useRouteStore } from "../../store/routeStore";
 import { RouteHeader } from "../../components/RouteHeader/RouteHeader";
 import { RouteTimeline } from "../../components/RouteTimeLine/RouteTimeLine";
@@ -11,23 +11,26 @@ function RouteDetail() {
   }
 
   return (
-    <Box
-      sx={{
-        minHeight: "100vh",
-        background: "radial-gradient(circle at top, #0B1B3B 0%, #030712 45%)",
-        color: "white",
-        py: 6,
-      }}
-    >
+    <PageContainer>
       <Container maxWidth="xl">
         <RouteHeader route={selectedRoute} />
 
-        <Box sx={{ mt: 10 }}>
+        <TimelineWrapper>
           <RouteTimeline route={selectedRoute} />
-        </Box>
+        </TimelineWrapper>
       </Container>
-    </Box>
+    </PageContainer>
   );
 }
+
+const PageContainer = styled(Box)(({ theme }) => ({
+  background: "radial-gradient(circle at top, #0B1B3B 0%, #030712 45%)",
+  color: theme.palette.text.primary,
+  paddingBlock: 48,
+}));
+
+const TimelineWrapper = styled(Box)({
+  marginTop: 80,
+});
 
 export default RouteDetail;

@@ -1,6 +1,6 @@
-import { Box } from "@mui/material";
+import { Box, styled } from "@mui/material";
 import FlightIcon from "@mui/icons-material/Flight";
-import { routeCardThemes } from "../../utils/colors";
+import { routeCardThemes } from "../../theme";
 import { CityImageCard } from "../CityCardImage/CityCardImage";
 import { CityInfoCard } from "../CityInfoCard/CityInfoCard";
 import type { EnrichedRouteDetail, Flight } from "../../types/routes";
@@ -19,87 +19,75 @@ export function RouteTimelineItem({
   isLast,
 }: Readonly<RouteTimelineItemProps>) {
   const isEven = index % 2 === 0;
-
   const theme = routeCardThemes[index % routeCardThemes.length];
 
   return (
-    <Box
-      sx={{
-        display: "grid",
-        gridTemplateColumns: "1fr 120px 1fr",
-        gap: 4,
-        minHeight: 420,
-      }}
-    >
-      <Box
-        sx={{ display: "flex", alignItems: "center", justifyContent: "flex-end", py: 6 }}
-      >
+    <TimelineRow>
+      <PanelSide align="right">
         {isEven ? (
-          <CityImageCard
-            city={city}
-            theme={theme}
-            isFirst={index === 0}
-            isLast={isLast}
-          />
+          <CityImageCard city={city} theme={theme} isFirst={index === 0} isLast={isLast} />
         ) : (
           <CityInfoCard city={city} flight={flight} theme={theme} isLast={isLast} />
         )}
-      </Box>
+      </PanelSide>
 
-      <Box
-        sx={{
-          position: "relative",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-        }}
-      >
-        <Box
-          sx={{
-            width: 2,
-            flex: 1,
-            background: "rgba(255,255,255,0.1)",
-          }}
-        />
-
-        <Box
-          sx={{
-            width: 56,
-            height: 56,
-            borderRadius: "50%",
-            background: theme.bgColor,
-            border: `2px solid ${theme.mainColor}`,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            zIndex: 10,
-            boxShadow: `0 0 25px ${theme.mainColor}50`,
-          }}
-        >
+      <CenterAxis>
+        <AxisLine />
+        <FlightNode mainColor={theme.mainColor} bgColor={theme.bgColor}>
           <FlightIcon />
-        </Box>
+        </FlightNode>
+        <AxisLine />
+      </CenterAxis>
 
-        <Box
-          sx={{
-            width: 2,
-            flex: 1,
-            background: "rgba(255,255,255,0.1)",
-          }}
-        />
-      </Box>
-
-      <Box sx={{ display: "flex", alignItems: "center", py: 6 }}>
+      <PanelSide align="left">
         {isEven ? (
           <CityInfoCard city={city} flight={flight} theme={theme} isLast={isLast} />
         ) : (
-          <CityImageCard
-            city={city}
-            theme={theme}
-            isFirst={index === 0}
-            isLast={isLast}
-          />
+          <CityImageCard city={city} theme={theme} isFirst={index === 0} isLast={isLast} />
         )}
-      </Box>
-    </Box>
+      </PanelSide>
+    </TimelineRow>
   );
 }
+
+const TimelineRow = styled(Box)({
+  display: "grid",
+  gridTemplateColumns: "1fr 120px 1fr",
+  gap: 32,
+  minHeight: 420,
+});
+
+const PanelSide = styled(Box)<{ align: "left" | "right" }>(({ align }) => ({
+  display: "flex",
+  alignItems: "center",
+  justifyContent: align === "right" ? "flex-end" : "flex-start",
+  paddingBlock: 48,
+}));
+
+const CenterAxis = styled(Box)({
+  position: "relative",
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
+});
+
+const AxisLine = styled(Box)(({ theme }) => ({
+  width: 2,
+  flex: 1,
+  background: theme.palette.divider,
+}));
+
+const FlightNode = styled(Box)<{ mainColor: string; bgColor: string }>(
+  ({ mainColor, bgColor }) => ({
+    width: 56,
+    height: 56,
+    borderRadius: "50%",
+    background: bgColor,
+    border: `2px solid ${mainColor}`,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    zIndex: 10,
+    boxShadow: `0 0 25px ${mainColor}50`,
+  })
+);

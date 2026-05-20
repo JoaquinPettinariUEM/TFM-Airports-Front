@@ -1,4 +1,5 @@
 import { Container, styled } from "@mui/material";
+import { appPalette } from "../../theme";
 import BackgroundImage from "../../assets/rome_background.jpg";
 import PageTitle from "../../components/PageTitle/PageTitle";
 
@@ -15,14 +16,14 @@ function Home() {
   );
 }
 
-const HomeComponent = styled("section")({
+const HomeComponent = styled("section")(({ theme }) => ({
   width: "100%",
   height: "100%",
   backgroundImage: `url(${BackgroundImage})`,
   backgroundRepeat: "no-repeat",
   backgroundPosition: "center",
   backgroundSize: "cover",
-  color: "white",
+  color: theme.palette.text.primary,
   ".tp-title": {
     fontSize: "80px",
     fontWeight: 700,
@@ -38,8 +39,8 @@ const HomeComponent = styled("section")({
     inset: 0,
     background: `linear-gradient(
       to bottom,
-      rgba(2,6,23,0.65),
-      rgba(2,6,23,0.85)
+      ${appPalette.overlayDarkSoft},
+      ${appPalette.overlayDarkStrong}
     )`,
     zIndex: 1,
   },
@@ -47,6 +48,6 @@ const HomeComponent = styled("section")({
     position: "relative",
     zIndex: 2,
   },
-});
+}));
 
 export default Home;

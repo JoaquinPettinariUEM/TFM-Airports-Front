@@ -6,9 +6,9 @@ function Header() {
   return (
     <HeaderComponent>
       <Container maxWidth="lg" className="tp-header-container">
-        <Box onClick={() => navigate("/")} sx={{ cursor: "pointer" }}>
+        <TitleClickArea onClick={() => navigate("/")}>
           <h1 className="tp-header-title">Travel Planner</h1>
-        </Box>
+        </TitleClickArea>
         <Button
           size={"small"}
           variant="text"
@@ -22,11 +22,11 @@ function Header() {
   );
 }
 
-const HeaderComponent = styled(Box)({
+const HeaderComponent = styled(Box)(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
   width: "100%",
-  backgroundColor: "#111827",
+  backgroundColor: theme.palette.background.paper,
   zIndex: 100,
   ".tp-header-container": {
     display: "flex",
@@ -34,8 +34,12 @@ const HeaderComponent = styled(Box)({
     padding: 8,
   },
   ".tp-header-title": {
-    color: "white",
+    color: theme.palette.text.primary,
   },
+}));
+
+const TitleClickArea = styled(Box)({
+  cursor: "pointer",
 });
 
 export default Header;

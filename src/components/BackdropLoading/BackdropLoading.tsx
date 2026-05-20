@@ -1,10 +1,15 @@
-import { Backdrop, CircularProgress } from "@mui/material";
+import { Backdrop, CircularProgress, styled } from "@mui/material";
+
+const StyledBackdrop = styled(Backdrop)(({ theme }) => ({
+  color: theme.palette.text.primary,
+  zIndex: theme.zIndex.drawer + 1,
+}));
 
 function BackdropLoading() {
   return (
-    <Backdrop sx={theme => ({ color: "#fff", zIndex: theme.zIndex.drawer + 1 })} open>
+    <StyledBackdrop open>
       <CircularProgress color="inherit" />
-    </Backdrop>
+    </StyledBackdrop>
   );
 }
 

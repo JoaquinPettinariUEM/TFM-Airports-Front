@@ -16,7 +16,7 @@ const LayoutStyled = styled(Grid)({
   minHeight: "100vh",
   display: "flex",
   flexDirection: "column",
-  background: "linear-gradient(to bottom, #0B1020, #111827)",
+  background: "linear-gradient(to bottom, var(--tp-bg-start), var(--tp-bg-end))",
 });
 
 export default Layout;

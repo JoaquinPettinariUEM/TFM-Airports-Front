@@ -1,25 +1,18 @@
-import { Box, Button, Typography } from "@mui/material";
+import { Box, Button, Typography, styled } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
 function PageTitle() {
   const navigate = useNavigate();
 
   return (
-    <Box
-      sx={{
-        display: "flex",
-        flexDirection: "column",
-        height: "100%",
-        justifyContent: "center",
-      }}
-    >
+    <TitleWrapper>
       <Typography variant="h2" className="tp-title">
         One trip, multiple cities
       </Typography>
       <Typography variant="h3" className="tp-description">
         Don't know where to start planning a trip? <br /> Plan it with us
       </Typography>
-      <Box sx={{ display: "flex", gap: 2, mt: 1 }}>
+      <ActionsRow>
         <Button variant="contained" color="primary">
           See our recommendations
         </Button>
@@ -30,9 +23,22 @@ function PageTitle() {
         >
           Plan your trip
         </Button>
-      </Box>
-    </Box>
+      </ActionsRow>
+    </TitleWrapper>
   );
 }
+
+const TitleWrapper = styled(Box)({
+  display: "flex",
+  flexDirection: "column",
+  height: "100%",
+  justifyContent: "center",
+});
+
+const ActionsRow = styled(Box)({
+  display: "flex",
+  gap: 16,
+  marginTop: 8,
+});
 
 export default PageTitle;

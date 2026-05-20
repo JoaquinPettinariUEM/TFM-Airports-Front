@@ -4,6 +4,7 @@ import { AirportFinder } from "../../components/AirportFinder/AirportFinder";
 import NumberField from "../../components/NumberField/NumberField";
 import { useCreateRouteForm } from "../../hooks/useCreateRouteForm";
 import { DateRangeField } from "../../components/DateRangeField/DateRangeField";
+import { appPalette } from "../../theme";
 
 function CreateRoute() {
   const { form, updateField, submit } = useCreateRouteForm();
@@ -70,14 +71,14 @@ function CreateRoute() {
   );
 }
 
-const BackgroundComponent = styled("section")({
+const BackgroundComponent = styled("section")(({ theme }) => ({
   height: "100%",
   width: "100%",
   backgroundImage: `url(${BackgroundImage})`,
   backgroundRepeat: "no-repeat",
   backgroundPosition: "center",
   backgroundSize: "cover",
-  color: "white",
+  color: theme.palette.text.primary,
   ".tp-create-route-title": {
     fontSize: "80px",
     fontWeight: 700,
@@ -88,8 +89,8 @@ const BackgroundComponent = styled("section")({
     inset: 0,
     background: `linear-gradient(
       to bottom,
-      rgba(2,6,23,0.65),
-      rgba(2,6,23,0.85)
+      ${appPalette.overlayDarkSoft},
+      ${appPalette.overlayDarkStrong}
     )`,
     zIndex: 1,
   },
@@ -97,9 +98,9 @@ const BackgroundComponent = styled("section")({
     position: "relative",
     zIndex: 2,
   },
-});
+}));
 
-const FormCard = styled(Card)({
+const FormCard = styled(Card)(({ theme }) => ({
   padding: 16,
   display: "grid",
   gridTemplateColumns: "repeat(2, 1fr)",
@@ -107,13 +108,13 @@ const FormCard = styled(Card)({
 
   backdropFilter: "blur(18px)",
 
-  background: "rgba(255,255,255,0.08)",
+  background: theme.palette.background.paper,
 
-  border: "1px solid rgba(255,255,255,0.12)",
+  border: `1px solid ${theme.palette.divider}`,
 
-  boxShadow: "0 8px 32px rgba(0,0,0,0.35)",
+  boxShadow: appPalette.shadowStrong,
 
   borderRadius: 4,
-});
+}));
 
 export default CreateRoute;

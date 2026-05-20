@@ -5,6 +5,7 @@ import FormControl from "@mui/material/FormControl";
 import OutlinedInput from "@mui/material/OutlinedInput";
 import InputAdornment from "@mui/material/InputAdornment";
 import InputLabel from "@mui/material/InputLabel";
+import { styled } from "@mui/material/styles";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 
@@ -53,7 +54,7 @@ export default function NumberField({
       <BaseNumberField.Input
         id={id}
         render={(props, state) => (
-          <OutlinedInput
+          <StyledOutlinedInput
             aria-describedby={`${id}-helper-text`}
             label={label}
             inputRef={props.ref}
@@ -67,45 +68,49 @@ export default function NumberField({
               input: props,
             }}
             endAdornment={
-              <InputAdornment
-                position="end"
-                sx={{
-                  flexDirection: "column",
-                  maxHeight: "unset",
-                  alignSelf: "stretch",
-                  borderLeft: "1px solid",
-                  borderColor: "divider",
-                  ml: 0,
-                  "& button": {
-                    py: 0,
-                    flex: 1,
-                    borderRadius: 0.5,
-                  },
-                }}
-              >
+              <StyledInputAdornment position="end">
                 <BaseNumberField.Increment
                   render={<IconButton size={size} aria-label="Increase" />}
                 >
-                  <KeyboardArrowUpIcon
-                    fontSize={size}
-                    sx={{ transform: "translateY(2px)" }}
-                  />
+                  <IncrementIcon fontSize={size} />
                 </BaseNumberField.Increment>
 
                 <BaseNumberField.Decrement
                   render={<IconButton size={size} aria-label="Decrease" />}
                 >
-                  <KeyboardArrowDownIcon
-                    fontSize={size}
-                    sx={{ transform: "translateY(-2px)" }}
-                  />
+                  <DecrementIcon fontSize={size} />
                 </BaseNumberField.Decrement>
-              </InputAdornment>
+              </StyledInputAdornment>
             }
-            sx={{ pr: 0 }}
           />
         )}
       />
     </BaseNumberField.Root>
   );
 }
+
+const StyledInputAdornment = styled(InputAdornment)({
+  flexDirection: "column",
+  maxHeight: "unset",
+  alignSelf: "stretch",
+  borderLeft: "1px solid",
+  borderColor: "divider",
+  marginLeft: 0,
+  "& button": {
+    paddingBlock: 0,
+    flex: 1,
+    borderRadius: 4,
+  },
+});
+
+const StyledOutlinedInput = styled(OutlinedInput)({
+  paddingRight: 0,
+});
+
+const IncrementIcon = styled(KeyboardArrowUpIcon)({
+  transform: "translateY(2px)",
+});
+
+const DecrementIcon = styled(KeyboardArrowDownIcon)({
+  transform: "translateY(-2px)",
+});

@@ -8,55 +8,78 @@ type Props = {
 
 export function RoutePath({ routes }: Readonly<Props>) {
   return (
-    <Box sx={{ display: "flex", gap: 2, width: "100%" }}>
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "start",
-          gap: 1,
-          width: "100%",
-        }}
-      >
+    <RoutePathContainer>
+      <RoutePathColumn>
         {routes.map((route, index) => {
           const isLast = index === routes.length - 1;
           return (
-            <Box key={route._id} sx={{ display: "flex", gap: 2, width: "100%" }}>
-              <Box
-                sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}
-              >
-                <Brightness1OutlinedIcon
-                  sx={{
-                    fontSize: 14,
-                    color: "#A78BFA",
-                    paddingTop: 1,
-                  }}
-                />
+            <RouteRow key={route._id}>
+              <TimelineNodeColumn>
+                <PointIcon />
                 {!isLast && <TimelineDivider />}
-              </Box>
-              <Typography variant="h5" sx={{ width: 50 }}>
-                {route._id}
-              </Typography>
-              <Box sx={{ display: "flex", flexDirection: "column", gap: 1, flex: 1 }}>
+              </TimelineNodeColumn>
+              <CodeText variant="h5">{route._id}</CodeText>
+              <RouteTextColumn>
                 <Typography variant="body1">{route.name}</Typography>
                 <Typography variant="body2">
                   {route.city} - {route.country}
                 </Typography>
                 <Divider />
-              </Box>
-            </Box>
+              </RouteTextColumn>
+            </RouteRow>
           );
         })}
-      </Box>
-    </Box>
+      </RoutePathColumn>
+    </RoutePathContainer>
   );
 }
 
-const TimelineDivider = styled("span")({
+const RoutePathContainer = styled(Box)({
+  display: "flex",
+  gap: 16,
+  width: "100%",
+});
+
+const RoutePathColumn = styled(Box)({
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "flex-start",
+  gap: 8,
+  width: "100%",
+});
+
+const RouteRow = styled(Box)({
+  display: "flex",
+  gap: 16,
+  width: "100%",
+});
+
+const TimelineNodeColumn = styled(Box)({
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
+});
+
+const PointIcon = styled(Brightness1OutlinedIcon)(({ theme }) => ({
+  fontSize: 14,
+  color: theme.palette.primary.light,
+  paddingTop: 8,
+}));
+
+const CodeText = styled(Typography)({
+  width: 50,
+});
+
+const RouteTextColumn = styled(Box)({
+  display: "flex",
+  flexDirection: "column",
+  gap: 8,
+  flex: 1,
+});
+
+const TimelineDivider = styled("span")(({ theme }) => ({
   width: "2px",
   height: "100%",
-
-  background: "linear-gradient(to bottom, rgba(167,139,250,0.9), rgba(167,139,250,0.1))",
-
+  background: `linear-gradient(to bottom, ${theme.palette.primary.light}, transparent)`,
   borderRadius: "999px",
-});
+}));

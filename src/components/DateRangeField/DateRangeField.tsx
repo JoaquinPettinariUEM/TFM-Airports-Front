@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 
-import { Box, InputAdornment, Popover, TextField, styled } from "@mui/material";
+import { Box, InputAdornment, Popover, TextField, styled, useTheme } from "@mui/material";
 
 import { DateRange } from "react-date-range";
 
@@ -17,6 +17,7 @@ const formatDate = (date: Date) => format(date, "MMM dd");
 
 export function DateRangeField({ startDate, endDate, onChange }: Readonly<Props>) {
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+  const theme = useTheme();
 
   const label = useMemo(() => {
     if (!startDate) return "Select your dates";
@@ -67,7 +68,7 @@ export function DateRangeField({ startDate, endDate, onChange }: Readonly<Props>
                 endDate: item.selection.endDate ?? new Date(),
               })
             }
-            rangeColors={["#A855F7"]}
+            rangeColors={[theme.palette.primary.main]}
             ranges={[
               {
                 startDate,
@@ -82,33 +83,33 @@ export function DateRangeField({ startDate, endDate, onChange }: Readonly<Props>
   );
 }
 
-const CalendarWrapper = styled(Box)({
+const CalendarWrapper = styled(Box)(({ theme }) => ({
   ".rdrCalendarWrapper": {
-    background: "#111827",
-    color: "white",
+    background: theme.palette.background.paper,
+    color: theme.palette.text.primary,
   },
 
   ".rdrMonth": {
-    background: "#111827",
+    background: theme.palette.background.paper,
   },
 
   ".rdrDayNumber span": {
-    color: "white",
+    color: theme.palette.text.primary,
   },
 
   ".rdrMonthAndYearWrapper": {
-    background: "#111827",
+    background: theme.palette.background.paper,
   },
 
   ".rdrWeekDay": {
-    color: "#9CA3AF",
+    color: theme.palette.text.secondary,
   },
 
   ".rdrDayPassive span": {
-    color: "#6B7280",
+    color: theme.palette.text.disabled,
   },
 
   ".rdrDefinedRangesWrapper": {
     display: "none",
   },
-});
+}));

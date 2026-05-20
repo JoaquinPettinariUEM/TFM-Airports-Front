@@ -72,8 +72,12 @@ export function FlightCurve({ from, to }: Readonly<{ from: string; to: string }>
           offsetPath: 'path("M50 180 Q250 20 500 100 T950 45")',
         }}
       >
-        <FlightIcon sx={{ rotate: "90deg" }} fontSize="inherit" />
+        <RotatedFlightIcon fontSize="inherit" />
       </PlaneWrapper>
     </Wrapper>
   );
 }
+
+const RotatedFlightIcon = styled(FlightIcon)({
+  rotate: "90deg",
+});

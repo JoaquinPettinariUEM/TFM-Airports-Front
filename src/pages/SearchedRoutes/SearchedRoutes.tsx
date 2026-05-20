@@ -10,7 +10,7 @@ import { BestRouteCard } from "../../components/BestRouteCard/BestRouteCard";
 import { RouteCard } from "../../components/RouteCard/RouteCard";
 import RouteMainTitle from "../../components/RouteMainTitle/RouteMainTitle";
 
-import { routeCardThemes } from "../../utils/colors";
+import { routeCardThemes } from "../../theme";
 
 import { useSearchedRoutes } from "../../hooks/useSearchedRoutes";
 

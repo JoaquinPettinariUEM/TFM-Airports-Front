@@ -1,4 +1,12 @@
-import { Box, Button, Card, Divider, Grid, Typography, styled } from "@mui/material";
+import {
+  Box,
+  Button,
+  Card,
+  Divider,
+  Grid,
+  Typography,
+  styled,
+} from "@mui/material";
 
 import SocialDistanceIcon from "@mui/icons-material/SocialDistance";
 import RequestQuoteOutlinedIcon from "@mui/icons-material/RequestQuoteOutlined";
@@ -32,24 +40,33 @@ export function BestRouteCard({
     <BestCard>
       <Grid container>
         <Grid size={{ xs: 12, md: 5 }}>
-          <RouteImage src={`${import.meta.env.VITE_API_URL}/city-images/${image}`} alt={image} />
+          <RouteImage
+            src={`${import.meta.env.VITE_API_URL}/city-images/${image}`}
+            alt={image}
+          />
         </Grid>
 
         <Grid size={{ xs: 12, md: 7 }}>
           <RightColumn>
             <RouteTitle variant="h3">
-              {[departure?.city, arrival?.city].join(" -> ")}
+              {[departure?.city, arrival?.city].join(" - ")}
             </RouteTitle>
 
             <RouteDescription variant="body1">
-              Our algorithm found the smartest route balancing price, travel time and
-              interesting stopovers.
+              Our algorithm found the smartest route balancing price, travel
+              time and interesting stopovers.
             </RouteDescription>
 
             <StatsWrap>
               <RouteStat icon={<PriceIcon />} label={`EUR ${route.cost}`} />
-              <RouteStat icon={<LocationIcon />} label={`${route.path.length - 1} flights`} />
-              <RouteStat icon={<DistanceIcon />} label={`${route.distance} km`} />
+              <RouteStat
+                icon={<LocationIcon />}
+                label={`${route.path.length - 1} flights`}
+              />
+              <RouteStat
+                icon={<DistanceIcon />}
+                label={`${route.distance} km`}
+              />
             </StatsWrap>
 
             <CardDivider />

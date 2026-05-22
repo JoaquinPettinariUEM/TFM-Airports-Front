@@ -7,7 +7,7 @@ function Header() {
     <HeaderComponent>
       <Container maxWidth="lg" className="tp-header-container">
         <TitleClickArea onClick={() => navigate("/")}>
-          <h1 className="tp-header-title">Travel Planner</h1>
+          <h1 className="tp-header-title">Route Wise</h1>
         </TitleClickArea>
         <Button
           size={"small"}

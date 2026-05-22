@@ -43,6 +43,7 @@ function SearchedRoutes() {
     airports,
     bestRoute,
     suggestedRoutes,
+    expensiveSuggestedRoutes,
     remainingRoutes,
     setVisibleRoutes,
     departure,
@@ -110,54 +111,103 @@ function SearchedRoutes() {
           cities.
         </Alert>
 
-        <AlternativesHeader>
-          <SectionHeader>
-            <DoneAllIcon />
+        {suggestedRoutes.length > 0 && (
+          <>
+            <AlternativesHeader>
+              <SectionHeader>
+                <DoneAllIcon />
 
-            <Typography variant="h5">Other smart alternatives</Typography>
-          </SectionHeader>
+                <Typography variant="h5">Other smart alternatives</Typography>
+              </SectionHeader>
 
-          {remainingRoutes > 0 && (
-            <Button
-              variant="outlined"
-              startIcon={<ArrowDownwardIcon />}
-              onClick={() => setVisibleRoutes(prev => prev + ROUTES_PER_LOAD)}
-            >
-              Show more ({remainingRoutes})
-            </Button>
-          )}
-        </AlternativesHeader>
+              {remainingRoutes > 0 && (
+                <Button
+                  variant="outlined"
+                  startIcon={<ArrowDownwardIcon />}
+                  onClick={() => setVisibleRoutes(prev => prev + ROUTES_PER_LOAD)}
+                >
+                  Show more ({remainingRoutes})
+                </Button>
+              )}
+            </AlternativesHeader>
 
-        <Grid container spacing={3}>
-          {suggestedRoutes.map(({ route, previewCity }, index) => {
-            const theme = routeCardThemes[index % routeCardThemes.length];
+            <Grid container spacing={3}>
+              {suggestedRoutes.map(({ route, previewCity }, index) => {
+                const theme = routeCardThemes[index % routeCardThemes.length];
 
-            return (
-              <Grid
-                key={route.id}
-                size={{
-                  xs: 12,
-                  md: 6,
-                  lg: 3,
-                }}
-              >
-                <Grow in timeout={400 + index * 120}>
-                  <Box sx={{ height: "100%" }}>
-                    <RouteCard
-                      route={route}
-                      previewCity={previewCity}
-                      airports={airports}
-                      bestPrice={bestRoute.route.cost}
-                      mainColor={theme.mainColor}
-                      bgColor={theme.bgColor}
-                      viewDetailsRoute={viewDetailsRoute}
-                    />
-                  </Box>
-                </Grow>
-              </Grid>
-            );
-          })}
-        </Grid>
+                return (
+                  <Grid
+                    key={route.id}
+                    size={{
+                      xs: 12,
+                      md: 6,
+                      lg: 3,
+                    }}
+                  >
+                    <Grow in timeout={400 + index * 120}>
+                      <Box sx={{ height: "100%" }}>
+                        <RouteCard
+                          route={route}
+                          previewCity={previewCity}
+                          airports={airports}
+                          bestPrice={bestRoute.route.cost}
+                          mainColor={theme.mainColor}
+                          bgColor={theme.bgColor}
+                          viewDetailsRoute={viewDetailsRoute}
+                        />
+                      </Box>
+                    </Grow>
+                  </Grid>
+                );
+              })}
+            </Grid>
+          </>
+        )}
+
+        {expensiveSuggestedRoutes.length > 0 && (
+          <>
+            <AlternativesHeader>
+              <SectionHeader>
+                <DoneAllIcon />
+                <Typography variant="h5">
+                  If you want to spend a little more, these routes may fit you
+                </Typography>
+              </SectionHeader>
+            </AlternativesHeader>
+
+            <Grid container spacing={3}>
+              {expensiveSuggestedRoutes.map(({ route, previewCity }, index) => {
+                const theme =
+                  routeCardThemes[(index + suggestedRoutes.length) % routeCardThemes.length];
+
+                return (
+                  <Grid
+                    key={route.id}
+                    size={{
+                      xs: 12,
+                      md: 6,
+                      lg: 3,
+                    }}
+                  >
+                    <Grow in timeout={400 + index * 120}>
+                      <Box sx={{ height: "100%" }}>
+                        <RouteCard
+                          route={route}
+                          previewCity={previewCity}
+                          airports={airports}
+                          bestPrice={bestRoute.route.cost}
+                          mainColor={theme.mainColor}
+                          bgColor={theme.bgColor}
+                          viewDetailsRoute={viewDetailsRoute}
+                        />
+                      </Box>
+                    </Grow>
+                  </Grid>
+                );
+              })}
+            </Grid>
+          </>
+        )}
       </Container>
     </PageWrapper>
   );

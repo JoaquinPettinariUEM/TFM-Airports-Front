@@ -5,7 +5,6 @@ import { useRoutePreviewCities } from "./useRoutePreviewCities";
 import { getDepartureArrival, getRouteAirports } from "../utils/cities";
 import type { AirportResponse, GetRoutesParams } from "../types/routes";
 
-const BEST_ROUTE_INDEX = 1;
 const ROUTES_PER_LOAD = 4;
 
 export function useSearchedRoutes(params: GetRoutesParams) {
@@ -14,21 +13,27 @@ export function useSearchedRoutes(params: GetRoutesParams) {
   const { data, isLoading } = useGetRoutes(params);
 
   const airports = data?.airports ?? {};
-  const routes = data?.routes ?? [];
+  const bestRouteRaw = data?.bestRoute ?? null;
+  const recommendedRoutesRaw = data?.recommendedRoutes ?? [];
+  const moreExpensiveOptionsRaw = data?.moreExpensiveOptions ?? [];
 
-  const routesWithImages = useRoutePreviewCities(
-    routes.slice(0, visibleRoutes + BEST_ROUTE_INDEX),
+  const routes = useMemo(
+    () => [...recommendedRoutesRaw, ...moreExpensiveOptionsRaw],
+    [recommendedRoutesRaw, moreExpensiveOptionsRaw]
+  );
+
+  const bestRouteData = useRoutePreviewCities(bestRouteRaw ? [bestRouteRaw] : [], airports)[0];
+
+  const recommendedWithImages = useRoutePreviewCities(
+    recommendedRoutesRaw.slice(0, visibleRoutes),
     airports
   );
+  const expensiveWithImages = useRoutePreviewCities(moreExpensiveOptionsRaw, airports);
 
-  const bestRouteData = routesWithImages[0];
+  const suggestedRoutes = recommendedWithImages;
+  const expensiveSuggestedRoutes = expensiveWithImages;
 
-  const suggestedRoutes = routesWithImages.slice(
-    BEST_ROUTE_INDEX,
-    visibleRoutes + BEST_ROUTE_INDEX
-  );
-
-  const remainingRoutes = Math.max(routes.length - (visibleRoutes + BEST_ROUTE_INDEX), 0);
+  const remainingRoutes = Math.max(recommendedRoutesRaw.length - visibleRoutes, 0);
 
   const bestRoute = useMemo(() => {
     if (!bestRouteData) return null;
@@ -57,8 +62,11 @@ export function useSearchedRoutes(params: GetRoutesParams) {
     isLoading,
     airports,
     routes,
+    recommendedRoutes: recommendedRoutesRaw,
+    moreExpensiveOptions: moreExpensiveOptionsRaw,
     bestRoute,
     suggestedRoutes,
+    expensiveSuggestedRoutes,
     remainingRoutes,
     visibleRoutes,
     setVisibleRoutes,

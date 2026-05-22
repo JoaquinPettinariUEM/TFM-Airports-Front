@@ -17,7 +17,9 @@ export type CreateRouteForm = {
 
 export type RoutesResponse = {
   airports: Airports;
-  routes: RouteListItemResponse[];
+  bestRoute: RouteListItemResponse | null;
+  recommendedRoutes: RouteListItemResponse[];
+  moreExpensiveOptions: RouteListItemResponse[];
 };
 
 export type Airports = Record<string, AirportResponse>;

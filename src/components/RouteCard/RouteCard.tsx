@@ -1,4 +1,11 @@
-import { Button, Chip, Divider, Stack, Typography, styled } from "@mui/material";
+import {
+  Button,
+  Chip,
+  Divider,
+  Stack,
+  Typography,
+  styled,
+} from "@mui/material";
 
 import FlightIcon from "@mui/icons-material/Flight";
 import StraightenIcon from "@mui/icons-material/Straighten";
@@ -52,7 +59,7 @@ export function RouteCard({
       <RouteCardImage city={previewCity} />
 
       <CardContent>
-        <TitleText variant="h5">{[departure, arrival].join(" -> ")}</TitleText>
+        <TitleText variant="h5">{[departure, arrival].join(" - ")}</TitleText>
 
         <SubtitleText variant="body1">{viaText}</SubtitleText>
 
@@ -62,28 +69,36 @@ export function RouteCard({
           </Typography>
 
           {difference > 0 && (
-            <InfoChip textColor={mainColor} bgColor={bgColor} label={`+EUR ${difference}`} />
+            <InfoChip
+              textColor={mainColor}
+              bgColor={bgColor}
+              label={`+EUR ${difference}`}
+            />
           )}
         </PriceRow>
 
         <StatsStack direction="row" spacing={1}>
-          <Chip icon={<FlightIcon />} label={`${route.path.length - 1} flights`} />
+          <Chip
+            icon={<FlightIcon />}
+            label={`${route.path.length - 1} flights`}
+          />
           <Chip icon={<StraightenIcon />} label={`${route.distance} km`} />
         </StatsStack>
 
         <ContentDivider />
 
-        <PathText variant="body2">{route.path.join(" -> ")}</PathText>
+        <PathText variant="body2">{route.path.join(" - ")}</PathText>
 
         <BottomAction>
-          <Button
+          <ViewDetailsButton
             variant="outlined"
             fullWidth
             endIcon={<EastIcon />}
             onClick={() => viewDetailsRoute(route)}
+            mainColor={mainColor}
           >
             View Details
-          </Button>
+          </ViewDetailsButton>
         </BottomAction>
       </CardContent>
     </StyledRouteCard>
@@ -111,3 +126,17 @@ const ContentDivider = styled(Divider)({
 const PathText = styled(Typography)({
   marginBottom: 16,
 });
+
+const ViewDetailsButton = styled(Button, {
+  shouldForwardProp: (prop) => prop !== "mainColor",
+})<{ mainColor: string }>(({ mainColor, theme }) => ({
+  borderColor: mainColor,
+  color: theme.palette.common.white,
+  fontWeight: 700,
+  textTransform: "uppercase",
+  "&:hover": {
+    backgroundColor: mainColor,
+    borderColor: mainColor,
+    filter: "brightness(0.95)",
+  },
+}));

@@ -13,9 +13,12 @@ interface Props {
 function RouteMainTitle({ from, to, budget, maxStops }: Readonly<Props>) {
   return (
     <MainTitleWrapper>
-      <Typography variant="h5">{[from, to].join(" -> ")}</Typography>
+      <Typography variant="h5">{[from, to].join(" - ")}</Typography>
       <StatsRow>
-        <RouteStat icon={<WalletIcon color="inherit" />} label={`Budget: EUR ${budget}`} />
+        <RouteStat
+          icon={<WalletIcon color="inherit" />}
+          label={`Budget: EUR ${budget}`}
+        />
         <RouteStat
           icon={<AirlineStopsOutlinedIcon color="inherit" />}
           label={`Stops: ${maxStops}`}

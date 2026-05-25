@@ -11,12 +11,7 @@ interface CityImageCardProps {
   isLast?: boolean;
 }
 
-export function CityImageCard({
-  city,
-  theme,
-  isFirst,
-  isLast,
-}: Readonly<CityImageCardProps>) {
+export function CityImageCard({ city, theme, isFirst, isLast }: Readonly<CityImageCardProps>) {
   return (
     <ImageCard>
       <CityImage src={city.image} alt={city.name} />
@@ -63,6 +58,7 @@ const OverlayContent = styled(Box)({
   bottom: 0,
   left: 0,
   padding: 32,
+  textAlign: "start",
 });
 
 const CityTitle = styled(Typography)<{ mainColor: string }>(({ mainColor }) => ({

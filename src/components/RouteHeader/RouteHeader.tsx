@@ -1,4 +1,4 @@
-import { Box, Divider, Paper, Typography, styled } from "@mui/material";
+import { Box, Button, Divider, Paper, Typography, styled } from "@mui/material";
 import EastIcon from "@mui/icons-material/East";
 import type { EnrichedRouteDetail } from "../../types/routes";
 import { routeCardThemes } from "../../theme";
@@ -8,20 +8,26 @@ import {
   formatCompactDistance,
   formatEuro,
 } from "../../utils/format";
+import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
 
 interface Props {
   route: EnrichedRouteDetail;
+  budget?: number;
+  requestedMaxStops?: number;
 }
 
-export function RouteHeader({ route }: Readonly<Props>) {
+export function RouteHeader({ route, budget, requestedMaxStops }: Readonly<Props>) {
   const totalStops = Math.max(route.path.length - 2, 0);
   const totalCities = route.path.length;
-  const score = computeRouteScoreOutOfTen(route);
+  const score = computeRouteScoreOutOfTen(route, { budget, requestedMaxStops });
   const totalDuration = computeTotalTravelDuration(route.flights) ?? "-";
 
   return (
     <Box>
-      <HeaderTitle variant="h2">Full Route Details</HeaderTitle>
+      <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+        <HeaderTitle variant="h2">Full Route Details</HeaderTitle>
+        <Button startIcon={<KeyboardBackspaceIcon />}>Back to results</Button>
+      </Box>
       <HeaderSubtitle>Every stop. Every detail. Your complete journey.</HeaderSubtitle>
 
       <SummaryCard elevation={0}>
@@ -53,11 +59,14 @@ export function RouteHeader({ route }: Readonly<Props>) {
         </MetricsRow>
 
         <PathRow>
-          {route.path.map((step, index) => {
+          {route.citiesInfo.map((step, index) => {
             const color = routeCardThemes[index % routeCardThemes.length].mainColor;
+            const airportId = route.path[index];
+
             return (
               <PathStepWrap key={`${step}-${index}`}>
-                <PathStep style={{ color }}>{step}</PathStep>
+                <Typography sx={{ color }}>{step.name}</Typography>
+                <PathStep style={{ color }}>({airportId})</PathStep>
                 {index < route.path.length - 1 && <EastIcon fontSize="small" />}
               </PathStepWrap>
             );
@@ -83,7 +92,8 @@ const SummaryCard = styled(Paper)(({ theme }) => ({
   borderRadius: 10,
   border: `1px solid ${theme.palette.divider}`,
   background: theme.palette.background.paper,
-  overflow: "hidden",
+  overflow: "visible",
+  position: "relative",
 }));
 
 const MetricsRow = styled(Box)({
@@ -143,7 +153,7 @@ const PathRow = styled(Box)(({ theme }) => ({
   gap: 8,
   flexWrap: "wrap",
   padding: 12,
-  borderTop: `1px solid ${theme.palette.divider}`,
+  border: `1px solid ${theme.palette.divider}`,
 }));
 
 const PathStepWrap = styled(Box)(({ theme }) => ({

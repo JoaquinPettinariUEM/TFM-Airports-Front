@@ -2,9 +2,14 @@ import { Box, Container, styled } from "@mui/material";
 import { useRouteStore } from "../../store/routeStore";
 import { RouteHeader } from "../../components/RouteHeader/RouteHeader";
 import { RouteTimeline } from "../../components/RouteTimeLine/RouteTimeLine";
+import { useSearchParams } from "react-router-dom";
 
 function RouteDetail() {
   const { selectedRoute } = useRouteStore();
+  const [searchParams] = useSearchParams();
+
+  const budget = Number(searchParams.get("budget") ?? Number.NaN);
+  const maxStops = Number(searchParams.get("maxStops") ?? Number.NaN);
 
   if (!selectedRoute) {
     return null;
@@ -13,7 +18,11 @@ function RouteDetail() {
   return (
     <PageContainer>
       <Container maxWidth="xl">
-        <RouteHeader route={selectedRoute} />
+        <RouteHeader
+          route={selectedRoute}
+          budget={Number.isFinite(budget) ? budget : undefined}
+          requestedMaxStops={Number.isFinite(maxStops) ? maxStops : undefined}
+        />
 
         <TimelineWrapper>
           <RouteTimeline route={selectedRoute} />

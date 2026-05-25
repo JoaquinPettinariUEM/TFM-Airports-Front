@@ -87,4 +87,4 @@ export type EnrichedRouteDetail = RouteListItemResponse & {
   }[];
 };
 
-export type RouteBadge = "Best Balance" | "Best Price" | "Fastest" | "Smart Choice";
+export type RouteBadge = "Best Balance" | "Best Price" | "Fastest" | "Smart Choice" | "Fewer Stops";

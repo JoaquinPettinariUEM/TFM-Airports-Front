@@ -14,13 +14,44 @@ export function formatCompactDistance(distance: number) {
   return new Intl.NumberFormat("es-ES").format(Math.round(distance));
 }
 
-export function computeRouteScoreOutOfTen(route: Pick<RouteMapped, "cost" | "distance" | "path">) {
+type ScoreOptions = {
+  budget?: number;
+  requestedMaxStops?: number;
+};
+
+export function computeRouteScoreOutOfTen(
+  route: Pick<RouteMapped, "cost" | "distance" | "path">,
+  options: ScoreOptions = {},
+) {
+  const { budget, requestedMaxStops } = options;
   const stops = Math.max(route.path.length - 2, 0);
-  const pricePenalty = Math.min(route.cost / 1400, 1) * 3.2;
-  const distancePenalty = Math.min(route.distance / 5000, 1) * 2.8;
-  const stopPenalty = Math.min(stops / 4, 1) * 2.0;
-  const raw = 10 - pricePenalty - distancePenalty - stopPenalty;
-  return Math.max(1, Math.min(10, Number(raw.toFixed(1))));
+  let score = 9.8;
+
+  if (Number.isFinite(budget) && (budget ?? 0) > 0) {
+    const normalizedBudget = Number(budget);
+    const ratio = route.cost / normalizedBudget;
+
+    if (ratio <= 1.2) {
+      score = 9.8;
+    } else if (ratio <= 1.4) {
+      score -= 0.4;
+    } else if (ratio <= 1.6) {
+      score -= 0.9;
+    } else if (ratio <= 1.9) {
+      score -= 1.6;
+    } else {
+      score -= 2.3;
+    }
+  } else {
+    score -= Math.min(route.distance / 30000, 0.7);
+  }
+
+  if (Number.isFinite(requestedMaxStops) && (requestedMaxStops ?? 0) >= 1) {
+    const stopDelta = Math.abs(stops - Number(requestedMaxStops));
+    score -= Math.min(stopDelta * 0.2, 0.6);
+  }
+
+  return Math.max(5.5, Math.min(9.8, Number(score.toFixed(1))));
 }
 
 export function computeTotalTravelDuration(flights: Flight[]) {
@@ -28,12 +59,7 @@ export function computeTotalTravelDuration(flights: Flight[]) {
     return null;
   }
 
-  const departureDate = new Date(flights[0].departureDate);
-  const arrivalDate = new Date(flights[flights.length - 1].arrivalDate);
-  const totalMinutes = Math.max(
-    0,
-    Math.round((arrivalDate.getTime() - departureDate.getTime()) / 60000),
-  );
+  const totalMinutes = flights.reduce((acc, flight) => acc + (flight.durationMinutes ?? 0), 0);
 
   const hours = Math.floor(totalMinutes / 60);
   const minutes = totalMinutes % 60;

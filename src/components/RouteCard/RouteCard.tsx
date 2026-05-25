@@ -1,11 +1,4 @@
-import {
-  Button,
-  Chip,
-  Divider,
-  Stack,
-  Typography,
-  styled,
-} from "@mui/material";
+import { Button, Chip, Divider, Stack, Typography, styled } from "@mui/material";
 
 import FlightIcon from "@mui/icons-material/Flight";
 import StraightenIcon from "@mui/icons-material/Straighten";
@@ -16,6 +9,7 @@ import { InfoChip } from "../InfoChip/InfoChip";
 
 import type { AirportResponse, RouteMapped } from "../../types/routes";
 import { getRouteCities } from "../../utils/cities";
+import { formatCompactDistance, formatEuro } from "../../utils/format";
 import {
   BottomAction,
   CardContent,
@@ -51,43 +45,39 @@ export function RouteCard({
 
   const difference = route.cost - bestPrice;
 
-  const viaText =
-    stopCities.length > 0 ? `Via ${stopCities.join(" & ")}` : "Direct flight";
+  const viaText = stopCities.length > 0 ? `Via ${stopCities.join(" & ")}` : "Direct flight";
 
   return (
     <StyledRouteCard mainColor={mainColor}>
       <RouteCardImage city={previewCity} />
 
       <CardContent>
-        <TitleText variant="h5">{[departure, arrival].join(" - ")}</TitleText>
+        <TitleText variant="h5">{`${departure} → ${arrival}`}</TitleText>
 
         <SubtitleText variant="body1">{viaText}</SubtitleText>
 
         <PriceRow>
           <Typography variant="h5" color={mainColor}>
-            {`EUR ${route.cost}`}
+            {formatEuro(route.cost)}
           </Typography>
 
           {difference > 0 && (
             <InfoChip
               textColor={mainColor}
               bgColor={bgColor}
-              label={`+EUR ${difference}`}
+              label={`+${formatEuro(difference)}`}
             />
           )}
         </PriceRow>
 
         <StatsStack direction="row" spacing={1}>
-          <Chip
-            icon={<FlightIcon />}
-            label={`${route.path.length - 1} flights`}
-          />
-          <Chip icon={<StraightenIcon />} label={`${route.distance} km`} />
+          <Chip icon={<FlightIcon />} label={`${route.path.length - 1} flights`} />
+          <Chip icon={<StraightenIcon />} label={`${formatCompactDistance(route.distance)} km`} />
         </StatsStack>
 
         <ContentDivider />
 
-        <PathText variant="body2">{route.path.join(" - ")}</PathText>
+        <PathText variant="body2">{route.path.join(" → ")}</PathText>
 
         <BottomAction>
           <ViewDetailsButton
@@ -133,7 +123,7 @@ const ViewDetailsButton = styled(Button, {
   borderColor: mainColor,
   color: theme.palette.common.white,
   fontWeight: 700,
-  textTransform: "uppercase",
+  textTransform: "none",
   "&:hover": {
     backgroundColor: mainColor,
     borderColor: mainColor,

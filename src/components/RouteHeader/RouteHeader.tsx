@@ -1,33 +1,70 @@
-import { Box, Paper, Typography, styled } from "@mui/material";
+import { Box, Divider, Paper, Typography, styled } from "@mui/material";
+import EastIcon from "@mui/icons-material/East";
 import type { EnrichedRouteDetail } from "../../types/routes";
+import { routeCardThemes } from "../../theme";
+import {
+  computeRouteScoreOutOfTen,
+  computeTotalTravelDuration,
+  formatCompactDistance,
+  formatEuro,
+} from "../../utils/format";
 
 interface Props {
   route: EnrichedRouteDetail;
 }
 
 export function RouteHeader({ route }: Readonly<Props>) {
+  const totalStops = Math.max(route.path.length - 2, 0);
+  const totalCities = route.path.length;
+  const score = computeRouteScoreOutOfTen(route);
+  const totalDuration = computeTotalTravelDuration(route.flights) ?? "-";
+
   return (
     <Box>
       <HeaderTitle variant="h2">Full Route Details</HeaderTitle>
+      <HeaderSubtitle>Every stop. Every detail. Your complete journey.</HeaderSubtitle>
 
-      <HeaderSubtitle>Every stop. Every detail.</HeaderSubtitle>
+      <SummaryCard elevation={0}>
+        <MetricsRow>
+          <MetricBlock>
+            <MetricValue colorVariant="success">{formatEuro(route.cost)}</MetricValue>
+            <MetricLabel>Total Price</MetricLabel>
+          </MetricBlock>
+          <MetricDivider orientation="vertical" flexItem />
+          <MetricBlock>
+            <MetricValue colorVariant="secondary">{`${totalStops} stops`}</MetricValue>
+            <MetricLabel>{`${totalCities} cities`}</MetricLabel>
+          </MetricBlock>
+          <MetricDivider orientation="vertical" flexItem />
+          <MetricBlock>
+            <MetricValue colorVariant="info">{`${formatCompactDistance(route.distance)} km`}</MetricValue>
+            <MetricLabel>Total Distance</MetricLabel>
+          </MetricBlock>
+          <MetricDivider orientation="vertical" flexItem />
+          <MetricBlock>
+            <MetricValue colorVariant="warning">{`${score}/10`}</MetricValue>
+            <MetricLabel>Route Score</MetricLabel>
+          </MetricBlock>
+          <MetricDivider orientation="vertical" flexItem />
+          <MetricBlock>
+            <MetricValue>{totalDuration}</MetricValue>
+            <MetricLabel>Total Travel Time</MetricLabel>
+          </MetricBlock>
+        </MetricsRow>
 
-      <StatsGrid>
-        <StatCard label="Total Price" value={`EUR ${route.cost}`} />
-        <StatCard label="Stops" value={`${route.path.length - 2}`} />
-        <StatCard label="Distance" value={`${route.distance} km`} />
-        <StatCard label="Score" value={`${route.score}`} />
-      </StatsGrid>
+        <PathRow>
+          {route.path.map((step, index) => {
+            const color = routeCardThemes[index % routeCardThemes.length].mainColor;
+            return (
+              <PathStepWrap key={`${step}-${index}`}>
+                <PathStep style={{ color }}>{step}</PathStep>
+                {index < route.path.length - 1 && <EastIcon fontSize="small" />}
+              </PathStepWrap>
+            );
+          })}
+        </PathRow>
+      </SummaryCard>
     </Box>
-  );
-}
-
-function StatCard({ label, value }: Readonly<{ label: string; value: string }>) {
-  return (
-    <StyledPaper elevation={0}>
-      <StatLabel>{label}</StatLabel>
-      <StatValue variant="h4">{value}</StatValue>
-    </StyledPaper>
   );
 }
 
@@ -36,31 +73,86 @@ const HeaderTitle = styled(Typography)({
 });
 
 const HeaderSubtitle = styled(Typography)(({ theme }) => ({
-  marginTop: 16,
+  marginTop: 10,
   color: theme.palette.text.secondary,
-  fontSize: 20,
+  fontSize: 18,
 }));
 
-const StatsGrid = styled(Box)({
+const SummaryCard = styled(Paper)(({ theme }) => ({
+  marginTop: 20,
+  borderRadius: 10,
+  border: `1px solid ${theme.palette.divider}`,
+  background: theme.palette.background.paper,
+  overflow: "hidden",
+}));
+
+const MetricsRow = styled(Box)({
   display: "grid",
-  gridTemplateColumns: "repeat(4, minmax(0, 1fr))",
-  gap: 24,
-  marginTop: 48,
+  gridTemplateColumns: "1fr auto 1fr auto 1fr auto 1fr auto 1fr",
+  alignItems: "stretch",
+  "@media (max-width: 1200px)": {
+    gridTemplateColumns: "1fr 1fr",
+  },
 });
 
-const StyledPaper = styled(Paper)(({ theme }) => ({
-  padding: 32,
-  borderRadius: "24px",
-  background: theme.palette.background.paper,
-  border: `1px solid ${theme.palette.divider}`,
-  color: theme.palette.text.primary,
+const MetricBlock = styled(Box)({
+  padding: 20,
+  display: "flex",
+  flexDirection: "column",
+  gap: 4,
+  minHeight: 96,
+  justifyContent: "center",
+});
+
+const MetricDivider = styled(Divider)(({ theme }) => ({
+  borderColor: theme.palette.divider,
+  "@media (max-width: 1200px)": {
+    display: "none",
+  },
 }));
 
-const StatLabel = styled(Typography)(({ theme }) => ({
+const MetricValue = styled(Typography, {
+  shouldForwardProp: (prop) => prop !== "colorVariant",
+})<{ colorVariant?: "success" | "secondary" | "info" | "warning" }>(({ theme, colorVariant }) => {
+  const colorMap = {
+    success: theme.palette.success.main,
+    secondary: theme.palette.secondary.main,
+    info: theme.palette.info.main,
+    warning: theme.palette.warning.main,
+  };
+
+  return {
+    fontWeight: 700,
+    fontSize: 42,
+    lineHeight: 1.1,
+    color: colorVariant ? colorMap[colorVariant] : theme.palette.text.primary,
+    "@media (max-width: 1200px)": {
+      fontSize: 32,
+    },
+  };
+});
+
+const MetricLabel = styled(Typography)(({ theme }) => ({
   color: theme.palette.text.secondary,
 }));
 
-const StatValue = styled(Typography)({
+const PathRow = styled(Box)(({ theme }) => ({
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  gap: 8,
+  flexWrap: "wrap",
+  padding: 12,
+  borderTop: `1px solid ${theme.palette.divider}`,
+}));
+
+const PathStepWrap = styled(Box)(({ theme }) => ({
+  display: "flex",
+  alignItems: "center",
+  gap: 8,
+  color: theme.palette.text.secondary,
+}));
+
+const PathStep = styled(Typography)({
   fontWeight: 700,
-  marginTop: 16,
 });

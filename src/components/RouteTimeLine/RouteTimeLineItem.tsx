@@ -7,16 +7,20 @@ import type { EnrichedRouteDetail, Flight } from "../../types/routes";
 
 interface RouteTimelineItemProps {
   city: EnrichedRouteDetail["citiesInfo"][number];
-  flight?: Flight;
+  previousFlight?: Flight;
+  nextFlight?: Flight;
   index: number;
   isLast: boolean;
+  isFirst: boolean;
 }
 
 export function RouteTimelineItem({
   city,
-  flight,
+  previousFlight,
+  nextFlight,
   index,
   isLast,
+  isFirst,
 }: Readonly<RouteTimelineItemProps>) {
   const isEven = index % 2 === 0;
   const theme = routeCardThemes[index % routeCardThemes.length];
@@ -27,7 +31,14 @@ export function RouteTimelineItem({
         {isEven ? (
           <CityImageCard city={city} theme={theme} isFirst={index === 0} isLast={isLast} />
         ) : (
-          <CityInfoCard city={city} flight={flight} theme={theme} isLast={isLast} />
+          <CityInfoCard
+            city={city}
+            previousFlight={previousFlight}
+            nextFlight={nextFlight}
+            theme={theme}
+            isLast={isLast}
+            isFirst={isFirst}
+          />
         )}
       </PanelSide>
 
@@ -41,7 +52,14 @@ export function RouteTimelineItem({
 
       <PanelSide align="left">
         {isEven ? (
-          <CityInfoCard city={city} flight={flight} theme={theme} isLast={isLast} />
+          <CityInfoCard
+            city={city}
+            previousFlight={previousFlight}
+            nextFlight={nextFlight}
+            theme={theme}
+            isLast={isLast}
+            isFirst={isFirst}
+          />
         ) : (
           <CityImageCard city={city} theme={theme} isFirst={index === 0} isLast={isLast} />
         )}
@@ -55,6 +73,11 @@ const TimelineRow = styled(Box)({
   gridTemplateColumns: "1fr 120px 1fr",
   gap: 32,
   minHeight: 420,
+  "@media (max-width: 1100px)": {
+    gridTemplateColumns: "1fr",
+    gap: 14,
+    minHeight: "unset",
+  },
 });
 
 const PanelSide = styled(Box)<{ align: "left" | "right" }>(({ align }) => ({
@@ -62,6 +85,10 @@ const PanelSide = styled(Box)<{ align: "left" | "right" }>(({ align }) => ({
   alignItems: "center",
   justifyContent: align === "right" ? "flex-end" : "flex-start",
   paddingBlock: 48,
+  "@media (max-width: 1100px)": {
+    justifyContent: "stretch",
+    paddingBlock: 0,
+  },
 }));
 
 const CenterAxis = styled(Box)({
@@ -69,6 +96,9 @@ const CenterAxis = styled(Box)({
   display: "flex",
   flexDirection: "column",
   alignItems: "center",
+  "@media (max-width: 1100px)": {
+    display: "none",
+  },
 });
 
 const AxisLine = styled(Box)(({ theme }) => ({
@@ -89,5 +119,5 @@ const FlightNode = styled(Box)<{ mainColor: string; bgColor: string }>(
     justifyContent: "center",
     zIndex: 10,
     boxShadow: `0 0 25px ${mainColor}50`,
-  })
+  }),
 );

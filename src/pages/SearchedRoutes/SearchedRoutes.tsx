@@ -1,10 +1,11 @@
-import { Alert, Box, Button, Container, Grid, Grow, Typography } from "@mui/material";
+import { Alert, Box, Button, Container, Grid, Grow, Typography, styled } from "@mui/material";
 
 import EmojiEventsIcon from "@mui/icons-material/EmojiEvents";
 import DoneAllIcon from "@mui/icons-material/DoneAll";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 
 import { createSearchParams, useNavigate, useSearchParams } from "react-router-dom";
+import SearchOffOutlinedIcon from "@mui/icons-material/SearchOffOutlined";
 
 import { BestRouteCard } from "../../components/BestRouteCard/BestRouteCard";
 import { RouteCard } from "../../components/RouteCard/RouteCard";
@@ -53,7 +54,7 @@ function SearchedRoutes() {
   const viewDetailsRoute = (route: RouteMapped) => {
     setAirports(airports);
     enrichRouteMutation(route, {
-      onSuccess: response => {
+      onSuccess: (response) => {
         setSelectedRoute(response);
         navigate({
           pathname: `/route/details`,
@@ -72,7 +73,22 @@ function SearchedRoutes() {
   }
 
   if (!bestRoute || !departure || !arrival) {
-    return <Typography variant="h5">No routes found</Typography>;
+    return (
+      <PageWrapper>
+        <Container maxWidth="md">
+          <NoRoutesWrap>
+            <SearchOffOutlinedIcon color="warning" sx={{ fontSize: 40 }} />
+            <Typography variant="h4">No routes found</Typography>
+            <Typography color="text.secondary" sx={{ textAlign: "center" }}>
+              Try increasing budget, dates or max stops to discover more combinations.
+            </Typography>
+            <Button variant="contained" onClick={() => navigate("/create/route")}>
+              New search
+            </Button>
+          </NoRoutesWrap>
+        </Container>
+      </PageWrapper>
+    );
   }
 
   return (
@@ -83,10 +99,10 @@ function SearchedRoutes() {
         <SectionHeader>
           <EmojiEventsIcon color="warning" />
 
-          <Typography variant="h5">Best route for you</Typography>
+          <Typography variant="h4">Best route for you</Typography>
         </SectionHeader>
 
-        <Typography variant="body1" color="text.secondary" sx={{ mt: 1, mb: 3 }}>
+        <Typography variant="body1" color="text.secondary" sx={{ mt: 1, mb: 2.5 }}>
           Our algorithm found the best balance between price, distance and experience.
         </Typography>
 
@@ -107,8 +123,7 @@ function SearchedRoutes() {
             borderRadius: 2,
           }}
         >
-          Great Choice! This route offers the best balance of price, time and interesting
-          cities.
+          Great Choice! This route offers the best balance of price, time and interesting cities.
         </Alert>
 
         {suggestedRoutes.length > 0 && (
@@ -117,16 +132,16 @@ function SearchedRoutes() {
               <SectionHeader>
                 <DoneAllIcon />
 
-                <Typography variant="h5">Other smart alternatives</Typography>
+                <Typography variant="h4">Other smart alternatives</Typography>
               </SectionHeader>
 
               {remainingRoutes > 0 && (
                 <Button
                   variant="outlined"
-                  startIcon={<ArrowDownwardIcon />}
-                  onClick={() => setVisibleRoutes(prev => prev + ROUTES_PER_LOAD)}
+                  endIcon={<ArrowDownwardIcon />}
+                  onClick={() => setVisibleRoutes((prev) => prev + ROUTES_PER_LOAD)}
                 >
-                  Show more ({remainingRoutes})
+                  View all routes ({remainingRoutes})
                 </Button>
               )}
             </AlternativesHeader>
@@ -212,5 +227,19 @@ function SearchedRoutes() {
     </PageWrapper>
   );
 }
+
+const NoRoutesWrap = styled(Box)(({ theme }) => ({
+  marginTop: 56,
+  border: `1px solid ${theme.palette.divider}`,
+  borderRadius: 10,
+  background: theme.palette.background.paper,
+  minHeight: 280,
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
+  justifyContent: "center",
+  gap: 12,
+  padding: 20,
+}));
 
 export default SearchedRoutes;

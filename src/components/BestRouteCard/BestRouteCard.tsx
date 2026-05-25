@@ -1,12 +1,4 @@
-import {
-  Box,
-  Button,
-  Card,
-  Divider,
-  Grid,
-  Typography,
-  styled,
-} from "@mui/material";
+import { Chip, Box, Button, Card, Divider, Grid, Typography, styled } from "@mui/material";
 
 import SocialDistanceIcon from "@mui/icons-material/SocialDistance";
 import RequestQuoteOutlinedIcon from "@mui/icons-material/RequestQuoteOutlined";
@@ -18,6 +10,7 @@ import { RoutePath } from "../RoutePath/RoutePath";
 
 import type { AirportResponse, RouteMapped } from "../../types/routes";
 import { appPalette } from "../../theme";
+import { formatCompactDistance, formatEuro } from "../../utils/format";
 
 type Props = {
   route: RouteMapped;
@@ -40,32 +33,25 @@ export function BestRouteCard({
     <BestCard>
       <Grid container>
         <Grid size={{ xs: 12, md: 5 }}>
-          <RouteImage
-            src={`${import.meta.env.VITE_API_URL}/city-images/${image}`}
-            alt={image}
-          />
+          <RouteImage src={`${import.meta.env.VITE_API_URL}/city-images/${image}`} alt={image} />
         </Grid>
 
         <Grid size={{ xs: 12, md: 7 }}>
           <RightColumn>
-            <RouteTitle variant="h3">
-              {[departure?.city, arrival?.city].join(" - ")}
-            </RouteTitle>
+            <RouteTitle variant="h3">{[departure?.city, arrival?.city].join(" -> ")}</RouteTitle>
+            <BadgeChip label={route.badge} />
 
             <RouteDescription variant="body1">
-              Our algorithm found the smartest route balancing price, travel
-              time and interesting stopovers.
+              Our algorithm found the smartest route balancing price, travel time and interesting
+              stopovers.
             </RouteDescription>
 
             <StatsWrap>
-              <RouteStat icon={<PriceIcon />} label={`EUR ${route.cost}`} />
-              <RouteStat
-                icon={<LocationIcon />}
-                label={`${route.path.length - 1} flights`}
-              />
+              <RouteStat icon={<PriceIcon />} label={formatEuro(route.cost)} />
+              <RouteStat icon={<LocationIcon />} label={`${route.path.length - 1} flights`} />
               <RouteStat
                 icon={<DistanceIcon />}
-                label={`${route.distance} km`}
+                label={`${formatCompactDistance(route.distance)} km`}
               />
             </StatsWrap>
 
@@ -91,8 +77,8 @@ export function BestRouteCard({
 
 const BestCard = styled(Card)(({ theme }) => ({
   overflow: "hidden",
-  marginTop: 24,
-  borderRadius: 16,
+  marginTop: 20,
+  borderRadius: 10,
   backgroundColor: theme.palette.background.paper,
   border: `1px solid ${theme.palette.divider}`,
   boxShadow: appPalette.shadowHover,
@@ -120,17 +106,24 @@ const RightColumn = styled(Box)({
 const RouteTitle = styled(Typography)(({ theme }) => ({
   fontWeight: 800,
   lineHeight: 1.1,
-  marginBottom: 8,
+  marginBottom: 12,
   color: theme.palette.text.primary,
-  fontSize: "2rem",
+  fontSize: "2.1rem",
   "@media (min-width:900px)": {
-    fontSize: "2.5rem",
+    fontSize: "2.2rem",
   },
+}));
+
+const BadgeChip = styled(Chip)(({ theme }) => ({
+  width: "fit-content",
+  marginBottom: 14,
+  background: "rgba(16,185,129,0.2)",
+  color: theme.palette.success.light,
 }));
 
 const RouteDescription = styled(Typography)(({ theme }) => ({
   color: theme.palette.text.secondary,
-  marginBottom: 32,
+  marginBottom: 24,
   fontSize: "1rem",
 }));
 

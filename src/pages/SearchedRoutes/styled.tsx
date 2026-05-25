@@ -1,10 +1,11 @@
 import { Box, Card, styled } from "@mui/material";
 
 export const PageWrapper = styled(Box)({
-  background: "linear-gradient(to bottom, var(--tp-bg-start), var(--tp-bg-end))",
+  background:
+    "radial-gradient(circle at 20% 0%, rgba(59,130,246,0.16), transparent 36%), radial-gradient(circle at 90% 10%, rgba(139,92,246,0.18), transparent 32%), linear-gradient(to bottom, var(--tp-bg-start), var(--tp-bg-end))",
   color: "var(--tp-text-primary)",
-  paddingTop: 32,
-  paddingBottom: 32,
+  paddingTop: 28,
+  paddingBottom: 56,
 });
 
 export const SectionHeader = styled(Box)({
@@ -17,7 +18,7 @@ export const AlternativesHeader = styled(Box)({
   display: "flex",
   justifyContent: "space-between",
   alignItems: "center",
-  marginTop: 48,
+  marginTop: 40,
   marginBottom: 24,
   flexWrap: "wrap",
   gap: 16,
@@ -27,7 +28,7 @@ export const StyledRouteCard = styled(Card)<{
   mainColor: string;
 }>(({ mainColor, theme }) => ({
   overflow: "hidden",
-  borderRadius: 8,
+  borderRadius: 10,
   backgroundColor: theme.palette.background.paper,
   color: theme.palette.text.primary,
   height: "100%",
@@ -43,7 +44,7 @@ export const StyledRouteCard = styled(Card)<{
 }));
 
 export const CardContent = styled(Box)({
-  padding: 24,
+  padding: 20,
   flex: 1,
   display: "flex",
   flexDirection: "column",

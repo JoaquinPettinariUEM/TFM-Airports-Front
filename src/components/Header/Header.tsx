@@ -1,4 +1,4 @@
-import { Box, Button, Container, styled } from "@mui/material";
+import { Box, Button, Container, styled, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
 function Header() {
@@ -7,10 +7,12 @@ function Header() {
     <HeaderComponent>
       <Container maxWidth="lg" className="tp-header-container">
         <TitleClickArea onClick={() => navigate("/")}>
-          <h1 className="tp-header-title">Route Wise</h1>
+          <Typography variant="h5" className="tp-header-title">
+            RouteWise
+          </Typography>
         </TitleClickArea>
         <Button
-          size={"small"}
+          size="small"
           variant="text"
           color="secondary"
           onClick={() => navigate("/create/route")}
@@ -23,18 +25,18 @@ function Header() {
 }
 
 const HeaderComponent = styled(Box)(({ theme }) => ({
-  display: "flex",
-  flexDirection: "column",
   width: "100%",
   backgroundColor: theme.palette.background.paper,
   zIndex: 100,
   ".tp-header-container": {
     display: "flex",
     justifyContent: "space-between",
-    padding: 8,
+    alignItems: "center",
+    paddingBlock: 8,
   },
   ".tp-header-title": {
     color: theme.palette.text.primary,
+    fontWeight: 700,
   },
 }));
 

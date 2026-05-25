@@ -9,20 +9,30 @@ interface InfoProps {
 
 interface CityInfoCardProps {
   city: EnrichedRouteDetail["citiesInfo"][number];
-  flight?: Flight;
+  previousFlight?: Flight;
+  nextFlight?: Flight;
   theme: {
     mainColor: string;
     bgColor: string;
   };
+  isFirst?: boolean;
   isLast?: boolean;
 }
 
 export function CityInfoCard({
   city,
-  flight,
+  previousFlight,
+  nextFlight,
   theme,
+  isFirst,
   isLast,
 }: Readonly<CityInfoCardProps>) {
+  const arrivalValue = previousFlight
+    ? format(new Date(previousFlight.arrivalDate), "EEE HH:mm")
+    : "-";
+  const departureValue = nextFlight ? format(new Date(nextFlight.departureDate), "EEE HH:mm") : "-";
+  const stayValue = !isFirst && !isLast && previousFlight ? `${previousFlight.stayDays} days` : "-";
+
   return (
     <StyledPaper elevation={0}>
       <CityName variant="h4" mainColor={theme.mainColor}>
@@ -32,20 +42,31 @@ export function CityInfoCard({
       <CityDescription>{city.description}</CityDescription>
 
       <InfoGrid>
-        <Info label="Arrival" value={flight ? format(new Date(flight.arrivalDate), "HH:mm") : "-"} />
-        <Info label="Stay" value={flight ? `${flight.stayDays} days` : "-"} />
+        {isFirst ? (
+          <Info label="Departure" value={departureValue} />
+        ) : (
+          <Info label="Arrival" value={arrivalValue} />
+        )}
+        {isLast ? (
+          <Info label="Departure" value="-" />
+        ) : (
+          <Info
+            label={isFirst ? "Next flight" : "Stay"}
+            value={isFirst ? departureValue : stayValue}
+          />
+        )}
       </InfoGrid>
 
       <ContentDivider />
 
       <CitySummary>{city.summary}</CitySummary>
 
-      {!isLast && flight && (
+      {!isLast && nextFlight && (
         <FlightBox mainColor={theme.mainColor} bgColor={theme.bgColor}>
           <FlightRow>
             <Typography color="text.secondary">Flight to next destination</Typography>
             <FlightDuration mainColor={theme.mainColor}>
-              {Math.floor(flight.durationMinutes / 60)}h {flight.durationMinutes % 60}m
+              {Math.floor(nextFlight.durationMinutes / 60)}h {nextFlight.durationMinutes % 60}m
             </FlightDuration>
           </FlightRow>
         </FlightBox>

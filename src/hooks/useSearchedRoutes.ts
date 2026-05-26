@@ -12,21 +12,21 @@ export function useSearchedRoutes(params: GetRoutesParams) {
 
   const { data, isLoading } = useGetRoutes(params);
 
-  const airports = data?.airports ?? {};
+  const airports = useMemo(() => data?.airports ?? {}, [data]);
   const bestRouteRaw = data?.bestRoute ?? null;
-  const recommendedRoutesRaw = data?.recommendedRoutes ?? [];
-  const moreExpensiveOptionsRaw = data?.moreExpensiveOptions ?? [];
+  const recommendedRoutesRaw = useMemo(() => data?.recommendedRoutes ?? [], [data]);
+  const moreExpensiveOptionsRaw = useMemo(() => data?.moreExpensiveOptions ?? [], [data]);
 
   const routes = useMemo(
     () => [...recommendedRoutesRaw, ...moreExpensiveOptionsRaw],
-    [recommendedRoutesRaw, moreExpensiveOptionsRaw]
+    [recommendedRoutesRaw, moreExpensiveOptionsRaw],
   );
 
   const bestRouteData = useRoutePreviewCities(bestRouteRaw ? [bestRouteRaw] : [], airports)[0];
 
   const recommendedWithImages = useRoutePreviewCities(
     recommendedRoutesRaw.slice(0, visibleRoutes),
-    airports
+    airports,
   );
   const expensiveWithImages = useRoutePreviewCities(moreExpensiveOptionsRaw, airports);
 

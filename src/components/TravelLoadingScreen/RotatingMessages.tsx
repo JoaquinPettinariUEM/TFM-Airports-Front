@@ -4,11 +4,11 @@ import { Box } from "@mui/material";
 import { useEffect, useState } from "react";
 
 const messages = [
-  "Estamos creando tu viaje ideal",
-  "Analizando conexiones inteligentes",
-  "Buscando las mejores ciudades para vos",
-  "Calculando estadías y escalas",
-  "Optimizando presupuesto y tiempos",
+  "We are building your ideal trip",
+  "Analyzing smart connections",
+  "Searching for the best cities for you",
+  "Calculating stays and stopovers",
+  "Optimizing budget and timing",
 ];
 
 const Wrapper = styled(Box)`
@@ -39,7 +39,7 @@ export function RotatingMessages() {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setIndex(prev => (prev + 1) % messages.length);
+      setIndex((prev) => (prev + 1) % messages.length);
     }, 3000);
 
     return () => clearInterval(interval);

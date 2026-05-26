@@ -35,13 +35,20 @@ const Root = styled(Box)`
   animation: ${backgroundMove} 18s ease infinite;
 `;
 
-export function TravelLoadingScreen({
-  from,
-  to,
-}: Readonly<{ from: string; to: string }>) {
+const HelperText = styled(Box)(({ theme }) => ({
+  marginTop: 16,
+  color: theme.palette.grey[300],
+  fontSize: 14,
+  textAlign: "center",
+  maxWidth: 480,
+  padding: "0 16px",
+}));
+
+export function TravelLoadingScreen({ from, to }: Readonly<{ from: string; to: string }>) {
   return (
     <Root>
       <RotatingMessages />
+      <HelperText>We are evaluating more than 20,000 routes.</HelperText>
       <FlightCurve from={from} to={to} />
     </Root>
   );

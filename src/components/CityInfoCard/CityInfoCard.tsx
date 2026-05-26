@@ -1,4 +1,4 @@
-import { Box, Divider, Paper, Typography, styled } from "@mui/material";
+import { Alert, Box, Divider, Paper, Typography, styled } from "@mui/material";
 import { format } from "date-fns";
 import type { EnrichedRouteDetail, Flight } from "../../types/routes";
 
@@ -28,10 +28,14 @@ export function CityInfoCard({
   isLast,
 }: Readonly<CityInfoCardProps>) {
   const arrivalValue = previousFlight
-    ? format(new Date(previousFlight.arrivalDate), "EEE HH:mm")
+    ? format(new Date(previousFlight.arrivalDate), "HH:mm MMM d")
     : "-";
-  const departureValue = nextFlight ? format(new Date(nextFlight.departureDate), "EEE HH:mm") : "-";
+  const departureValue = nextFlight
+    ? format(new Date(nextFlight.departureDate), "HH:mm MMM d")
+    : "-";
   const stayValue = !isFirst && !isLast && previousFlight ? `${previousFlight.stayDays} days` : "-";
+  const departureFromValue = nextFlight?.from ?? "-";
+  const arrivalToValue = previousFlight?.to ?? "-";
 
   return (
     <StyledPaper elevation={0}>
@@ -47,13 +51,12 @@ export function CityInfoCard({
         ) : (
           <Info label="Arrival" value={arrivalValue} />
         )}
-        {isLast ? (
-          <Info label="Departure" value="-" />
+        {isFirst ? (
+          <Info label="Airport" value={departureFromValue} />
+        ) : isLast ? (
+          <Info label="Airport" value={arrivalToValue} />
         ) : (
-          <Info
-            label={isFirst ? "Next flight" : "Stay"}
-            value={isFirst ? departureValue : stayValue}
-          />
+          <Info label="Stay / Departure" value={`${stayValue} · ${departureValue}`} />
         )}
       </InfoGrid>
 
@@ -70,6 +73,21 @@ export function CityInfoCard({
             </FlightDuration>
           </FlightRow>
         </FlightBox>
+      )}
+
+      {isLast && (
+        <Alert
+          variant="outlined"
+          severity="success"
+          sx={{
+            mt: 4,
+            borderRadius: 2,
+            backgroundColor: "rgba(46, 125, 50, 0.08)",
+          }}
+        >
+          <Typography sx={{ fontWeight: 700 }}>You have reached your final destination.</Typography>
+          <Typography variant="body2">Enjoy your stay in {city.name}.</Typography>
+        </Alert>
       )}
     </StyledPaper>
   );

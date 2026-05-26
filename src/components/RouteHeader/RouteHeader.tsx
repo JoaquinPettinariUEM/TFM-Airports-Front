@@ -9,6 +9,7 @@ import {
   formatEuro,
 } from "../../utils/format";
 import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
+import { useLocation, useNavigate } from "react-router-dom";
 
 interface Props {
   route: EnrichedRouteDetail;
@@ -17,6 +18,9 @@ interface Props {
 }
 
 export function RouteHeader({ route, budget, requestedMaxStops }: Readonly<Props>) {
+  const navigate = useNavigate();
+  const location = useLocation();
+
   const totalStops = Math.max(route.path.length - 2, 0);
   const totalCities = route.path.length;
   const score = computeRouteScoreOutOfTen(route, { budget, requestedMaxStops });
@@ -26,7 +30,17 @@ export function RouteHeader({ route, budget, requestedMaxStops }: Readonly<Props
     <Box>
       <Box sx={{ display: "flex", justifyContent: "space-between" }}>
         <HeaderTitle variant="h2">Full Route Details</HeaderTitle>
-        <Button startIcon={<KeyboardBackspaceIcon />}>Back to results</Button>
+        <Button
+          startIcon={<KeyboardBackspaceIcon />}
+          onClick={() =>
+            navigate({
+              pathname: "/searched/routes",
+              search: location.search,
+            })
+          }
+        >
+          Back to results
+        </Button>
       </Box>
       <HeaderSubtitle>Every stop. Every detail. Your complete journey.</HeaderSubtitle>
 

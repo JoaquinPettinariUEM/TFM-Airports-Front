@@ -34,7 +34,7 @@ export function DateRangeField({ startDate, endDate, onChange }: Readonly<Props>
       <TextField
         fullWidth
         value={label}
-        onClick={e => setAnchorEl(e.currentTarget)}
+        onClick={(e) => setAnchorEl(e.currentTarget)}
         slotProps={{
           input: {
             readOnly: true,
@@ -56,13 +56,22 @@ export function DateRangeField({ startDate, endDate, onChange }: Readonly<Props>
           vertical: "bottom",
           horizontal: "left",
         }}
+        slotProps={{
+          paper: {
+            sx: {
+              background: "#182232",
+              borderRadius: "8px",
+            },
+          },
+        }}
       >
         <CalendarWrapper>
           <DateRange
             editableDateInputs={false}
             showDateDisplay={false}
+            showMonthAndYearPickers={false}
             minDate={new Date()}
-            onChange={item =>
+            onChange={(item) =>
               onChange({
                 startDate: item.selection.startDate ?? new Date(),
                 endDate: item.selection.endDate ?? new Date(),

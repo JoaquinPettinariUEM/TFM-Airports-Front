@@ -48,10 +48,10 @@ export function AsyncAutocomplete<T>({
       getOptionLabel={getOptionLabel}
       slotProps={{
         popper: {
-          sx: { background: "grey", borderRadius: "8px" },
+          sx: { background: "#182232", borderRadius: "8px" },
         },
       }}
-      renderInput={params => (
+      renderInput={(params) => (
         <TextField
           {...params}
           label={label}

@@ -1,13 +1,25 @@
-import { Button, Card, Container, styled, Typography } from "@mui/material";
+import { type ComponentProps } from "react";
+import { Button, Card, Container, Divider, styled, Typography } from "@mui/material";
+import { DragDropProvider } from "@dnd-kit/react";
+import AddIcon from "@mui/icons-material/Add";
 import BackgroundImage from "../../assets/bs_wallpaper.jpg";
-import { AirportFinder } from "../../components/AirportFinder/AirportFinder";
 import NumberField from "../../components/NumberField/NumberField";
-import { useCreateRouteForm } from "../../hooks/useCreateRouteForm";
 import { DateRangeField } from "../../components/DateRangeField/DateRangeField";
+import { useCreateRouteForm } from "../../hooks/useCreateRouteForm";
 import { appPalette } from "../../theme";
+import { SortableRoutePoint } from "./SortableRoutePoint";
 
 function CreateRoute() {
-  const { form, updateField, submit } = useCreateRouteForm();
+  const {
+    form,
+    updateField,
+    addRoutePoint,
+    removeRoutePoint,
+    updateRoutePointCity,
+    updateRoutePointStayDays,
+    reorderRoutePointsById,
+    submit,
+  } = useCreateRouteForm();
 
   return (
     <BackgroundComponent>
@@ -24,44 +36,55 @@ function CreateRoute() {
         <Typography variant="h2">Create your own route</Typography>
 
         <FormCard>
-          <AirportFinder
-            value={form.from}
-            onChange={value => updateField("from", value)}
-            label="Initial Airport"
-          />
+          <TopFilters>
+            <DateRangeField
+              startDate={form.startDate}
+              endDate={form.endDate}
+              onChange={({ startDate, endDate }) => {
+                updateField("startDate", startDate);
+                updateField("endDate", endDate);
+              }}
+            />
+            <NumberField
+              label="Budget"
+              value={form.budget}
+              defaultValue={300}
+              min={0}
+              max={10000}
+              onValueChange={(value) => updateField("budget", value ?? 1000)}
+            />
+          </TopFilters>
 
-          <AirportFinder
-            value={form.to}
-            onChange={value => updateField("to", value)}
-            label="Final Airport"
-          />
+          <Divider />
 
-          <DateRangeField
-            startDate={form.startDate}
-            endDate={form.endDate}
-            onChange={({ startDate, endDate }) => {
-              updateField("startDate", startDate);
-              updateField("endDate", endDate);
+          <DragDropProvider
+            onDragEnd={(event: DndDragEndEvent) => {
+              const sourceId = event.operation.source?.id;
+              const targetId = event.operation.target?.id;
+              if (typeof sourceId === "string" && typeof targetId === "string") {
+                reorderRoutePointsById(sourceId, targetId);
+              }
             }}
-          />
+          >
+            <StopsList>
+              {form.routePoints.map((point, index) => (
+                <SortableRoutePoint
+                  key={point.id}
+                  point={point}
+                  index={index}
+                  canRemove={form.routePoints.length > 2}
+                  onUpdateCity={updateRoutePointCity}
+                  onUpdateStayDays={updateRoutePointStayDays}
+                  onRemove={removeRoutePoint}
+                />
+              ))}
+            </StopsList>
+          </DragDropProvider>
 
-          <NumberField
-            label="Budget"
-            value={form.budget}
-            defaultValue={300}
-            min={0}
-            max={10000}
-            onValueChange={value => updateField("budget", value ?? 1000)}
-          />
-
-          <NumberField
-            label="Max main cities"
-            value={form.maxStops}
-            min={1}
-            max={5}
-            onValueChange={value => updateField("maxStops", value ?? 1)}
-          />
-
+          <Button onClick={addRoutePoint} variant="outlined" startIcon={<AddIcon />}>
+            Add city
+          </Button>
+          <Divider />
           <Button onClick={submit} variant="contained">
             Search
           </Button>
@@ -79,10 +102,6 @@ const BackgroundComponent = styled("section")(({ theme }) => ({
   backgroundPosition: "center",
   backgroundSize: "cover",
   color: theme.palette.text.primary,
-  ".tp-create-route-title": {
-    fontSize: "80px",
-    fontWeight: 700,
-  },
   "&::before": {
     content: '""',
     position: "absolute",
@@ -102,19 +121,33 @@ const BackgroundComponent = styled("section")(({ theme }) => ({
 
 const FormCard = styled(Card)(({ theme }) => ({
   padding: 16,
-  display: "grid",
-  gridTemplateColumns: "repeat(2, 1fr)",
+  display: "flex",
+  flexDirection: "column",
   gap: 16,
-
   backdropFilter: "blur(18px)",
-
   background: theme.palette.background.paper,
-
   border: `1px solid ${theme.palette.divider}`,
-
   boxShadow: appPalette.shadowStrong,
-
   borderRadius: 4,
 }));
+
+const TopFilters = styled("div")({
+  display: "grid",
+  gridTemplateColumns: "1fr 1fr",
+  gap: 12,
+});
+
+const StopsList = styled("ul")({
+  display: "flex",
+  flexDirection: "column",
+  gap: 12,
+  listStyle: "none",
+  margin: 0,
+  padding: 0,
+});
+
+type DndDragEndEvent = Parameters<
+  NonNullable<ComponentProps<typeof DragDropProvider>["onDragEnd"]>
+>[0];
 
 export default CreateRoute;

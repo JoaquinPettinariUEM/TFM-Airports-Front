@@ -55,16 +55,4 @@ export const theme = createTheme({
   shape: {
     borderRadius: 8,
   },
-  components: {
-    MuiCard: {
-      styleOverrides: {
-        root: {
-          backdropFilter: "blur(18px)",
-          background: appPalette.surfaceGlass,
-          border: `1px solid ${appPalette.borderSoft}`,
-          boxShadow: appPalette.shadowStrong,
-        },
-      },
-    },
-  },
 });

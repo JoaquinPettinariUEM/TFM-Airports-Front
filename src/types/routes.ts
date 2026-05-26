@@ -7,12 +7,16 @@ export type RouteByQueryResponse = {
 };
 
 export type CreateRouteForm = {
-  from: RouteByQueryResponse | null;
-  to: RouteByQueryResponse | null;
+  routePoints: RoutePointInput[];
   budget?: number;
-  maxStops?: number;
   startDate?: Date;
   endDate?: Date;
+};
+
+export type RoutePointInput = {
+  id: string;
+  city: RouteByQueryResponse | null;
+  stayDays: number;
 };
 
 export type RoutesResponse = {

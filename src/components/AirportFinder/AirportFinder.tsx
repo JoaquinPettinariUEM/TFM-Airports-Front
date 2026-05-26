@@ -15,7 +15,7 @@ export function AirportFinder({ value, onChange, label = "Airports" }: Readonly<
       value={value}
       onChange={onChange}
       useFetch={useAirportSearch}
-      getOptionLabel={option => option.label}
+      getOptionLabel={(option) => option.label}
       isOptionEqualToValue={(a, b) => a.label === b.label}
     />
   );

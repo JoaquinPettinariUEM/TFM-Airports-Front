@@ -70,8 +70,8 @@ export type GetRoutesParams = {
   tripDays: string;
   startDate: string;
   endDate?: string;
-  via?: string;
-  stayDays?: string;
+  pathTemplate?: string;
+  stayDaysTemplate?: string;
   budget?: number;
   maxStops?: number;
 };

@@ -36,10 +36,10 @@ function SearchedRoutes() {
     tripDays: searchParams.get("tripDays") ?? "",
     startDate: searchParams.get("startDate") ?? "",
     endDate: searchParams.get("endDate") ?? "",
-    via: searchParams.get("via") ?? "",
-    stayDays: searchParams.get("stayDays") ?? "",
+    pathTemplate: searchParams.get("pathTemplate") ?? "",
+    stayDaysTemplate: searchParams.get("stayDaysTemplate") ?? "",
     budget: Number(searchParams.get("budget") ?? 500),
-    maxStops: Number(searchParams.get("maxStops") ?? 2),
+    maxStops: searchParams.get("maxStops") ? Number(searchParams.get("maxStops")) : undefined,
   };
 
   const {
@@ -61,11 +61,15 @@ function SearchedRoutes() {
         setSelectedRoute(response);
         navigate({
           pathname: `/route/details`,
-          search: createSearchParams({
-            ...params,
-            budget: String(params.budget),
-            maxStops: String(params.maxStops),
-          }).toString(),
+          search: createSearchParams(
+            Object.fromEntries(
+              Object.entries({
+                ...params,
+                budget: String(params.budget),
+                maxStops: params.maxStops !== undefined ? String(params.maxStops) : undefined,
+              }).filter(([, value]) => value !== undefined),
+            ) as Record<string, string>,
+          ).toString(),
         });
       },
     });
@@ -97,7 +101,12 @@ function SearchedRoutes() {
   return (
     <PageWrapper>
       <Container maxWidth="lg">
-        <RouteMainTitle {...params} from={departure._id} to={arrival._id} />
+        <RouteMainTitle
+          {...params}
+          maxStops={params.maxStops ?? 0}
+          from={departure._id}
+          to={arrival._id}
+        />
 
         <SectionHeader>
           <EmojiEventsIcon color="warning" />

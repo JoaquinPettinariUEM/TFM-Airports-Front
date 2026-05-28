@@ -19,7 +19,7 @@ export function useCreateRouteForm() {
         stayDays: 2,
       },
     ],
-    budget: undefined,
+    budget: 300,
     startDate: new Date(),
     endDate: addDays(new Date(), 15),
   });
@@ -35,15 +35,23 @@ export function useCreateRouteForm() {
     form.startDate && form.endDate
       ? Math.max(0, differenceInDays(form.endDate, form.startDate) + 1)
       : 0;
-  const totalStayDays = form.routePoints.reduce((sum, point) => sum + (point.stayDays || 0), 0);
+  const lastIndex = form.routePoints.length - 1;
+  const pointsWithStay = form.routePoints.filter((_, index) => index > 0);
+  const totalStayDays = pointsWithStay.reduce((sum, point) => sum + (point.stayDays || 0), 0);
   const remainingStayDays = Math.max(0, tripDays - totalStayDays);
-  const hasAllCities = form.routePoints.every((point) => Boolean(point.city?.id));
+  const startPoint = form.routePoints[0];
+  const endPoint = form.routePoints[lastIndex];
+  const hasRequiredCities = Boolean(startPoint?.city?.id && endPoint?.city?.id);
   const hasValidDates = Boolean(form.startDate && form.endDate && tripDays > 0);
-  const hasValidStayDays = form.routePoints.every((point) => point.stayDays >= 1);
+  const hasValidStayDays = pointsWithStay.every((point) => point.stayDays >= 1);
   const hasValidBudget = form.budget === undefined || form.budget >= 0;
   const isStayDaysWithinTrip = totalStayDays <= tripDays;
   const isFormValid =
-    hasAllCities && hasValidDates && hasValidStayDays && hasValidBudget && isStayDaysWithinTrip;
+    hasRequiredCities &&
+    hasValidDates &&
+    hasValidStayDays &&
+    hasValidBudget &&
+    isStayDaysWithinTrip;
 
   const submit = () => {
     const start = form.routePoints[0];
@@ -52,22 +60,22 @@ export function useCreateRouteForm() {
 
     const startDate = format(form.startDate, "yyyy-MM-dd");
     const endDate = format(form.endDate, "yyyy-MM-dd");
-    const middlePoints = form.routePoints.slice(1, -1);
-    const selectedStopovers = middlePoints.filter((item) => item.city?.id);
-    const via = selectedStopovers.map((item) => item.city?.id).join(",");
-    const stayDays = selectedStopovers.map((item) => item.stayDays).join(",");
-    const computedMaxStops = Math.max(1, middlePoints.length + 1);
-    const params = createSearchParams({
+    const pathTemplate = form.routePoints.map((point) => point.city?.id ?? "?").join("->");
+    const stayDaysTemplate = form.routePoints
+      .map((point, index) => (index === 0 ? "0" : String(point.stayDays)))
+      .join(",");
+    const queryParams: Record<string, string> = {
       from: start.city.id,
       to: end.city.id,
-      budget: String(form.budget ?? 0),
-      maxStops: String(computedMaxStops),
+      budget: String(form.budget ?? 300),
       tripDays: String(tripDays),
       startDate,
       endDate,
-      via,
-      stayDays,
-    });
+      pathTemplate,
+      stayDaysTemplate,
+    };
+
+    const params = createSearchParams(queryParams);
 
     navigate(`/searched/routes?${params.toString()}`);
   };
@@ -117,21 +125,6 @@ export function useCreateRouteForm() {
     }));
   };
 
-  const reorderRoutePointsByIndex = (fromIndex: number, toIndex: number) => {
-    if (fromIndex === toIndex || fromIndex < 0 || toIndex < 0) return;
-    setForm((prev) => {
-      if (fromIndex >= prev.routePoints.length || toIndex >= prev.routePoints.length) return prev;
-      const next = [...prev.routePoints];
-      const [moved] = next.splice(fromIndex, 1);
-      if (!moved) return prev;
-      next.splice(toIndex, 0, moved);
-      return {
-        ...prev,
-        routePoints: next,
-      };
-    });
-  };
-
   const reorderRoutePointsByIds = (sourceId?: string, targetId?: string) => {
     if (!sourceId || !targetId || sourceId === targetId) return;
     setForm((prev) => {
@@ -158,7 +151,6 @@ export function useCreateRouteForm() {
     removeRoutePoint,
     updateRoutePointCity,
     updateRoutePointStayDays,
-    reorderRoutePointsByIndex,
     reorderRoutePointsByIds,
     tripDays,
     totalStayDays,

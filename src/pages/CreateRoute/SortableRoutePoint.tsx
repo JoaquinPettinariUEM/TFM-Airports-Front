@@ -62,13 +62,17 @@ export function SortableRoutePoint({
       </CityInputWrap>
       <Divider orientation="vertical" sx={{ margin: "0px 10px" }} />
       <DaysInputWrap>
-        <NumberField
-          label="Days"
-          min={1}
-          max={maxStayDays}
-          value={point.stayDays}
-          onValueChange={(value) => onUpdateStayDays(point.id, value ?? 2)}
-        />
+        {!isFirst ? (
+          <NumberField
+            label="Days"
+            min={1}
+            max={maxStayDays}
+            value={point.stayDays}
+            onValueChange={(value) => onUpdateStayDays(point.id, value ?? 2)}
+          />
+        ) : (
+          <Box sx={{ minHeight: 56 }} />
+        )}
       </DaysInputWrap>
       {canRemove && <Divider orientation="vertical" sx={{ margin: "0px 10px" }} />}
       {canRemove ? (

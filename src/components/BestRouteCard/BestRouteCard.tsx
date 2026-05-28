@@ -38,7 +38,13 @@ export function BestRouteCard({
 
         <Grid size={{ xs: 12, md: 7 }}>
           <RightColumn>
-            <RouteTitle variant="h3">{[departure?.city, arrival?.city].join(" -> ")}</RouteTitle>
+            <RouteTitleRow>
+              <RouteTitle variant="h3">{departure?.city}</RouteTitle>
+              <RouteTitleArrow>
+                <EastIcon fontSize="inherit" />
+              </RouteTitleArrow>
+              <RouteTitle variant="h3">{arrival?.city}</RouteTitle>
+            </RouteTitleRow>
             <BadgeChip label={route.badge} />
 
             <RouteDescription variant="body1">
@@ -112,6 +118,21 @@ const RouteTitle = styled(Typography)(({ theme }) => ({
   "@media (min-width:900px)": {
     fontSize: "2.2rem",
   },
+}));
+
+const RouteTitleRow = styled(Box)({
+  display: "flex",
+  alignItems: "center",
+  gap: 12,
+  marginBottom: 12,
+});
+
+const RouteTitleArrow = styled("span")(({ theme }) => ({
+  display: "inline-flex",
+  alignItems: "center",
+  justifyContent: "center",
+  color: theme.palette.text.secondary,
+  fontSize: "1.7rem",
 }));
 
 const BadgeChip = styled(Chip)(({ theme }) => ({

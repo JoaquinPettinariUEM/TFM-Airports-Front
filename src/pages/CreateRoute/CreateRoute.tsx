@@ -1,13 +1,16 @@
 import { type ComponentProps } from "react";
-import { Alert, Button, Card, Container, Divider, styled, Typography } from "@mui/material";
+import { Alert, Box, Button, Card, Container, Divider, styled, Typography } from "@mui/material";
 import { DragDropProvider } from "@dnd-kit/react";
 import AddIcon from "@mui/icons-material/Add";
+import EastIcon from "@mui/icons-material/East";
+import MonetizationOnOutlinedIcon from "@mui/icons-material/MonetizationOnOutlined";
 import BackgroundImage from "../../assets/bs_wallpaper.jpg";
 import NumberField from "../../components/NumberField/NumberField";
 import { DateRangeField } from "../../components/DateRangeField/DateRangeField";
 import { useCreateRouteForm } from "../../hooks/useCreateRouteForm";
-import { appPalette } from "../../theme";
+import { appPalette, routeCardThemes } from "../../theme";
 import { SortableRoutePoint } from "./SortableRoutePoint";
+import { InfoChip } from "../../components/InfoChip/InfoChip";
 
 function CreateRoute() {
   const {
@@ -27,7 +30,7 @@ function CreateRoute() {
     submit,
   } = useCreateRouteForm();
 
-  const routePreview = form.routePoints.map((point) => point.city?.id ?? "?").join(" -> ");
+  const routePreview = form.routePoints.map((point) => point.city?.id ?? "?");
 
   return (
     <BackgroundComponent>
@@ -53,21 +56,42 @@ function CreateRoute() {
                 updateField("endDate", endDate);
               }}
             />
-            <NumberField
-              label="Budget"
-              value={form.budget}
-              defaultValue={300}
-              min={0}
-              max={10000}
-              onValueChange={(value) => updateField("budget", value ?? 1000)}
-            />
+            <Divider orientation="vertical" />
+            <BudgetFieldWrap>
+              <FilterLabel>
+                <MonetizationOnOutlinedIcon color="primary" />
+                <Typography variant="h6">Budget</Typography>
+              </FilterLabel>
+              <NumberField
+                label={undefined}
+                value={form.budget}
+                defaultValue={300}
+                min={0}
+                max={10000}
+                onValueChange={(value) => updateField("budget", value ?? 1000)}
+              />
+            </BudgetFieldWrap>
           </TopFilters>
 
           <Divider />
 
-          <Typography variant="h6" color="text.secondary">
-            Path preview: {routePreview}
-          </Typography>
+          <RoutePreviewWrap>
+            <Typography variant="body1" color="text.secondary">
+              Path preview:
+            </Typography>
+            <RoutePreviewPath>
+              {routePreview.map((segment, index) => (
+                <RoutePreviewSegment key={`${segment}-${index}`}>
+                  <InfoChip
+                    textColor={segment === "?" ? "white" : routeCardThemes[3].mainColor}
+                    bgColor={routeCardThemes[3].bgColor}
+                    label={segment}
+                  />
+                  {index < routePreview.length - 1 && <EastIcon fontSize="inherit" />}
+                </RoutePreviewSegment>
+              ))}
+            </RoutePreviewPath>
+          </RoutePreviewWrap>
 
           <DragDropProvider
             onDragEnd={(event: DndDragEndEvent) => {
@@ -84,6 +108,7 @@ function CreateRoute() {
                   key={point.id}
                   point={point}
                   index={index}
+                  amountOfRoutes={form.routePoints.length}
                   canRemove={form.routePoints.length > 2}
                   maxStayDays={Math.max(1, point.stayDays + remainingStayDays)}
                   onUpdateCity={updateRoutePointCity}
@@ -158,9 +183,45 @@ const FormCard = styled(Card)(({ theme }) => ({
 
 const TopFilters = styled("div")({
   display: "grid",
-  gridTemplateColumns: "1fr 1fr",
-  gap: 12,
+  gridTemplateColumns: "1fr auto 240px",
+  gap: 32,
 });
+
+const BudgetFieldWrap = styled("div")({
+  display: "flex",
+  flexDirection: "column",
+  gap: 6,
+});
+
+const FilterLabel = styled(Box)({
+  display: "inline-flex",
+  alignItems: "center",
+  gap: 8,
+  marginBottom: 4,
+});
+
+const RoutePreviewWrap = styled("div")({
+  display: "flex",
+  gap: 16,
+  alignItems: "center",
+});
+
+const RoutePreviewPath = styled("div")(({ theme }) => ({
+  marginTop: 4,
+  display: "flex",
+  alignItems: "center",
+  gap: 8,
+  color: theme.palette.text.primary,
+  flexWrap: "wrap",
+}));
+
+const RoutePreviewSegment = styled("div")(({ theme }) => ({
+  display: "inline-flex",
+  alignItems: "center",
+  gap: 8,
+  color: theme.palette.text.secondary,
+  fontSize: 18,
+}));
 
 const StopsList = styled("ul")({
   display: "flex",

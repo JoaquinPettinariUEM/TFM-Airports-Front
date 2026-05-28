@@ -54,7 +54,7 @@ export function AsyncAutocomplete<T>({
       renderInput={(params) => (
         <TextField
           {...params}
-          label={label}
+          placeholder={label}
           slotProps={{
             ...params.slotProps,
             input: {

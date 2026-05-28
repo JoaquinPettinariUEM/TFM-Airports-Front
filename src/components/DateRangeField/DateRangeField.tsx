@@ -1,124 +1,97 @@
-import { useMemo, useState } from "react";
-
-import { Box, InputAdornment, Popover, TextField, styled, useTheme } from "@mui/material";
-
-import { DateRange } from "react-date-range";
-
+import { Box, Typography, styled } from "@mui/material";
+import EastIcon from "@mui/icons-material/East";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import dayjs, { type Dayjs } from "dayjs";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
-
-import { format } from "date-fns";
 
 type Props = {
   startDate?: Date;
   endDate?: Date;
   onChange: (range: { startDate: Date; endDate: Date }) => void;
 };
-const formatDate = (date: Date) => format(date, "MMM dd");
+
+const backgroundPaper = {
+  background: "#182232",
+  borderRadius: "8px",
+};
 
 export function DateRangeField({ startDate, endDate, onChange }: Readonly<Props>) {
-  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
-  const theme = useTheme();
+  const handleStartDateChange = (value: Dayjs | null) => {
+    const nextStart = (value ?? dayjs()).startOf("day").toDate();
+    const currentEnd = endDate ? dayjs(endDate).startOf("day") : null;
+    const nextEnd =
+      !currentEnd || currentEnd.isBefore(dayjs(nextStart)) ? nextStart : currentEnd.toDate();
+    onChange({
+      startDate: nextStart,
+      endDate: nextEnd,
+    });
+  };
 
-  const label = useMemo(() => {
-    if (!startDate) return "Select your dates";
-
-    if (!endDate) return `${formatDate(startDate)} - End Date`;
-
-    return `${format(startDate, "MMM dd")} - ${format(endDate, "MMM dd")}`;
-  }, [startDate, endDate]);
-
-  const open = Boolean(anchorEl);
+  const handleEndDateChange = (value: Dayjs | null) => {
+    const baseStart = startDate ? dayjs(startDate).startOf("day") : dayjs().startOf("day");
+    const selectedEnd = (value ?? baseStart).startOf("day");
+    const nextEnd = selectedEnd.isBefore(baseStart) ? baseStart.toDate() : selectedEnd.toDate();
+    onChange({
+      startDate: baseStart.toDate(),
+      endDate: nextEnd,
+    });
+  };
 
   return (
-    <>
-      <TextField
-        fullWidth
-        value={label}
-        onClick={(e) => setAnchorEl(e.currentTarget)}
-        slotProps={{
-          input: {
-            readOnly: true,
-            startAdornment: (
-              <InputAdornment position="start">
-                <CalendarMonthIcon />
-              </InputAdornment>
-            ),
-          },
-        }}
-        label="Travel dates"
-      />
-
-      <Popover
-        open={open}
-        anchorEl={anchorEl}
-        onClose={() => setAnchorEl(null)}
-        anchorOrigin={{
-          vertical: "bottom",
-          horizontal: "left",
-        }}
-        slotProps={{
-          paper: {
-            sx: {
-              background: "#182232",
-              borderRadius: "8px",
-            },
-          },
-        }}
-      >
-        <CalendarWrapper>
-          <DateRange
-            editableDateInputs={false}
-            showDateDisplay={false}
-            showMonthAndYearPickers={false}
-            minDate={new Date()}
-            onChange={(item) =>
-              onChange({
-                startDate: item.selection.startDate ?? new Date(),
-                endDate: item.selection.endDate ?? new Date(),
-              })
-            }
-            rangeColors={[theme.palette.primary.main]}
-            ranges={[
-              {
-                startDate,
-                endDate,
-                key: "selection",
-              },
-            ]}
-          />
-        </CalendarWrapper>
-      </Popover>
-    </>
+    <DateRangeWrapper>
+      <TitleContainer>
+        <CalendarMonthIcon color="primary" />
+        <Typography variant="h6" color="text.secondary">
+          Travel dates
+        </Typography>
+      </TitleContainer>
+      <InputsRow>
+        <DatePicker
+          label={undefined}
+          value={startDate ? dayjs(startDate) : null}
+          onChange={handleStartDateChange}
+          minDate={dayjs().startOf("day")}
+          slotProps={{ textField: { fullWidth: true }, popper: { sx: backgroundPaper } }}
+        />
+        <ArrowWrap>
+          <EastIcon fontSize="inherit" />
+        </ArrowWrap>
+        <DatePicker
+          label={undefined}
+          value={endDate ? dayjs(endDate) : null}
+          onChange={handleEndDateChange}
+          minDate={startDate ? dayjs(startDate).startOf("day") : dayjs().startOf("day")}
+          slotProps={{ textField: { fullWidth: true }, popper: { sx: backgroundPaper } }}
+        />
+      </InputsRow>
+    </DateRangeWrapper>
   );
 }
 
-const CalendarWrapper = styled(Box)(({ theme }) => ({
-  ".rdrCalendarWrapper": {
-    background: theme.palette.background.paper,
-    color: theme.palette.text.primary,
-  },
+const TitleContainer = styled(Box)({
+  display: "flex",
+  alignItems: "center",
+  gap: 8,
+  marginBottom: 4,
+});
 
-  ".rdrMonth": {
-    background: theme.palette.background.paper,
-  },
+const DateRangeWrapper = styled(Box)({
+  display: "flex",
+  flexDirection: "column",
+  gap: 6,
+});
 
-  ".rdrDayNumber span": {
-    color: theme.palette.text.primary,
-  },
+const InputsRow = styled(Box)({
+  display: "grid",
+  gridTemplateColumns: "1fr auto 1fr",
+  alignItems: "center",
+  gap: 10,
+});
 
-  ".rdrMonthAndYearWrapper": {
-    background: theme.palette.background.paper,
-  },
-
-  ".rdrWeekDay": {
-    color: theme.palette.text.secondary,
-  },
-
-  ".rdrDayPassive span": {
-    color: theme.palette.text.disabled,
-  },
-
-  ".rdrDefinedRangesWrapper": {
-    display: "none",
-  },
+const ArrowWrap = styled(Box)(({ theme }) => ({
+  display: "inline-flex",
+  alignItems: "center",
+  justifyContent: "center",
+  color: theme.palette.text.secondary,
+  fontSize: 20,
 }));

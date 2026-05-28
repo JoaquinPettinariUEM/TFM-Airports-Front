@@ -1,16 +1,20 @@
 import { useRef, useState } from "react";
-import { IconButton, styled } from "@mui/material";
+import { Divider, IconButton, styled } from "@mui/material";
 import { useSortable } from "@dnd-kit/react/sortable";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { AirportFinder } from "../../components/AirportFinder/AirportFinder";
 import NumberField from "../../components/NumberField/NumberField";
 import type { RoutePointInput } from "../../types/routes";
+import FlightTakeoffOutlinedIcon from "@mui/icons-material/FlightTakeoffOutlined";
+import FlightLandOutlinedIcon from "@mui/icons-material/FlightLandOutlined";
+import RoomOutlinedIcon from "@mui/icons-material/RoomOutlined";
 
 type Props = {
   point: RoutePointInput;
   index: number;
   canRemove: boolean;
   maxStayDays: number;
+  amountOfRoutes: number;
   onUpdateCity: (id: string, city: RoutePointInput["city"]) => void;
   onUpdateStayDays: (id: string, days: number) => void;
   onRemove: (id: string) => void;
@@ -21,6 +25,7 @@ export function SortableRoutePoint({
   index,
   canRemove,
   maxStayDays,
+  amountOfRoutes,
   onUpdateCity,
   onUpdateStayDays,
   onRemove,
@@ -34,16 +39,24 @@ export function SortableRoutePoint({
     handle: handleRef,
   });
 
+  const getIcon = () => {
+    if (index === 0) return <FlightTakeoffOutlinedIcon />;
+    if (index === amountOfRoutes - 1) return <FlightLandOutlinedIcon />;
+    else return <RoomOutlinedIcon />;
+  };
+
   return (
     <StopRow ref={setElement} data-shadow={isDragging || undefined}>
       <HandleButton ref={handleRef} className="handle" aria-label="Drag handle" />
+      {getIcon()}
       <CityInputWrap>
         <AirportFinder
           value={point.city}
           onChange={(value) => onUpdateCity(point.id, value)}
-          label="City"
+          label="Select a city (optional)"
         />
       </CityInputWrap>
+      <Divider orientation="vertical" sx={{ margin: "0px 10px" }} />
       <DaysInputWrap>
         <NumberField
           label="Days"
@@ -82,8 +95,8 @@ const StopRow = styled("li")(({ theme }) => ({
 
 const HandleButton = styled("button")(({ theme }) => ({
   display: "flex",
-  width: 30,
-  height: 30,
+  width: 50,
+  height: 50,
   alignItems: "center",
   justifyContent: "center",
   borderRadius: 6,
@@ -94,8 +107,8 @@ const HandleButton = styled("button")(({ theme }) => ({
   "&.handle::before": {
     content: '""',
     display: "block",
-    width: 14,
-    height: 14,
+    width: 25,
+    height: 25,
     backgroundImage:
       "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M7 2a2 2 0 1 0 .001 4.001A2 2 0 0 0 7 2zm0 6a2 2 0 1 0 .001 4.001A2 2 0 0 0 7 8zm0 6a2 2 0 1 0 .001 4.001A2 2 0 0 0 7 14zm6-8a2 2 0 1 0-.001-4.001A2 2 0 0 0 13 6zm0 2a2 2 0 1 0 .001 4.001A2 2 0 0 0 13 8zm0 6a2 2 0 1 0 .001 4.001A2 2 0 0 0 13 14z' fill='%23919eab'/%3E%3C/svg%3E\")",
     backgroundSize: "contain",

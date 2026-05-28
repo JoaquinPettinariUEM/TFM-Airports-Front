@@ -10,6 +10,7 @@ type Props = {
   point: RoutePointInput;
   index: number;
   canRemove: boolean;
+  maxStayDays: number;
   onUpdateCity: (id: string, city: RoutePointInput["city"]) => void;
   onUpdateStayDays: (id: string, days: number) => void;
   onRemove: (id: string) => void;
@@ -19,6 +20,7 @@ export function SortableRoutePoint({
   point,
   index,
   canRemove,
+  maxStayDays,
   onUpdateCity,
   onUpdateStayDays,
   onRemove,
@@ -46,7 +48,7 @@ export function SortableRoutePoint({
         <NumberField
           label="Days"
           min={1}
-          max={14}
+          max={maxStayDays}
           value={point.stayDays}
           onValueChange={(value) => onUpdateStayDays(point.id, value ?? 2)}
         />
@@ -69,7 +71,6 @@ const StopRow = styled("li")(({ theme }) => ({
   border: `1px solid ${theme.palette.divider}`,
   borderRadius: 8,
   padding: "8px 10px",
-  backgroundColor: theme.palette.background.paper,
   transition: "transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease",
   "&[data-shadow='true']": {
     transform: "scale(1.02)",

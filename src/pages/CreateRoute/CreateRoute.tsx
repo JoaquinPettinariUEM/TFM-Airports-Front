@@ -1,5 +1,5 @@
 import { type ComponentProps } from "react";
-import { Button, Card, Container, Divider, styled, Typography } from "@mui/material";
+import { Alert, Button, Card, Container, Divider, styled, Typography } from "@mui/material";
 import { DragDropProvider } from "@dnd-kit/react";
 import AddIcon from "@mui/icons-material/Add";
 import BackgroundImage from "../../assets/bs_wallpaper.jpg";
@@ -12,14 +12,22 @@ import { SortableRoutePoint } from "./SortableRoutePoint";
 function CreateRoute() {
   const {
     form,
+    maxRoutePoints,
     updateField,
     addRoutePoint,
     removeRoutePoint,
     updateRoutePointCity,
     updateRoutePointStayDays,
     reorderRoutePointsById,
+    tripDays,
+    totalStayDays,
+    remainingStayDays,
+    isStayDaysWithinTrip,
+    isFormValid,
     submit,
   } = useCreateRouteForm();
+
+  const routePreview = form.routePoints.map((point) => point.city?.id ?? "?").join(" -> ");
 
   return (
     <BackgroundComponent>
@@ -57,6 +65,10 @@ function CreateRoute() {
 
           <Divider />
 
+          <Typography variant="h6" color="text.secondary">
+            Path preview: {routePreview}
+          </Typography>
+
           <DragDropProvider
             onDragEnd={(event: DndDragEndEvent) => {
               const sourceId = event.operation.source?.id;
@@ -73,6 +85,7 @@ function CreateRoute() {
                   point={point}
                   index={index}
                   canRemove={form.routePoints.length > 2}
+                  maxStayDays={Math.max(1, point.stayDays + remainingStayDays)}
                   onUpdateCity={updateRoutePointCity}
                   onUpdateStayDays={updateRoutePointStayDays}
                   onRemove={removeRoutePoint}
@@ -81,11 +94,23 @@ function CreateRoute() {
             </StopsList>
           </DragDropProvider>
 
-          <Button onClick={addRoutePoint} variant="outlined" startIcon={<AddIcon />}>
+          {!isStayDaysWithinTrip && (
+            <Alert severity="error" variant="outlined">
+              Total trip days: {tripDays} | Assigned stay days: {totalStayDays} (assigned days
+              cannot exceed total trip days).
+            </Alert>
+          )}
+
+          <Button
+            onClick={addRoutePoint}
+            variant="outlined"
+            startIcon={<AddIcon />}
+            disabled={form.routePoints.length >= maxRoutePoints}
+          >
             Add city
           </Button>
           <Divider />
-          <Button onClick={submit} variant="contained">
+          <Button onClick={submit} variant="contained" disabled={!isFormValid}>
             Search
           </Button>
         </FormCard>

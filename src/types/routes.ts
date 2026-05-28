@@ -69,6 +69,9 @@ export type GetRoutesParams = {
   to: string;
   tripDays: string;
   startDate: string;
+  endDate?: string;
+  via?: string;
+  stayDays?: string;
   budget?: number;
   maxStops?: number;
 };

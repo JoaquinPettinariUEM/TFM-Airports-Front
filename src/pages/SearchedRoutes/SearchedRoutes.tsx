@@ -35,6 +35,9 @@ function SearchedRoutes() {
     to: searchParams.get("to") ?? "",
     tripDays: searchParams.get("tripDays") ?? "",
     startDate: searchParams.get("startDate") ?? "",
+    endDate: searchParams.get("endDate") ?? "",
+    via: searchParams.get("via") ?? "",
+    stayDays: searchParams.get("stayDays") ?? "",
     budget: Number(searchParams.get("budget") ?? 500),
     maxStops: Number(searchParams.get("maxStops") ?? 2),
   };

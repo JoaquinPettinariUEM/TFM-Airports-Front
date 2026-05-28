@@ -1,5 +1,5 @@
-import { useRef, useState } from "react";
-import { Divider, IconButton, styled } from "@mui/material";
+import { useMemo, useRef, useState } from "react";
+import { Box, Divider, IconButton, styled } from "@mui/material";
 import { useSortable } from "@dnd-kit/react/sortable";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { AirportFinder } from "../../components/AirportFinder/AirportFinder";
@@ -8,6 +8,7 @@ import type { RoutePointInput } from "../../types/routes";
 import FlightTakeoffOutlinedIcon from "@mui/icons-material/FlightTakeoffOutlined";
 import FlightLandOutlinedIcon from "@mui/icons-material/FlightLandOutlined";
 import RoomOutlinedIcon from "@mui/icons-material/RoomOutlined";
+import { blueCardTheme } from "../../theme";
 
 type Props = {
   point: RoutePointInput;
@@ -39,21 +40,24 @@ export function SortableRoutePoint({
     handle: handleRef,
   });
 
+  const isFirst = useMemo(() => index === 0, [index]);
+  const isLast = useMemo(() => index === amountOfRoutes - 1, [index, amountOfRoutes]);
+
   const getIcon = () => {
-    if (index === 0) return <FlightTakeoffOutlinedIcon />;
-    if (index === amountOfRoutes - 1) return <FlightLandOutlinedIcon />;
+    if (isFirst) return <FlightTakeoffOutlinedIcon />;
+    if (isLast) return <FlightLandOutlinedIcon />;
     else return <RoomOutlinedIcon />;
   };
 
   return (
     <StopRow ref={setElement} data-shadow={isDragging || undefined}>
       <HandleButton ref={handleRef} className="handle" aria-label="Drag handle" />
-      {getIcon()}
+      <IconFlightContainer>{getIcon()}</IconFlightContainer>
       <CityInputWrap>
         <AirportFinder
           value={point.city}
           onChange={(value) => onUpdateCity(point.id, value)}
-          label="Select a city (optional)"
+          label={`Select a city ${!isFirst && !isLast ? "(optional)" : ""}`}
         />
       </CityInputWrap>
       <Divider orientation="vertical" sx={{ margin: "0px 10px" }} />
@@ -66,8 +70,22 @@ export function SortableRoutePoint({
           onValueChange={(value) => onUpdateStayDays(point.id, value ?? 2)}
         />
       </DaysInputWrap>
+      {canRemove && <Divider orientation="vertical" sx={{ margin: "0px 10px" }} />}
       {canRemove ? (
-        <IconButton onClick={() => onRemove(point.id)} aria-label="Remove city" color="error">
+        <IconButton
+          onClick={() => onRemove(point.id)}
+          aria-label="Remove city"
+          color="error"
+          sx={(theme) => ({
+            border: `1px solid ${theme.palette.error.main}`,
+            borderRadius: 1,
+            width: 50,
+            height: "100%",
+            "&:hover": {
+              backgroundColor: "rgba(239,68,68,0.12)",
+            },
+          })}
+        >
           <DeleteIcon />
         </IconButton>
       ) : (
@@ -83,7 +101,7 @@ const StopRow = styled("li")(({ theme }) => ({
   alignItems: "center",
   border: `1px solid ${theme.palette.divider}`,
   borderRadius: 8,
-  padding: "8px 10px",
+  padding: "12px 10px",
   transition: "transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease",
   "&[data-shadow='true']": {
     transform: "scale(1.02)",
@@ -128,4 +146,9 @@ const CityInputWrap = styled("div")({
 
 const DaysInputWrap = styled("div")({
   width: "100%",
+});
+
+const IconFlightContainer = styled(Box)({
+  marginRight: 8,
+  color: blueCardTheme.mainColor,
 });

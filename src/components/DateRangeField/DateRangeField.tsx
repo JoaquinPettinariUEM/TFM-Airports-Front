@@ -7,6 +7,7 @@ import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 type Props = {
   startDate?: Date;
   endDate?: Date;
+  tripDays: number;
   onChange: (range: { startDate: Date; endDate: Date }) => void;
 };
 
@@ -15,7 +16,7 @@ const backgroundPaper = {
   borderRadius: "8px",
 };
 
-export function DateRangeField({ startDate, endDate, onChange }: Readonly<Props>) {
+export function DateRangeField({ startDate, endDate, onChange, tripDays }: Readonly<Props>) {
   const handleStartDateChange = (value: Dayjs | null) => {
     const nextStart = (value ?? dayjs()).startOf("day").toDate();
     const currentEnd = endDate ? dayjs(endDate).startOf("day") : null;
@@ -40,9 +41,14 @@ export function DateRangeField({ startDate, endDate, onChange }: Readonly<Props>
   return (
     <DateRangeWrapper>
       <TitleContainer>
-        <CalendarMonthIcon color="primary" />
-        <Typography variant="h6" color="text.secondary">
-          Travel dates
+        <TitleContainer>
+          <CalendarMonthIcon color="primary" />
+          <Typography variant="h6" color="text.secondary">
+            Travel dates
+          </Typography>
+        </TitleContainer>
+        <Typography variant="body1" color="textSecondary">
+          {tripDays} trip days
         </Typography>
       </TitleContainer>
       <InputsRow>
@@ -71,6 +77,7 @@ export function DateRangeField({ startDate, endDate, onChange }: Readonly<Props>
 const TitleContainer = styled(Box)({
   display: "flex",
   alignItems: "center",
+  justifyContent: "space-between",
   gap: 8,
   marginBottom: 4,
 });

@@ -117,14 +117,11 @@ export function useCreateRouteForm() {
     }));
   };
 
-  const reorderRoutePointsById = (sourceId: string, targetId: string) => {
-    if (!sourceId || !targetId || sourceId === targetId) return;
+  const reorderRoutePointsByIndex = (fromIndex: number, toIndex: number) => {
+    if (fromIndex === toIndex || fromIndex < 0 || toIndex < 0) return;
     setForm((prev) => {
+      if (fromIndex >= prev.routePoints.length || toIndex >= prev.routePoints.length) return prev;
       const next = [...prev.routePoints];
-      const fromIndex = next.findIndex((item) => item.id === sourceId);
-      const toIndex = next.findIndex((item) => item.id === targetId);
-      if (fromIndex < 0 || toIndex < 0) return prev;
-
       const [moved] = next.splice(fromIndex, 1);
       if (!moved) return prev;
       next.splice(toIndex, 0, moved);
@@ -135,6 +132,13 @@ export function useCreateRouteForm() {
     });
   };
 
+  const reorderRoutePointsByIds = (sourceId?: string, targetId?: string) => {
+    if (!sourceId || !targetId || sourceId === targetId) return;
+    const fromIndex = form.routePoints.findIndex((item) => item.id === sourceId);
+    const toIndex = form.routePoints.findIndex((item) => item.id === targetId);
+    reorderRoutePointsByIndex(fromIndex, toIndex);
+  };
+
   return {
     form,
     maxRoutePoints: MAX_ROUTE_POINTS,
@@ -143,7 +147,8 @@ export function useCreateRouteForm() {
     removeRoutePoint,
     updateRoutePointCity,
     updateRoutePointStayDays,
-    reorderRoutePointsById,
+    reorderRoutePointsByIndex,
+    reorderRoutePointsByIds,
     tripDays,
     totalStayDays,
     remainingStayDays,

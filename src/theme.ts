@@ -16,12 +16,13 @@ export const appPalette = {
   shadowStrong: "0 8px 32px rgba(0,0,0,0.35)",
   shadowHover: "0 20px 40px rgba(0,0,0,0.35)",
 };
+export const blueCardTheme = { mainColor: "#60A5FA", bgColor: "rgba(59,130,246,0.18)" };
 
 export const routeCardThemes = [
   { mainColor: "#34D399", bgColor: "rgba(16,185,129,0.18)" },
   { mainColor: "#A78BFA", bgColor: "rgba(139,92,246,0.18)" },
   { mainColor: "#FBBF24", bgColor: "rgba(245,158,11,0.18)" },
-  { mainColor: "#60A5FA", bgColor: "rgba(59,130,246,0.18)" },
+  { ...blueCardTheme },
 ] as const;
 
 export const theme = createTheme({

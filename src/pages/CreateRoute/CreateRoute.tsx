@@ -8,9 +8,11 @@ import BackgroundImage from "../../assets/bs_wallpaper.jpg";
 import NumberField from "../../components/NumberField/NumberField";
 import { DateRangeField } from "../../components/DateRangeField/DateRangeField";
 import { useCreateRouteForm } from "../../hooks/useCreateRouteForm";
-import { appPalette, routeCardThemes } from "../../theme";
+import { appPalette, blueCardTheme } from "../../theme";
 import { SortableRoutePoint } from "./SortableRoutePoint";
 import { InfoChip } from "../../components/InfoChip/InfoChip";
+import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
+import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 
 function CreateRoute() {
   const {
@@ -21,7 +23,8 @@ function CreateRoute() {
     removeRoutePoint,
     updateRoutePointCity,
     updateRoutePointStayDays,
-    reorderRoutePointsById,
+    reorderRoutePointsByIndex,
+    reorderRoutePointsByIds,
     tripDays,
     totalStayDays,
     remainingStayDays,
@@ -30,8 +33,10 @@ function CreateRoute() {
     submit,
   } = useCreateRouteForm();
 
-  const routePreview = form.routePoints.map((point) => point.city?.id ?? "?");
-
+  const routePreview = form.routePoints.map((point) => ({
+    id: point.id,
+    label: point.city?.id ?? "?",
+  }));
   return (
     <BackgroundComponent>
       <Container
@@ -44,7 +49,12 @@ function CreateRoute() {
           justifyContent: "center",
         }}
       >
-        <Typography variant="h2">Create your own route</Typography>
+        <TitleContainer>
+          <Typography variant="h2">Create your own route</Typography>
+          <Typography variant="h5" color="textSecondary">
+            Plan your multi-city adventure in just a few steps
+          </Typography>
+        </TitleContainer>
 
         <FormCard>
           <TopFilters>
@@ -55,6 +65,7 @@ function CreateRoute() {
                 updateField("startDate", startDate);
                 updateField("endDate", endDate);
               }}
+              tripDays={tripDays}
             />
             <Divider orientation="vertical" />
             <BudgetFieldWrap>
@@ -76,30 +87,49 @@ function CreateRoute() {
           <Divider />
 
           <RoutePreviewWrap>
-            <Typography variant="body1" color="text.secondary">
-              Path preview:
-            </Typography>
-            <RoutePreviewPath>
-              {routePreview.map((segment, index) => (
-                <RoutePreviewSegment key={`${segment}-${index}`}>
-                  <InfoChip
-                    textColor={segment === "?" ? "white" : routeCardThemes[3].mainColor}
-                    bgColor={routeCardThemes[3].bgColor}
-                    label={segment}
-                  />
-                  {index < routePreview.length - 1 && <EastIcon fontSize="inherit" />}
-                </RoutePreviewSegment>
-              ))}
-            </RoutePreviewPath>
+            <RoutePreviewWrap>
+              <Typography variant="body1" color="textSecondary">
+                Path preview:
+              </Typography>
+              <RoutePreviewPath>
+                {routePreview.map((segment, index) => (
+                  <RoutePreviewSegment key={segment.id}>
+                    <InfoChip
+                      textColor={segment.label === "?" ? "white" : blueCardTheme.mainColor}
+                      bgColor={blueCardTheme.bgColor}
+                      label={segment.label}
+                    />
+                    {index < routePreview.length - 1 && <EastIcon fontSize="inherit" />}
+                  </RoutePreviewSegment>
+                ))}
+              </RoutePreviewPath>
+            </RoutePreviewWrap>
+            <RoutePreviewWrap>
+              <InfoOutlinedIcon />
+              <Typography variant="body2" color="textSecondary">
+                Up to 5 cities total
+              </Typography>
+            </RoutePreviewWrap>
           </RoutePreviewWrap>
 
           <DragDropProvider
-            onDragEnd={(event: DndDragEndEvent) => {
+            onDragOver={(event: DndDragOverEvent) => {
+              const sourceIndex = (
+                event.operation.source as { sortable?: { index?: number } } | undefined
+              )?.sortable?.index;
+              const targetIndex = (
+                event.operation.target as { sortable?: { index?: number } } | undefined
+              )?.sortable?.index;
+              if (typeof sourceIndex === "number" && typeof targetIndex === "number") {
+                reorderRoutePointsByIndex(sourceIndex, targetIndex);
+                return;
+              }
               const sourceId = event.operation.source?.id;
               const targetId = event.operation.target?.id;
-              if (typeof sourceId === "string" && typeof targetId === "string") {
-                reorderRoutePointsById(sourceId, targetId);
-              }
+              reorderRoutePointsByIds(
+                typeof sourceId === "string" ? sourceId : undefined,
+                typeof targetId === "string" ? targetId : undefined,
+              );
             }}
           >
             <StopsList>
@@ -125,19 +155,24 @@ function CreateRoute() {
               cannot exceed total trip days).
             </Alert>
           )}
-
-          <Button
-            onClick={addRoutePoint}
-            variant="outlined"
-            startIcon={<AddIcon />}
-            disabled={form.routePoints.length >= maxRoutePoints}
-          >
-            Add city
-          </Button>
-          <Divider />
-          <Button onClick={submit} variant="contained" disabled={!isFormValid}>
-            Search
-          </Button>
+          <ActionContainer>
+            <Button
+              onClick={addRoutePoint}
+              variant="outlined"
+              startIcon={<AddIcon />}
+              disabled={form.routePoints.length >= maxRoutePoints}
+            >
+              Add city
+            </Button>
+            <Button
+              startIcon={<SearchOutlinedIcon />}
+              onClick={submit}
+              variant="contained"
+              disabled={!isFormValid}
+            >
+              Search
+            </Button>
+          </ActionContainer>
         </FormCard>
       </Container>
     </BackgroundComponent>
@@ -204,6 +239,7 @@ const RoutePreviewWrap = styled("div")({
   display: "flex",
   gap: 16,
   alignItems: "center",
+  justifyContent: "space-between",
 });
 
 const RoutePreviewPath = styled("div")(({ theme }) => ({
@@ -232,8 +268,21 @@ const StopsList = styled("ul")({
   padding: 0,
 });
 
-type DndDragEndEvent = Parameters<
-  NonNullable<ComponentProps<typeof DragDropProvider>["onDragEnd"]>
+const TitleContainer = styled(Box)({
+  display: "flex",
+  flexDirection: "column",
+  textAlign: "center",
+  marginBottom: 8,
+});
+
+const ActionContainer = styled(Box)({
+  display: "flex",
+  justifyContent: "end",
+  gap: 16,
+});
+
+type DndDragOverEvent = Parameters<
+  NonNullable<ComponentProps<typeof DragDropProvider>["onDragOver"]>
 >[0];
 
 export default CreateRoute;

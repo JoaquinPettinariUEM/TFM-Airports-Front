@@ -23,7 +23,6 @@ function CreateRoute() {
     removeRoutePoint,
     updateRoutePointCity,
     updateRoutePointStayDays,
-    reorderRoutePointsByIndex,
     reorderRoutePointsByIds,
     tripDays,
     totalStayDays,
@@ -114,16 +113,6 @@ function CreateRoute() {
 
           <DragDropProvider
             onDragOver={(event: DndDragOverEvent) => {
-              const sourceIndex = (
-                event.operation.source as { sortable?: { index?: number } } | undefined
-              )?.sortable?.index;
-              const targetIndex = (
-                event.operation.target as { sortable?: { index?: number } } | undefined
-              )?.sortable?.index;
-              if (typeof sourceIndex === "number" && typeof targetIndex === "number") {
-                reorderRoutePointsByIndex(sourceIndex, targetIndex);
-                return;
-              }
               const sourceId = event.operation.source?.id;
               const targetId = event.operation.target?.id;
               reorderRoutePointsByIds(
@@ -205,15 +194,15 @@ const BackgroundComponent = styled("section")(({ theme }) => ({
 }));
 
 const FormCard = styled(Card)(({ theme }) => ({
-  padding: 16,
+  padding: 24,
   display: "flex",
   flexDirection: "column",
   gap: 16,
   backdropFilter: "blur(18px)",
   background: theme.palette.background.paper,
-  border: `1px solid ${theme.palette.divider}`,
+  border: `3px solid ${theme.palette.divider}`,
   boxShadow: appPalette.shadowStrong,
-  borderRadius: 4,
+  borderRadius: 16,
 }));
 
 const TopFilters = styled("div")({

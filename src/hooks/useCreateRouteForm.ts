@@ -134,9 +134,20 @@ export function useCreateRouteForm() {
 
   const reorderRoutePointsByIds = (sourceId?: string, targetId?: string) => {
     if (!sourceId || !targetId || sourceId === targetId) return;
-    const fromIndex = form.routePoints.findIndex((item) => item.id === sourceId);
-    const toIndex = form.routePoints.findIndex((item) => item.id === targetId);
-    reorderRoutePointsByIndex(fromIndex, toIndex);
+    setForm((prev) => {
+      const fromIndex = prev.routePoints.findIndex((item) => item.id === sourceId);
+      const toIndex = prev.routePoints.findIndex((item) => item.id === targetId);
+      if (fromIndex === toIndex || fromIndex < 0 || toIndex < 0) return prev;
+
+      const next = [...prev.routePoints];
+      const [moved] = next.splice(fromIndex, 1);
+      if (!moved) return prev;
+      next.splice(toIndex, 0, moved);
+      return {
+        ...prev,
+        routePoints: next,
+      };
+    });
   };
 
   return {

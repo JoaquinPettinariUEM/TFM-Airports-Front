@@ -26,13 +26,14 @@ function Header() {
 
 const HeaderComponent = styled(Box)(({ theme }) => ({
   width: "100%",
+  height: "var(--tp-header-height)",
   backgroundColor: theme.palette.background.paper,
   zIndex: 100,
   ".tp-header-container": {
     display: "flex",
+    height: "100%",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingBlock: 8,
   },
   ".tp-header-title": {
     color: theme.palette.text.primary,

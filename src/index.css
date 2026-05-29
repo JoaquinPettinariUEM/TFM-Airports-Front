@@ -6,6 +6,7 @@
   --tp-bg-end: #111827;
   --tp-text-primary: #f8fafc;
   --tp-shadow-hover: 0 20px 40px rgba(0, 0, 0, 0.35);
+  --tp-header-height: 56px;
 
   @media (max-width: 1024px) {
     font-size: 16px;
@@ -15,6 +16,12 @@
 body {
   margin: 0;
   padding: 0;
+  background: var(--tp-bg-start);
+  color: var(--tp-text-primary);
+}
+
+#root {
+  min-height: 100vh;
 }
 
 h1,

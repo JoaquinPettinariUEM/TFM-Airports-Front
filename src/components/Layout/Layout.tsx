@@ -6,17 +6,23 @@ const Layout = () => {
   return (
     <LayoutStyled>
       <Header />
-      <Outlet />
+      <MainContent>
+        <Outlet />
+      </MainContent>
     </LayoutStyled>
   );
 };
 
 const LayoutStyled = styled(Grid)({
-  height: "100vh",
-  minHeight: "100vh",
+  minHeight: "100dvh",
   display: "flex",
   flexDirection: "column",
   background: "linear-gradient(to bottom, var(--tp-bg-start), var(--tp-bg-end))",
+});
+
+const MainContent = styled("main")({
+  flex: 1,
+  minHeight: 0,
 });
 
 export default Layout;

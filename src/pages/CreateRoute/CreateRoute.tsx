@@ -169,7 +169,7 @@ function CreateRoute() {
 }
 
 const BackgroundComponent = styled("section")(({ theme }) => ({
-  height: "100%",
+  height: "calc(100dvh - var(--tp-header-height))",
   width: "100%",
   backgroundImage: `url(${BackgroundImage})`,
   backgroundRepeat: "no-repeat",

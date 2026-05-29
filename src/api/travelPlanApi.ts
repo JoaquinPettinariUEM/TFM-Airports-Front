@@ -2,12 +2,14 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { api } from "./axios";
 import { apiRoutes } from "./apiRoutes";
 import type {
+  CreateShareRouteResponse,
   EnrichedRouteDetail,
   GetRoutesParams,
   PopularRoutesResponse,
   RouteByQueryResponse,
   RouteMapped,
   RoutesResponse,
+  SharedRouteResponse,
 } from "../types/routes";
 import { useDebouncedValue } from "../hooks/useDebouncedValue";
 
@@ -34,6 +36,20 @@ const enrichRoute = async (body: RouteMapped | undefined): Promise<EnrichedRoute
 const getPopularRoutes = async (): Promise<PopularRoutesResponse> => {
   const { data } = await api.get(apiRoutes.popularRoutes);
 
+  return data;
+};
+
+const createShareRoute = async (body: {
+  route: EnrichedRouteDetail;
+  budget?: number;
+  requestedMaxStops?: number;
+}): Promise<CreateShareRouteResponse> => {
+  const { data } = await api.post(apiRoutes.routeShare, body);
+  return data;
+};
+
+const getSharedRoute = async (shareId: string): Promise<SharedRouteResponse> => {
+  const { data } = await api.get(`${apiRoutes.routeShare}/${shareId}`);
   return data;
 };
 
@@ -69,6 +85,22 @@ export const useGetPopularRoutes = () => {
     queryKey: ["popular-routes"],
     queryFn: getPopularRoutes,
     staleTime: 1000 * 60 * 10,
+    refetchOnReconnect: false,
+    refetchOnWindowFocus: false,
+  });
+};
+
+export const useCreateShareRoute = () => {
+  return useMutation({
+    mutationFn: createShareRoute,
+  });
+};
+
+export const useGetSharedRoute = (shareId?: string) => {
+  return useQuery({
+    queryKey: ["shared-route", shareId],
+    queryFn: () => getSharedRoute(shareId ?? ""),
+    enabled: Boolean(shareId),
     refetchOnReconnect: false,
     refetchOnWindowFocus: false,
   });

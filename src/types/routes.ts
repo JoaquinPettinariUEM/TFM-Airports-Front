@@ -32,6 +32,19 @@ export type PopularRoutesResponse = {
   popularRoutes: RouteListItemResponse[];
 };
 
+export type CreateShareRouteResponse = {
+  shareId: string;
+  expiresInSeconds: number;
+};
+
+export type SharedRouteResponse = {
+  route: EnrichedRouteDetail;
+  budget?: number;
+  requestedMaxStops?: number;
+  createdAt: string;
+  expiresInSeconds: number;
+};
+
 export type Airports = Record<string, AirportResponse>;
 
 export type RouteListItemResponse = {

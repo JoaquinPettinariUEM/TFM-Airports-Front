@@ -9,15 +9,17 @@ import {
   formatEuro,
 } from "../../utils/format";
 import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
+import ShareOutlinedIcon from "@mui/icons-material/ShareOutlined";
 import { useLocation, useNavigate } from "react-router-dom";
 
 interface Props {
   route: EnrichedRouteDetail;
   budget?: number;
   requestedMaxStops?: number;
+  onShare?: () => void;
 }
 
-export function RouteHeader({ route, budget, requestedMaxStops }: Readonly<Props>) {
+export function RouteHeader({ route, budget, requestedMaxStops, onShare }: Readonly<Props>) {
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -30,17 +32,24 @@ export function RouteHeader({ route, budget, requestedMaxStops }: Readonly<Props
     <Box>
       <Box sx={{ display: "flex", justifyContent: "space-between" }}>
         <HeaderTitle variant="h2">Full Route Details</HeaderTitle>
-        <Button
-          startIcon={<KeyboardBackspaceIcon />}
-          onClick={() =>
-            navigate({
-              pathname: "/searched/routes",
-              search: location.search,
-            })
-          }
-        >
-          Back to results
-        </Button>
+        <HeaderActions>
+          {onShare && (
+            <Button variant="contained" startIcon={<ShareOutlinedIcon />} onClick={onShare}>
+              Share
+            </Button>
+          )}
+          <Button
+            startIcon={<KeyboardBackspaceIcon />}
+            onClick={() =>
+              navigate({
+                pathname: "/searched/routes",
+                search: location.search,
+              })
+            }
+          >
+            Back to results
+          </Button>
+        </HeaderActions>
       </Box>
       <HeaderSubtitle>Every stop. Every detail. Your complete journey.</HeaderSubtitle>
 
@@ -100,6 +109,11 @@ const HeaderSubtitle = styled(Typography)(({ theme }) => ({
   color: theme.palette.text.secondary,
   fontSize: 18,
 }));
+
+const HeaderActions = styled(Box)({
+  display: "flex",
+  gap: 8,
+});
 
 const SummaryCard = styled(Paper)(({ theme }) => ({
   marginTop: 20,

@@ -4,6 +4,7 @@ import CreateRoute from "./pages/CreateRoute/CreateRoute";
 import Layout from "./components/Layout/Layout";
 import SearchedRoutes from "./pages/SearchedRoutes/SearchedRoutes";
 import RouteDetail from "./pages/RouteDetail/RouteDetail";
+import SharedRoute from "./pages/SharedRoute/SharedRoute";
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
         <Route path="/create/route" element={<CreateRoute />} />
         <Route path="/searched/routes" element={<SearchedRoutes />} />
         <Route path="/route/details" element={<RouteDetail />} />
+        <Route path="/shared/:shareId" element={<SharedRoute />} />
         <Route path="*" element={<h5>Not found</h5>} />
       </Route>
     </Routes>

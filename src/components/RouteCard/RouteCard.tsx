@@ -1,5 +1,4 @@
 import { Button, Chip, Divider, Stack, Typography, styled } from "@mui/material";
-
 import FlightIcon from "@mui/icons-material/Flight";
 import StraightenIcon from "@mui/icons-material/Straighten";
 import EastIcon from "@mui/icons-material/East";
@@ -25,6 +24,8 @@ type Props = {
   bgColor: string;
   airports: Record<string, AirportResponse>;
   viewDetailsRoute: (routes: RouteMapped) => void;
+  showPriceDelta?: boolean;
+  showViewDetailsButton?: boolean;
 };
 
 export function RouteCard({
@@ -35,16 +36,14 @@ export function RouteCard({
   bgColor,
   airports,
   viewDetailsRoute,
+  showPriceDelta = true,
+  showViewDetailsButton = true,
 }: Readonly<Props>) {
   const cities = getRouteCities(route, airports);
-
   const departure = cities[0];
   const arrival = cities[cities.length - 1];
-
   const stopCities = cities.slice(1, -1);
-
   const difference = route.cost - bestPrice;
-
   const viaText = stopCities.length > 0 ? `Via ${stopCities.join(" & ")}` : "Direct flight";
 
   return (
@@ -53,7 +52,6 @@ export function RouteCard({
 
       <CardContent>
         <TitleText variant="h5">{`${departure} → ${arrival}`}</TitleText>
-
         <SubtitleText variant="body1">{viaText}</SubtitleText>
 
         <PriceRow>
@@ -61,7 +59,7 @@ export function RouteCard({
             {formatEuro(route.cost)}
           </Typography>
 
-          {difference > 0 && (
+          {showPriceDelta && difference > 0 && (
             <InfoChip
               textColor={mainColor}
               bgColor={bgColor}
@@ -75,21 +73,24 @@ export function RouteCard({
           <Chip icon={<StraightenIcon />} label={`${formatCompactDistance(route.distance)} km`} />
         </StatsStack>
 
-        <ContentDivider />
+        {showViewDetailsButton && (
+          <>
+            <ContentDivider />
+            <PathText variant="body2">{route.path.join(" -> ")}</PathText>
 
-        <PathText variant="body2">{route.path.join(" → ")}</PathText>
-
-        <BottomAction>
-          <ViewDetailsButton
-            variant="outlined"
-            fullWidth
-            endIcon={<EastIcon />}
-            onClick={() => viewDetailsRoute(route)}
-            mainColor={mainColor}
-          >
-            View Details
-          </ViewDetailsButton>
-        </BottomAction>
+            <BottomAction>
+              <ViewDetailsButton
+                variant="outlined"
+                fullWidth
+                endIcon={<EastIcon />}
+                onClick={() => viewDetailsRoute(route)}
+                mainColor={mainColor}
+              >
+                View Details
+              </ViewDetailsButton>
+            </BottomAction>
+          </>
+        )}
       </CardContent>
     </StyledRouteCard>
   );

@@ -39,13 +39,15 @@ export function BestRouteCard({
         <Grid size={{ xs: 12, md: 7 }}>
           <RightColumn>
             <RouteTitleRow>
-              <RouteTitle variant="h3">{departure?.city}</RouteTitle>
-              <RouteTitleArrow>
-                <EastIcon fontSize="inherit" />
-              </RouteTitleArrow>
-              <RouteTitle variant="h3">{arrival?.city}</RouteTitle>
+              <RouteTitleRow>
+                <RouteTitle variant="h3">{departure?.city}</RouteTitle>
+                <RouteTitleArrow>
+                  <EastIcon fontSize="inherit" />
+                </RouteTitleArrow>
+                <RouteTitle variant="h3">{arrival?.city}</RouteTitle>
+              </RouteTitleRow>
+              <BadgeChip label={route.badge} />
             </RouteTitleRow>
-            <BadgeChip label={route.badge} />
 
             <RouteDescription variant="body1">
               Our algorithm found the smartest route balancing price, travel time and interesting
@@ -122,9 +124,10 @@ const RouteTitle = styled(Typography)(({ theme }) => ({
 
 const RouteTitleRow = styled(Box)({
   display: "flex",
+  justifyContent: "space-between",
   alignItems: "center",
   gap: 12,
-  marginBottom: 12,
+  marginBottom: 6,
 });
 
 const RouteTitleArrow = styled("span")(({ theme }) => ({

@@ -1,37 +1,28 @@
-import { Box, Button, Container, Typography, styled } from "@mui/material";
-import BackgroundImage from "../../../assets/bs_wallpaper.jpg";
-import HeroBackdrop from "../../../assets/hero.png";
-import RomeBackground from "../../../assets/rome_background.jpg";
-import { appPalette } from "../../../theme";
-
-const popularTrips = [
-  {
-    path: "Madrid -> Cagliari -> Milan",
-    countries: "Spain, Italy",
-    days: "6 days",
-    stops: "2 stops",
-    price: "From $259",
-    image: RomeBackground,
-  },
-  {
-    path: "Barcelona -> Rome -> Athens",
-    countries: "Spain, Italy, Greece",
-    days: "8 days",
-    stops: "2 stops",
-    price: "From $349",
-    image: HeroBackdrop,
-  },
-  {
-    path: "Paris -> Nice -> Milan",
-    countries: "France, Italy",
-    days: "5 days",
-    stops: "1 stop",
-    price: "From $219",
-    image: BackgroundImage,
-  },
-];
+import { Box, Container, Grid, Typography, styled } from "@mui/material";
+import { useMemo } from "react";
+import { useGetPopularRoutes } from "../../../api/travelPlanApi";
+import { RouteCard } from "../../../components/RouteCard/RouteCard";
+import { appPalette, routeCardThemes } from "../../../theme";
+import type { RouteMapped } from "../../../types/routes";
 
 export function HomeRecommendationsSection() {
+  const { data } = useGetPopularRoutes();
+
+  const airports = data?.airports ?? {};
+  const popularRoutesMapped = useMemo<RouteMapped[]>(
+    () =>
+      (data?.popularRoutes ?? []).map((route) => ({
+        ...route,
+        citiesInfo: route.path.map((code) => airports[code]).filter(Boolean),
+      })),
+    [data?.popularRoutes, airports],
+  );
+
+  const bestPrice = useMemo(() => {
+    if (!popularRoutesMapped.length) return 0;
+    return Math.min(...popularRoutesMapped.map((route) => route.cost));
+  }, [popularRoutesMapped]);
+
   return (
     <Section>
       <Container maxWidth="xl" sx={{ py: 6, display: "grid", gap: 4 }}>
@@ -43,23 +34,44 @@ export function HomeRecommendationsSection() {
             </Typography>
           </SectionHeader>
 
-          <PopularGrid>
-            {popularTrips.map((trip) => (
-              <TripCard key={trip.path}>
-                <TripImage src={trip.image} alt={trip.path} />
-                <Box sx={{ p: 2, display: "grid", gap: 1 }}>
-                  <Typography variant="h6">{trip.path}</Typography>
-                  <Typography color="textSecondary">{trip.countries}</Typography>
-                  <RowStats>
-                    <Typography variant="body2">{trip.days}</Typography>
-                    <Typography variant="body2">{trip.stops}</Typography>
-                    <Typography variant="body2">{trip.price}</Typography>
-                  </RowStats>
-                  <Button variant="outlined">View route</Button>
-                </Box>
-              </TripCard>
-            ))}
-          </PopularGrid>
+          {popularRoutesMapped.length ? (
+            <Grid container spacing={3}>
+              {popularRoutesMapped.map((route, index) => {
+                const theme = routeCardThemes[index % routeCardThemes.length];
+                return (
+                  <Grid
+                    key={route.id}
+                    size={{
+                      xs: 12,
+                      md: 6,
+                      lg: 3,
+                    }}
+                  >
+                    <Box sx={{ height: "100%" }}>
+                      <RouteCard
+                        route={route}
+                        previewCity={route.previewCity}
+                        airports={airports}
+                        bestPrice={bestPrice}
+                        mainColor={theme.mainColor}
+                        bgColor={theme.bgColor}
+                        viewDetailsRoute={() => undefined}
+                        showPriceDelta={false}
+                        showViewDetailsButton={false}
+                      />
+                    </Box>
+                  </Grid>
+                );
+              })}
+            </Grid>
+          ) : (
+            <EmptyRecommendations>
+              <Typography variant="h6">No popular routes yet</Typography>
+              <Typography color="textSecondary">
+                We are preparing popular trip combinations.
+              </Typography>
+            </EmptyRecommendations>
+          )}
         </section>
       </Container>
     </Section>
@@ -74,31 +86,13 @@ const SectionHeader = styled("div")({
   marginBottom: 24,
 });
 
-const PopularGrid = styled("div")({
-  display: "grid",
-  gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
-  gap: 16,
-  "@media (max-width: 980px)": {
-    gridTemplateColumns: "1fr",
-  },
-});
-
-const TripCard = styled("article")(({ theme }) => ({
-  overflow: "hidden",
+const EmptyRecommendations = styled("div")(({ theme }) => ({
+  border: `1px dashed ${theme.palette.divider}`,
   borderRadius: 8,
-  border: `1px solid ${theme.palette.divider}`,
   background: appPalette.surfaceSoft,
+  minHeight: 130,
+  display: "grid",
+  placeItems: "center",
+  textAlign: "center",
+  padding: 16,
 }));
-
-const TripImage = styled("img")({
-  width: "100%",
-  aspectRatio: "16/9",
-  objectFit: "cover",
-  display: "block",
-});
-
-const RowStats = styled("div")({
-  display: "flex",
-  gap: 12,
-  flexWrap: "wrap",
-});

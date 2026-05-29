@@ -5,7 +5,8 @@ export const appPalette = {
   bgGradientEnd: "#111827",
   surfaceStrong: "#111827",
   surfaceSoft: "rgba(255,255,255,0.03)",
-  surfaceGlass: "rgba(255,255,255,0.06)",
+  surfaceGlass:
+    "radial-gradient(circle at 20% 0%, rgba(59,130,246,0.16), transparent 36%),radial-gradient(circle at 90% 10%, rgba(139,92,246,0.18), transparent 32%),linear-gradient(to bottom, var(--tp-bg-start), var(--tp-bg-end))",
   borderSoft: "rgba(255,255,255,0.08)",
   borderStrong: "rgba(255,255,255,0.12)",
   textPrimary: "#F8FAFC",

@@ -48,6 +48,7 @@ function SearchedRoutes() {
     bestRoute,
     suggestedRoutes,
     expensiveSuggestedRoutes,
+    notFoundCities,
     remainingRoutes,
     setVisibleRoutes,
     departure,
@@ -137,6 +138,20 @@ function SearchedRoutes() {
         >
           Great Choice! This route offers the best balance of price, time and interesting cities.
         </Alert>
+
+        {notFoundCities.length > 0 && (
+          <Alert
+            variant="outlined"
+            severity="warning"
+            sx={{
+              mt: 2,
+              borderRadius: 2,
+            }}
+          >
+            We could not find these cities: {notFoundCities.join(", ")}. We searched alternatives
+            for those stops.
+          </Alert>
+        )}
 
         {suggestedRoutes.length > 0 && (
           <>

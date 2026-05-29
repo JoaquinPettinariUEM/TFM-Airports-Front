@@ -4,6 +4,7 @@ import { apiRoutes } from "./apiRoutes";
 import type {
   EnrichedRouteDetail,
   GetRoutesParams,
+  PopularRoutesResponse,
   RouteByQueryResponse,
   RouteMapped,
   RoutesResponse,
@@ -24,10 +25,14 @@ const getRoutes = async (params: GetRoutesParams | null): Promise<RoutesResponse
   return data;
 };
 
-const enrichRoute = async (
-  body: RouteMapped | undefined
-): Promise<EnrichedRouteDetail> => {
+const enrichRoute = async (body: RouteMapped | undefined): Promise<EnrichedRouteDetail> => {
   const { data } = await api.post(apiRoutes.routeDetail, body);
+
+  return data;
+};
+
+const getPopularRoutes = async (): Promise<PopularRoutesResponse> => {
+  const { data } = await api.get(apiRoutes.popularRoutes);
 
   return data;
 };
@@ -56,5 +61,15 @@ export const useGetRoutes = (params: GetRoutesParams | null) => {
 export const useEnrichRoute = () => {
   return useMutation({
     mutationFn: (params: RouteMapped) => enrichRoute(params),
+  });
+};
+
+export const useGetPopularRoutes = () => {
+  return useQuery({
+    queryKey: ["popular-routes"],
+    queryFn: getPopularRoutes,
+    staleTime: 1000 * 60 * 10,
+    refetchOnReconnect: false,
+    refetchOnWindowFocus: false,
   });
 };

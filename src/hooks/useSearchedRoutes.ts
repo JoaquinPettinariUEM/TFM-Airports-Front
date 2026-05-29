@@ -16,6 +16,7 @@ export function useSearchedRoutes(params: GetRoutesParams) {
   const bestRouteRaw = data?.bestRoute ?? null;
   const recommendedRoutesRaw = useMemo(() => data?.recommendedRoutes ?? [], [data]);
   const moreExpensiveOptionsRaw = useMemo(() => data?.moreExpensiveOptions ?? [], [data]);
+  const notFoundCities = useMemo(() => data?.notFoundCities ?? [], [data]);
 
   const routes = useMemo(
     () => [...recommendedRoutesRaw, ...moreExpensiveOptionsRaw],
@@ -72,5 +73,6 @@ export function useSearchedRoutes(params: GetRoutesParams) {
     setVisibleRoutes,
     departure: departureArrival?.departure,
     arrival: departureArrival?.arrival,
+    notFoundCities,
   };
 }

@@ -18,7 +18,7 @@ const backgroundMove = keyframes`
 `;
 
 const Root = styled(Box)`
-  height: 100%;
+  height: calc(100dvh - var(--tp-header-height));
   width: 100%;
   position: relative;
   overflow: hidden;

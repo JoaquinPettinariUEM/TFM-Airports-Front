@@ -24,6 +24,12 @@ export type RoutesResponse = {
   bestRoute: RouteListItemResponse | null;
   recommendedRoutes: RouteListItemResponse[];
   moreExpensiveOptions: RouteListItemResponse[];
+  notFoundCities?: string[];
+};
+
+export type PopularRoutesResponse = {
+  airports: Airports;
+  popularRoutes: RouteListItemResponse[];
 };
 
 export type Airports = Record<string, AirportResponse>;

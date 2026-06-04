@@ -320,24 +320,24 @@ function LoadedItineraryContent({
                           }
                         }}
                       >
-                        <TimeCell>{activity.time}</TimeCell>
+                        <TimeCell variant="body1">{activity.time}</TimeCell>
                         <ActivityContent>
                           <ActivityHeader>
                             <Typography variant="h6">{activity.name}</Typography>
-                            <ActivityHeaderActions>
-                              <TypeChip mainColor={style.mainColor} bgColor={style.bgColor}>
-                                <Icon sx={{ fontSize: 14 }} />
-                                {activity.type}
-                              </TypeChip>
-                              {activity.moreInfoUrl && (
-                                <ArrowOutwardOutlinedIcon
-                                  sx={{ fontSize: 18, color: "text.secondary" }}
-                                />
-                              )}
-                            </ActivityHeaderActions>
                           </ActivityHeader>
-                          <Typography color="text.secondary">{activity.description}</Typography>
+                          <Typography color="textSecondary">{activity.description}</Typography>
                         </ActivityContent>
+                        <ActivityHeaderActions>
+                          <TypeChip mainColor={style.mainColor} bgColor={style.bgColor}>
+                            <Icon sx={{ fontSize: 18 }} />
+                            {activity.type}
+                          </TypeChip>
+                          {activity.moreInfoUrl && (
+                            <ArrowOutwardOutlinedIcon
+                              sx={{ fontSize: 18, color: "text.secondary" }}
+                            />
+                          )}
+                        </ActivityHeaderActions>
                       </ActivityRow>
                     );
                   })}

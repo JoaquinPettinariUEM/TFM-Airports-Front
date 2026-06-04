@@ -88,6 +88,7 @@ export const ContentGrid = styled(Box)({
   display: "grid",
   gridTemplateColumns: "550px minmax(0, 1fr)",
   gap: 20,
+  flex: 1,
   alignItems: "stretch",
   "@media (max-width: 1100px)": {
     gridTemplateColumns: "1fr",
@@ -153,7 +154,7 @@ export const PlaceholderBlock = styled(Box)(({ theme }) => ({
 
 export const HeroImage = styled("img")({
   width: "100%",
-  height: 260,
+  height: 400,
   objectFit: "cover",
   borderRadius: 16,
   display: "block",
@@ -201,7 +202,7 @@ export const TimelineScrollArea = styled(Box)({
 
 export const ActivityRow = styled(Box)<{ clickable?: boolean }>(({ theme, clickable }) => ({
   display: "grid",
-  gridTemplateColumns: "88px 1fr",
+  gridTemplateColumns: "75px 1fr auto",
   gap: 16,
   alignItems: "start",
   padding: 12,

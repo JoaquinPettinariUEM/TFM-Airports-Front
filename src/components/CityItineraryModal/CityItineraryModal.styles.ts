@@ -15,11 +15,11 @@ export const dialogPaperSx = (theme: { palette: { divider: string } }) => ({
 
 export const dialogContentSx = {
   pt: 2,
-  overflow: "hidden",
+  overflowY: "auto",
+  overflowX: "hidden",
   display: "flex",
   flexDirection: "column",
-  height: "100%",
-  minHeight: 0,
+  gap: 0,
 };
 
 export const HeaderRow = styled(Box)({
@@ -88,14 +88,9 @@ export const ContentGrid = styled(Box)({
   display: "grid",
   gridTemplateColumns: "550px minmax(0, 1fr)",
   gap: 20,
-  flex: 1,
-  height: 0,
-  overflow: "auto",
-  paddingRight: 4,
   alignItems: "stretch",
   "@media (max-width: 1100px)": {
     gridTemplateColumns: "1fr",
-    height: "auto",
   },
 });
 
@@ -126,17 +121,10 @@ export const ItineraryPanel = styled(Box)(({ theme }) => ({
   borderRadius: 20,
   border: `1px solid ${theme.palette.divider}`,
   background: alpha(theme.palette.common.white, 0.02),
-  height: "100%",
-  overflow: "hidden",
-  "@media (max-width: 1100px)": {
-    height: "auto",
-    minHeight: 520,
-  },
 }));
 
 export const ItineraryPanelBox = styled(Box)({
   display: "flex",
-  height: "100%",
   flexDirection: "column",
   padding: 20,
   gap: 16,
@@ -208,18 +196,23 @@ export const TimelineScrollArea = styled(Box)({
   display: "flex",
   flexDirection: "column",
   gap: 12,
-  flex: 1,
   paddingRight: 8,
-  overflowY: "auto",
 });
 
-export const ActivityRow = styled(Box)(({ theme }) => ({
+export const ActivityRow = styled(Box)<{ clickable?: boolean }>(({ theme, clickable }) => ({
   display: "grid",
   gridTemplateColumns: "88px 1fr",
   gap: 16,
   alignItems: "start",
-  paddingBottom: 12,
+  padding: 12,
   borderBottom: `1px solid ${theme.palette.divider}`,
+  cursor: clickable ? "pointer" : "default",
+  transition: "background-color 120ms ease, transform 120ms ease",
+  "&:hover": clickable
+    ? {
+        backgroundColor: alpha(theme.palette.common.white, 0.03),
+      }
+    : undefined,
 }));
 
 export const TimeCell = styled(Typography)(({ theme }) => ({
@@ -237,6 +230,13 @@ export const ActivityHeader = styled(Box)({
   alignItems: "center",
   justifyContent: "space-between",
   gap: 12,
+});
+
+export const ActivityHeaderActions = styled(Box)({
+  display: "flex",
+  alignItems: "center",
+  gap: 8,
+  flexShrink: 0,
 });
 
 export const TypeChip = styled("span")<{

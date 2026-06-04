@@ -4,7 +4,11 @@ import ParkOutlinedIcon from "@mui/icons-material/ParkOutlined";
 import PublicOutlinedIcon from "@mui/icons-material/PublicOutlined";
 import RestaurantOutlinedIcon from "@mui/icons-material/RestaurantOutlined";
 import StarBorderOutlinedIcon from "@mui/icons-material/StarBorderOutlined";
-import type { CityItinerary, CityItineraryCategory } from "../../types/routes";
+import type {
+  CityItinerary,
+  CityItineraryActivity,
+  CityItineraryCategory,
+} from "../../types/routes";
 import { appPalette, routeCardThemes } from "../../theme";
 
 export type ActivityTypeStyle = {
@@ -57,6 +61,39 @@ export function buildBudgetValue(itinerary: CityItinerary) {
 export function getCountryFlagUrl(country: string) {
   const code = countryToIso[country.trim().toLowerCase()];
   return code ? `https://flagcdn.com/w40/${code.toLowerCase()}.png` : null;
+}
+
+export function buildGoogleMapsDayUrl(
+  activities: CityItineraryActivity[],
+  fallbackUrl?: string | null,
+) {
+  const queries = activities
+    .map((activity) => activity.mapQuery?.trim())
+    .filter((query): query is string => Boolean(query));
+
+  if (queries.length === 0) {
+    return fallbackUrl ?? null;
+  }
+
+  if (queries.length === 1) {
+    return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(queries[0])}`;
+  }
+
+  const [origin, ...rest] = queries;
+  const destination = rest[rest.length - 1];
+  const waypoints = rest.slice(0, -1);
+  const params = new URLSearchParams({
+    api: "1",
+    travelmode: "walking",
+    origin,
+    destination,
+  });
+
+  if (waypoints.length > 0) {
+    params.set("waypoints", waypoints.join("|"));
+  }
+
+  return `https://www.google.com/maps/dir/?${params.toString()}`;
 }
 
 export function slugify(value: string) {

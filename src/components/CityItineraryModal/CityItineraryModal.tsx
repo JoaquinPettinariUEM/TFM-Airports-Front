@@ -29,6 +29,7 @@ import type { CityItinerary, EnrichedRouteDetail } from "../../types/routes";
 import {
   ActivityContent,
   ActivityHeader,
+  ActivityHeaderActions,
   ActivityRow,
   AiAlertSx,
   ContentGrid,
@@ -60,6 +61,7 @@ import {
 import {
   activityTypeStyles,
   buildBudgetValue,
+  buildGoogleMapsDayUrl,
   getCountryFlagUrl,
   slugify,
 } from "./CityItineraryModal.utils";
@@ -115,7 +117,7 @@ export function CityItineraryModal({ open, onClose, city, suggestedDays }: Reado
       fullWidth
       slotProps={{ paper: { sx: dialogPaperSx } }}
     >
-      <DialogTitle sx={{ pb: 1 }}>
+      <DialogTitle sx={{ pb: 2 }}>
         <HeaderRow>
           <HeaderMain>
             {flagUrl && <FlagImage src={flagUrl} alt={`${city.country} flag`} />}
@@ -134,8 +136,8 @@ export function CityItineraryModal({ open, onClose, city, suggestedDays }: Reado
 
         {!isLoading && itinerary && (
           <Fade in={isSuccess || isError} timeout={250}>
-            <Box sx={{ display: "flex", flexDirection: "column", gap: 0, flex: 1, minHeight: 0 }}>
-              <LoadedItineraryContent itinerary={itinerary} source={data?.source ?? "mock"} />
+            <Box sx={{ display: "flex", flexDirection: "column", gap: 0 }}>
+              <LoadedItineraryContent itinerary={itinerary} />
             </Box>
           </Fade>
         )}
@@ -146,10 +148,8 @@ export function CityItineraryModal({ open, onClose, city, suggestedDays }: Reado
 
 function LoadedItineraryContent({
   itinerary,
-  source,
 }: Readonly<{
   itinerary: CityItinerary;
-  source: "database" | "generated" | "mock";
 }>) {
   const [selectedDay, setSelectedDay] = useState(itinerary.itineraryDays[0]?.day ?? 1);
   const [selectedImage, setSelectedImage] = useState<string | null>(
@@ -158,6 +158,7 @@ function LoadedItineraryContent({
 
   const activeDay =
     itinerary.itineraryDays.find((day) => day.day === selectedDay) ?? itinerary.itineraryDays[0];
+  const activeDayMapUrl = buildGoogleMapsDayUrl(activeDay?.activities ?? [], itinerary.mapUrl);
 
   const infoPills: InfoPillConfig[] = [
     {
@@ -275,13 +276,6 @@ function LoadedItineraryContent({
               <AutoAwesomeOutlinedIcon color="primary" />
               <div>
                 <Typography variant="h5">Suggested itinerary</Typography>
-                <Typography color="text.secondary">
-                  {source === "database"
-                    ? "Loaded from saved itinerary data."
-                    : source === "generated"
-                      ? "Generated with Gemini and enriched with city images."
-                      : "Using the structured mock because the API request failed."}
-                </Typography>
               </div>
             </PanelHeader>
 
@@ -314,17 +308,33 @@ function LoadedItineraryContent({
                   {activeDay.activities.map((activity) => {
                     const style = activityTypeStyles[activity.type];
                     const Icon = style.icon;
+                    const isClickable = Boolean(activity.moreInfoUrl);
 
                     return (
-                      <ActivityRow key={`${activeDay.day}-${activity.time}-${activity.name}`}>
+                      <ActivityRow
+                        key={`${activeDay.day}-${activity.time}-${activity.name}`}
+                        clickable={isClickable}
+                        onClick={() => {
+                          if (activity.moreInfoUrl) {
+                            window.open(activity.moreInfoUrl, "_blank", "noopener,noreferrer");
+                          }
+                        }}
+                      >
                         <TimeCell>{activity.time}</TimeCell>
                         <ActivityContent>
                           <ActivityHeader>
                             <Typography variant="h6">{activity.name}</Typography>
-                            <TypeChip mainColor={style.mainColor} bgColor={style.bgColor}>
-                              <Icon sx={{ fontSize: 14 }} />
-                              {activity.type}
-                            </TypeChip>
+                            <ActivityHeaderActions>
+                              <TypeChip mainColor={style.mainColor} bgColor={style.bgColor}>
+                                <Icon sx={{ fontSize: 14 }} />
+                                {activity.type}
+                              </TypeChip>
+                              {activity.moreInfoUrl && (
+                                <ArrowOutwardOutlinedIcon
+                                  sx={{ fontSize: 18, color: "text.secondary" }}
+                                />
+                              )}
+                            </ActivityHeaderActions>
                           </ActivityHeader>
                           <Typography color="text.secondary">{activity.description}</Typography>
                         </ActivityContent>
@@ -338,7 +348,12 @@ function LoadedItineraryContent({
             <MapButton
               variant="outlined"
               endIcon={<ArrowOutwardOutlinedIcon />}
-              disabled={!itinerary.mapUrl}
+              disabled={!activeDayMapUrl}
+              onClick={() => {
+                if (activeDayMapUrl) {
+                  window.open(activeDayMapUrl, "_blank", "noopener,noreferrer");
+                }
+              }}
             >
               View on map
             </MapButton>
@@ -385,22 +400,24 @@ function ItineraryModalSkeleton() {
         </LeftColumn>
 
         <ItineraryPanel>
-          <PanelHeader>
-            <AutoAwesomeOutlinedIcon color="disabled" />
-            <div style={{ width: "100%" }}>
-              <Skeleton variant="text" width="38%" height={36} />
-              <Skeleton variant="text" width="62%" />
-            </div>
-          </PanelHeader>
-          <Skeleton variant="rounded" height={48} width={260} sx={{ borderRadius: 2 }} />
-          <Divider />
-          <TimelineScrollArea>
-            <Skeleton variant="text" width="28%" height={36} />
-            {Array.from({ length: 4 }).map((_, index) => (
-              <Skeleton key={index} variant="rounded" height={74} sx={{ borderRadius: 2 }} />
-            ))}
-          </TimelineScrollArea>
-          <Skeleton variant="rounded" height={40} sx={{ borderRadius: 2 }} />
+          <ItineraryPanelBox>
+            <PanelHeader>
+              <AutoAwesomeOutlinedIcon color="disabled" />
+              <div style={{ width: "100%" }}>
+                <Skeleton variant="text" width="38%" height={36} />
+                <Skeleton variant="text" width="62%" />
+              </div>
+            </PanelHeader>
+            <Skeleton variant="rounded" height={48} width={260} sx={{ borderRadius: 2 }} />
+            <Divider />
+            <TimelineScrollArea>
+              <Skeleton variant="text" width="28%" height={36} />
+              {Array.from({ length: 4 }).map((_, index) => (
+                <Skeleton key={index} variant="rounded" height={74} sx={{ borderRadius: 2 }} />
+              ))}
+            </TimelineScrollArea>
+            <Skeleton variant="rounded" height={40} sx={{ borderRadius: 2 }} />
+          </ItineraryPanelBox>
         </ItineraryPanel>
       </ContentGrid>
     </>

@@ -3,6 +3,7 @@ import { api } from "./axios";
 import { apiRoutes } from "./apiRoutes";
 import type {
   CreateShareRouteResponse,
+  CityItineraryResponse,
   EnrichedRouteDetail,
   GetRoutesParams,
   PopularRoutesResponse,
@@ -50,6 +51,17 @@ const createShareRoute = async (body: {
 
 const getSharedRoute = async (shareId: string): Promise<SharedRouteResponse> => {
   const { data } = await api.get(`${apiRoutes.routeShare}/${shareId}`);
+  return data;
+};
+
+const getCityItinerary = async (params: {
+  city: string;
+  country: string;
+  days: number;
+}): Promise<CityItineraryResponse> => {
+  const { data } = await api.get(apiRoutes.itineraries, {
+    params,
+  });
   return data;
 };
 
@@ -101,6 +113,16 @@ export const useGetSharedRoute = (shareId?: string) => {
     queryKey: ["shared-route", shareId],
     queryFn: () => getSharedRoute(shareId ?? ""),
     enabled: Boolean(shareId),
+    refetchOnReconnect: false,
+    refetchOnWindowFocus: false,
+  });
+};
+
+export const useGetCityItinerary = (params?: { city: string; country: string; days: number }) => {
+  return useQuery({
+    queryKey: ["city-itinerary", params],
+    queryFn: () => getCityItinerary(params as { city: string; country: string; days: number }),
+    enabled: Boolean(params?.city && params?.country && params?.days),
     refetchOnReconnect: false,
     refetchOnWindowFocus: false,
   });

@@ -34,7 +34,12 @@ export function RouteHeader({ route, budget, requestedMaxStops, onShare }: Reado
         <HeaderTitle variant="h2">Full Route Details</HeaderTitle>
         <HeaderActions>
           {onShare && (
-            <Button variant="contained" startIcon={<ShareOutlinedIcon />} onClick={onShare}>
+            <Button
+              variant="contained"
+              startIcon={<ShareOutlinedIcon />}
+              onClick={onShare}
+              sx={{ height: 35 }}
+            >
               Share
             </Button>
           )}
@@ -46,6 +51,7 @@ export function RouteHeader({ route, budget, requestedMaxStops, onShare }: Reado
                 search: location.search,
               })
             }
+            sx={{ height: 35 }}
           >
             Back to results
           </Button>

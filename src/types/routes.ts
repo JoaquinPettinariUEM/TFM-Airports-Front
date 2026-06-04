@@ -45,6 +45,57 @@ export type SharedRouteResponse = {
   expiresInSeconds: number;
 };
 
+export type CityItineraryCategory = "History" | "Gastronomy" | "Culture" | "Must-see" | "Nature";
+
+export type CityItineraryActivity = {
+  time: string;
+  name: string;
+  description: string;
+  type: CityItineraryCategory;
+  mapQuery?: string | null;
+  image?: string | null;
+  moreInfoUrl?: string | null;
+};
+
+export type CityItineraryDay = {
+  day: number;
+  title: string;
+  activities: CityItineraryActivity[];
+};
+
+export type CityItinerary = {
+  city: string;
+  country: string;
+  citySlug: string;
+  cacheKey: string;
+  days: number;
+  summary: string;
+  shortDescription: string;
+  budgetLevel: string;
+  estimatedDailyBudget: {
+    min: number | null;
+    max: number | null;
+    currency: string;
+  };
+  currency: string;
+  bestSeason: string;
+  averageWeather: string;
+  heroImage?: string | null;
+  galleryImages: string[];
+  tips: string[];
+  itineraryDays: CityItineraryDay[];
+  historicalInfoUrl?: string | null;
+  mapUrl?: string | null;
+  sourceModel: string;
+  promptVersion: string;
+};
+
+export type CityItineraryResponse = {
+  source: "database" | "mock";
+  cacheKey: string;
+  itinerary: CityItinerary;
+};
+
 export type Airports = Record<string, AirportResponse>;
 
 export type RouteListItemResponse = {

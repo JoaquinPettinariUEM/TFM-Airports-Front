@@ -1,6 +1,9 @@
-import { Alert, Box, Divider, Paper, Typography, styled } from "@mui/material";
+import { Alert, Box, Button, Divider, Paper, Typography, styled } from "@mui/material";
+import AutoAwesomeOutlinedIcon from "@mui/icons-material/AutoAwesomeOutlined";
 import { format } from "date-fns";
+import { useState } from "react";
 import type { EnrichedRouteDetail, Flight } from "../../types/routes";
+import { CityItineraryModal } from "../CityItineraryModal/CityItineraryModal";
 
 interface InfoProps {
   label: string;
@@ -27,6 +30,8 @@ export function CityInfoCard({
   isFirst,
   isLast,
 }: Readonly<CityInfoCardProps>) {
+  const [openItinerary, setOpenItinerary] = useState(false);
+
   const arrivalValue = previousFlight
     ? format(new Date(previousFlight.arrivalDate), "HH:mm MMM d")
     : "-";
@@ -36,60 +41,86 @@ export function CityInfoCard({
   const stayValue = !isFirst && !isLast && previousFlight ? `${previousFlight.stayDays} days` : "-";
   const departureFromValue = nextFlight?.from ?? "-";
   const arrivalToValue = previousFlight?.to ?? "-";
+  const suggestedDays = Math.max(previousFlight?.stayDays ?? (isLast ? 2 : 1), 1);
+  const showItineraryButton = !isFirst;
 
   return (
-    <StyledPaper elevation={0}>
-      <CityName variant="h4" mainColor={theme.mainColor}>
-        {city.name}
-      </CityName>
+    <>
+      <StyledPaper elevation={0}>
+        <CityName variant="h4" mainColor={theme.mainColor}>
+          {city.name}
+        </CityName>
 
-      <CityDescription>{city.description}</CityDescription>
+        <CityDescription>{city.description}</CityDescription>
 
-      <InfoGrid>
-        {isFirst ? (
-          <Info label="Departure" value={departureValue} />
-        ) : (
-          <Info label="Arrival" value={arrivalValue} />
+        <InfoGrid>
+          {isFirst ? (
+            <Info label="Departure" value={departureValue} />
+          ) : (
+            <Info label="Arrival" value={arrivalValue} />
+          )}
+
+          {isFirst ? (
+            <Info label="Airport" value={departureFromValue} />
+          ) : isLast ? (
+            <Info label="Airport" value={arrivalToValue} />
+          ) : (
+            <Info label="Stay / Departure" value={`${stayValue} · ${departureValue}`} />
+          )}
+        </InfoGrid>
+
+        <ContentDivider />
+
+        <CitySummary>{city.summary}</CitySummary>
+
+        {showItineraryButton && (
+          <ActionsRow>
+            <Button
+              variant="outlined"
+              startIcon={<AutoAwesomeOutlinedIcon />}
+              onClick={() => setOpenItinerary(true)}
+            >
+              View itinerary
+            </Button>
+          </ActionsRow>
         )}
-        {isFirst ? (
-          <Info label="Airport" value={departureFromValue} />
-        ) : isLast ? (
-          <Info label="Airport" value={arrivalToValue} />
-        ) : (
-          <Info label="Stay / Departure" value={`${stayValue} · ${departureValue}`} />
+
+        {!isLast && nextFlight && (
+          <FlightBox mainColor={theme.mainColor} bgColor={theme.bgColor}>
+            <FlightRow>
+              <Typography color="text.secondary">Flight to next destination</Typography>
+              <FlightDuration mainColor={theme.mainColor}>
+                {Math.floor(nextFlight.durationMinutes / 60)}h {nextFlight.durationMinutes % 60}m
+              </FlightDuration>
+            </FlightRow>
+          </FlightBox>
         )}
-      </InfoGrid>
 
-      <ContentDivider />
+        {isLast && (
+          <Alert
+            variant="outlined"
+            severity="success"
+            sx={{
+              mt: 4,
+              borderRadius: 2,
+              backgroundColor: "rgba(46, 125, 50, 0.08)",
+            }}
+          >
+            <Typography sx={{ fontWeight: 700 }}>
+              You have reached your final destination.
+            </Typography>
+            <Typography variant="body2">Enjoy your stay in {city.name}.</Typography>
+          </Alert>
+        )}
+      </StyledPaper>
 
-      <CitySummary>{city.summary}</CitySummary>
-
-      {!isLast && nextFlight && (
-        <FlightBox mainColor={theme.mainColor} bgColor={theme.bgColor}>
-          <FlightRow>
-            <Typography color="text.secondary">Flight to next destination</Typography>
-            <FlightDuration mainColor={theme.mainColor}>
-              {Math.floor(nextFlight.durationMinutes / 60)}h {nextFlight.durationMinutes % 60}m
-            </FlightDuration>
-          </FlightRow>
-        </FlightBox>
-      )}
-
-      {isLast && (
-        <Alert
-          variant="outlined"
-          severity="success"
-          sx={{
-            mt: 4,
-            borderRadius: 2,
-            backgroundColor: "rgba(46, 125, 50, 0.08)",
-          }}
-        >
-          <Typography sx={{ fontWeight: 700 }}>You have reached your final destination.</Typography>
-          <Typography variant="body2">Enjoy your stay in {city.name}.</Typography>
-        </Alert>
-      )}
-    </StyledPaper>
+      <CityItineraryModal
+        open={openItinerary}
+        onClose={() => setOpenItinerary(false)}
+        city={city}
+        suggestedDays={suggestedDays}
+      />
+    </>
   );
 }
 
@@ -140,6 +171,12 @@ const CitySummary = styled(Typography)(({ theme }) => ({
   color: theme.palette.text.secondary,
   lineHeight: 1.8,
 }));
+
+const ActionsRow = styled(Box)({
+  marginTop: 24,
+  display: "flex",
+  justifyContent: "flex-start",
+});
 
 const FlightBox = styled(Box)<{ mainColor: string; bgColor: string }>(({ mainColor, bgColor }) => ({
   marginTop: 40,

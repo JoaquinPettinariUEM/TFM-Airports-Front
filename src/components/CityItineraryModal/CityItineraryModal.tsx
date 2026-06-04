@@ -1,10 +1,13 @@
 import {
   Alert,
+  Box,
   Dialog,
   DialogContent,
   DialogTitle,
   Divider,
+  Fade,
   IconButton,
+  Skeleton,
   ToggleButton,
   ToggleButtonGroup,
   Typography,
@@ -32,11 +35,16 @@ import {
   dialogContentSx,
   dialogPaperSx,
   FlagImage,
+  GalleryStrip,
+  GalleryThumb,
+  GalleryThumbImage,
   HeaderMain,
   HeaderRow,
+  HeroImage,
   InfoIconWrap,
   InfoPill,
   ItineraryPanel,
+  ItineraryPanelBox,
   LeftColumn,
   MapButton,
   PanelHeader,
@@ -52,7 +60,6 @@ import {
 import {
   activityTypeStyles,
   buildBudgetValue,
-  formatBestSeasonShort,
   getCountryFlagUrl,
   slugify,
 } from "./CityItineraryModal.utils";
@@ -82,7 +89,7 @@ export function CityItineraryModal({ open, onClose, city, suggestedDays }: Reado
       }
     : undefined;
 
-  const { data, isLoading, isError } = useGetCityItinerary(itineraryParams);
+  const { data, isLoading, isError, isSuccess } = useGetCityItinerary(itineraryParams);
 
   const fallbackItinerary = useMemo<CityItinerary>(
     () => ({
@@ -97,8 +104,58 @@ export function CityItineraryModal({ open, onClose, city, suggestedDays }: Reado
     [city.country, city.name, suggestedDays],
   );
 
-  const itinerary = data?.itinerary ?? fallbackItinerary;
-  const [selectedDay, setSelectedDay] = useState(1);
+  const itinerary = data?.itinerary ?? (isError ? fallbackItinerary : undefined);
+  const flagUrl = getCountryFlagUrl(city.country);
+
+  return (
+    <Dialog
+      open={open}
+      onClose={onClose}
+      maxWidth="xl"
+      fullWidth
+      slotProps={{ paper: { sx: dialogPaperSx } }}
+    >
+      <DialogTitle sx={{ pb: 1 }}>
+        <HeaderRow>
+          <HeaderMain>
+            {flagUrl && <FlagImage src={flagUrl} alt={`${city.country} flag`} />}
+            <div>
+              <Typography variant="h3">{`${city.name}, ${city.country}`}</Typography>
+            </div>
+          </HeaderMain>
+          <IconButton onClick={onClose} aria-label="Close itinerary modal" edge="end">
+            <CloseIcon />
+          </IconButton>
+        </HeaderRow>
+      </DialogTitle>
+
+      <DialogContent sx={dialogContentSx}>
+        {isLoading && <ItineraryModalSkeleton />}
+
+        {!isLoading && itinerary && (
+          <Fade in={isSuccess || isError} timeout={250}>
+            <Box sx={{ display: "flex", flexDirection: "column", gap: 0, flex: 1, minHeight: 0 }}>
+              <LoadedItineraryContent itinerary={itinerary} source={data?.source ?? "mock"} />
+            </Box>
+          </Fade>
+        )}
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+function LoadedItineraryContent({
+  itinerary,
+  source,
+}: Readonly<{
+  itinerary: CityItinerary;
+  source: "database" | "generated" | "mock";
+}>) {
+  const [selectedDay, setSelectedDay] = useState(itinerary.itineraryDays[0]?.day ?? 1);
+  const [selectedImage, setSelectedImage] = useState<string | null>(
+    itinerary.heroImage ?? itinerary.galleryImages[0] ?? null,
+  );
+
   const activeDay =
     itinerary.itineraryDays.find((day) => day.day === selectedDay) ?? itinerary.itineraryDays[0];
 
@@ -106,7 +163,7 @@ export function CityItineraryModal({ open, onClose, city, suggestedDays }: Reado
     {
       key: "days",
       label: "Recommended days",
-      value: `${suggestedDays} days`,
+      value: `${itinerary.days} days`,
       icon: CalendarMonthOutlinedIcon,
       mainColor: routeCardThemes[1].mainColor,
       bgColor: routeCardThemes[1].bgColor,
@@ -114,7 +171,7 @@ export function CityItineraryModal({ open, onClose, city, suggestedDays }: Reado
     {
       key: "season",
       label: "Best time to visit",
-      value: formatBestSeasonShort(itinerary.bestSeason),
+      value: itinerary.bestSeason,
       icon: PlaceOutlinedIcon,
       mainColor: routeCardThemes[2].mainColor,
       bgColor: routeCardThemes[2].bgColor,
@@ -145,88 +202,85 @@ export function CityItineraryModal({ open, onClose, city, suggestedDays }: Reado
     },
   ];
 
-  const flagUrl = getCountryFlagUrl(city.country);
-
   return (
-    <Dialog
-      open={open}
-      onClose={onClose}
-      maxWidth="xl"
-      fullWidth
-      slotProps={{ paper: { sx: dialogPaperSx } }}
-    >
-      <DialogTitle sx={{ pb: 1 }}>
-        <HeaderRow>
-          <HeaderMain>
-            {flagUrl && <FlagImage src={flagUrl} alt={`${city.country} flag`} />}
+    <>
+      <TopInfo>
+        {infoPills.map((pill) => (
+          <InfoPill key={pill.key}>
+            <InfoIconWrap mainColor={pill.mainColor} bgColor={pill.bgColor}>
+              <pill.icon sx={{ color: pill.mainColor, fontSize: 20 }} />
+            </InfoIconWrap>
             <div>
-              <Typography variant="h3">{`${city.name}, ${city.country}`}</Typography>
-              <Typography color="text.secondary">{itinerary.summary}</Typography>
+              <Typography variant="body1" color="text.secondary">
+                {pill.label}
+              </Typography>
+              <Typography variant="h6">{pill.value}</Typography>
             </div>
-          </HeaderMain>
-          <IconButton onClick={onClose} aria-label="Close itinerary modal" edge="end">
-            <CloseIcon />
-          </IconButton>
-        </HeaderRow>
-      </DialogTitle>
+          </InfoPill>
+        ))}
+      </TopInfo>
 
-      <DialogContent sx={dialogContentSx}>
-        <TopInfo>
-          {infoPills.map((pill) => (
-            <InfoPill key={pill.key}>
-              <InfoIconWrap mainColor={pill.mainColor} bgColor={pill.bgColor}>
-                <pill.icon sx={{ color: pill.mainColor, fontSize: 20 }} />
-              </InfoIconWrap>
-              <div>
-                <Typography variant="body2" color="text.secondary">
-                  {pill.label}
-                </Typography>
-                <Typography variant="h6">{pill.value}</Typography>
-              </div>
-            </InfoPill>
-          ))}
-        </TopInfo>
+      <Alert severity="info" sx={AiAlertSx}>
+        This itinerary was generated with AI and should be reviewed before booking or planning
+        around it.
+      </Alert>
 
-        <Alert severity="info" sx={AiAlertSx}>
-          This itinerary was generated with AI and should be reviewed before booking or planning
-          around it.
-        </Alert>
+      <ContentGrid>
+        <LeftColumn>
+          <PreviewPanel>
+            <Typography variant="h5">City overview</Typography>
+            <Typography color="text.secondary">{itinerary.shortDescription}</Typography>
 
-        <ContentGrid>
-          <LeftColumn>
-            <PreviewPanel>
-              <Typography variant="h5">City overview</Typography>
-              <Typography color="text.secondary">{itinerary.shortDescription}</Typography>
-
+            {selectedImage ? (
+              <>
+                <HeroImage src={selectedImage} alt={`${itinerary.city} view`} />
+                {itinerary.galleryImages.length > 1 && (
+                  <GalleryStrip>
+                    {itinerary.galleryImages.slice(0, 4).map((image) => (
+                      <GalleryThumb
+                        key={image}
+                        active={image === selectedImage}
+                        type="button"
+                        onClick={() => setSelectedImage(image)}
+                      >
+                        <GalleryThumbImage src={image} alt={`${itinerary.city} thumbnail`} />
+                      </GalleryThumb>
+                    ))}
+                  </GalleryStrip>
+                )}
+              </>
+            ) : (
               <PlaceholderBlock>
-                <Typography variant="body1">Hero image / gallery</Typography>
+                <Typography variant="body1">No image available</Typography>
               </PlaceholderBlock>
-            </PreviewPanel>
+            )}
+          </PreviewPanel>
 
-            <TipsBlock>
-              <PanelSmallHeader>
-                <TipsAndUpdatesOutlinedIcon color="primary" />
-                <Typography variant="h6">Useful tips</Typography>
-              </PanelSmallHeader>
-              {itinerary.tips.map((tip) => (
-                <Typography key={tip} color="text.secondary">
-                  • {tip}
-                </Typography>
-              ))}
-            </TipsBlock>
-          </LeftColumn>
+          <TipsBlock>
+            <PanelSmallHeader>
+              <TipsAndUpdatesOutlinedIcon color="primary" />
+              <Typography variant="h6">Useful tips</Typography>
+            </PanelSmallHeader>
+            {itinerary.tips.map((tip) => (
+              <Typography key={tip} color="text.secondary">
+                {`• ${tip}`}
+              </Typography>
+            ))}
+          </TipsBlock>
+        </LeftColumn>
 
-          <ItineraryPanel>
+        <ItineraryPanel>
+          <ItineraryPanelBox>
             <PanelHeader>
               <AutoAwesomeOutlinedIcon color="primary" />
               <div>
                 <Typography variant="h5">Suggested itinerary</Typography>
                 <Typography color="text.secondary">
-                  {isLoading
-                    ? "Loading itinerary..."
-                    : data?.source === "database"
-                      ? "Loaded from saved itinerary data."
-                      : ""}
+                  {source === "database"
+                    ? "Loaded from saved itinerary data."
+                    : source === "generated"
+                      ? "Generated with Gemini and enriched with city images."
+                      : "Using the structured mock because the API request failed."}
                 </Typography>
               </div>
             </PanelHeader>
@@ -279,12 +333,6 @@ export function CityItineraryModal({ open, onClose, city, suggestedDays }: Reado
                   })}
                 </>
               )}
-
-              {isError && (
-                <Alert severity="warning">
-                  We could not load itinerary data from the API, so a local mock is being shown.
-                </Alert>
-              )}
             </TimelineScrollArea>
 
             <MapButton
@@ -294,9 +342,67 @@ export function CityItineraryModal({ open, onClose, city, suggestedDays }: Reado
             >
               View on map
             </MapButton>
-          </ItineraryPanel>
-        </ContentGrid>
-      </DialogContent>
-    </Dialog>
+          </ItineraryPanelBox>
+        </ItineraryPanel>
+      </ContentGrid>
+    </>
+  );
+}
+
+function ItineraryModalSkeleton() {
+  return (
+    <>
+      <TopInfo>
+        {Array.from({ length: 5 }).map((_, index) => (
+          <InfoPill key={index}>
+            <Skeleton variant="circular" width={40} height={40} />
+            <div style={{ width: "100%" }}>
+              <Skeleton variant="text" width="55%" height={20} />
+              <Skeleton variant="text" width="72%" height={28} />
+            </div>
+          </InfoPill>
+        ))}
+      </TopInfo>
+
+      <Skeleton variant="rounded" height={44} sx={{ mb: 2, borderRadius: 2 }} />
+
+      <ContentGrid>
+        <LeftColumn>
+          <PreviewPanel>
+            <Skeleton variant="text" width="45%" height={36} />
+            <Skeleton variant="text" width="100%" />
+            <Skeleton variant="text" width="88%" />
+            <Skeleton variant="rounded" height={260} sx={{ borderRadius: 2 }} />
+            <Skeleton variant="rounded" height={72} sx={{ borderRadius: 2 }} />
+          </PreviewPanel>
+
+          <TipsBlock>
+            <Skeleton variant="text" width="38%" height={32} />
+            <Skeleton variant="text" width="100%" />
+            <Skeleton variant="text" width="92%" />
+            <Skeleton variant="text" width="78%" />
+          </TipsBlock>
+        </LeftColumn>
+
+        <ItineraryPanel>
+          <PanelHeader>
+            <AutoAwesomeOutlinedIcon color="disabled" />
+            <div style={{ width: "100%" }}>
+              <Skeleton variant="text" width="38%" height={36} />
+              <Skeleton variant="text" width="62%" />
+            </div>
+          </PanelHeader>
+          <Skeleton variant="rounded" height={48} width={260} sx={{ borderRadius: 2 }} />
+          <Divider />
+          <TimelineScrollArea>
+            <Skeleton variant="text" width="28%" height={36} />
+            {Array.from({ length: 4 }).map((_, index) => (
+              <Skeleton key={index} variant="rounded" height={74} sx={{ borderRadius: 2 }} />
+            ))}
+          </TimelineScrollArea>
+          <Skeleton variant="rounded" height={40} sx={{ borderRadius: 2 }} />
+        </ItineraryPanel>
+      </ContentGrid>
+    </>
   );
 }

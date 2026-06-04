@@ -69,7 +69,7 @@ export type CityItinerary = {
   citySlug: string;
   cacheKey: string;
   days: number;
-  summary: string;
+  summary?: string;
   shortDescription: string;
   budgetLevel: string;
   estimatedDailyBudget: {
@@ -86,12 +86,12 @@ export type CityItinerary = {
   itineraryDays: CityItineraryDay[];
   historicalInfoUrl?: string | null;
   mapUrl?: string | null;
-  sourceModel: string;
-  promptVersion: string;
+  sourceModel?: string;
+  promptVersion?: string;
 };
 
 export type CityItineraryResponse = {
-  source: "database" | "mock";
+  source: "database" | "generated" | "mock";
   cacheKey: string;
   itinerary: CityItinerary;
 };

@@ -54,34 +54,6 @@ export function buildBudgetValue(itinerary: CityItinerary) {
   return `${symbol} ${itinerary.estimatedDailyBudget.min}-${itinerary.estimatedDailyBudget.max}`;
 }
 
-export function formatBestSeasonShort(bestSeason: string) {
-  const monthMap: Record<string, string> = {
-    january: "Jan",
-    february: "Feb",
-    march: "Mar",
-    april: "Apr",
-    may: "May",
-    june: "Jun",
-    july: "Jul",
-    august: "Aug",
-    september: "Sep",
-    october: "Oct",
-    november: "Nov",
-    december: "Dec",
-  };
-
-  const tokens = bestSeason
-    .split(/[/,]/)
-    .map((item) => item.trim())
-    .filter(Boolean)
-    .map((item) => item.split("-")[0]?.trim().toLowerCase())
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((item) => monthMap[item] ?? item.slice(0, 3));
-
-  return tokens.length > 0 ? tokens.join("/") : bestSeason;
-}
-
 export function getCountryFlagUrl(country: string) {
   const code = countryToIso[country.trim().toLowerCase()];
   return code ? `https://flagcdn.com/w40/${code.toLowerCase()}.png` : null;

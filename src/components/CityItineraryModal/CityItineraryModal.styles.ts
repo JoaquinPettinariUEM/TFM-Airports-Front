@@ -19,6 +19,7 @@ export const dialogContentSx = {
   display: "flex",
   flexDirection: "column",
   height: "100%",
+  minHeight: 0,
 };
 
 export const HeaderRow = styled(Box)({
@@ -31,7 +32,7 @@ export const HeaderRow = styled(Box)({
 export const HeaderMain = styled(Box)({
   display: "flex",
   gap: 16,
-  alignItems: "flex-start",
+  alignItems: "center",
   minWidth: 0,
 });
 
@@ -85,15 +86,16 @@ export const InfoIconWrap = styled(Box)<{ mainColor: string; bgColor: string }>(
 
 export const ContentGrid = styled(Box)({
   display: "grid",
-  gridTemplateColumns: "420px minmax(0, 1fr)",
+  gridTemplateColumns: "550px minmax(0, 1fr)",
   gap: 20,
   flex: 1,
-  minHeight: 0,
+  height: 0,
   overflow: "auto",
   paddingRight: 4,
   alignItems: "stretch",
   "@media (max-width: 1100px)": {
     gridTemplateColumns: "1fr",
+    height: "auto",
   },
 });
 
@@ -121,7 +123,6 @@ export const ItineraryPanel = styled(Box)(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
   gap: 16,
-  padding: 20,
   borderRadius: 20,
   border: `1px solid ${theme.palette.divider}`,
   background: alpha(theme.palette.common.white, 0.02),
@@ -132,6 +133,14 @@ export const ItineraryPanel = styled(Box)(({ theme }) => ({
     minHeight: 520,
   },
 }));
+
+export const ItineraryPanelBox = styled(Box)({
+  display: "flex",
+  height: "100%",
+  flexDirection: "column",
+  padding: 20,
+  gap: 16,
+});
 
 export const PanelHeader = styled(Box)({
   display: "flex",
@@ -154,6 +163,38 @@ export const PlaceholderBlock = styled(Box)(({ theme }) => ({
   color: theme.palette.text.secondary,
 }));
 
+export const HeroImage = styled("img")({
+  width: "100%",
+  height: 260,
+  objectFit: "cover",
+  borderRadius: 16,
+  display: "block",
+});
+
+export const GalleryStrip = styled(Box)({
+  display: "grid",
+  gridTemplateColumns: "repeat(4, minmax(0, 1fr))",
+  gap: 10,
+});
+
+export const GalleryThumb = styled("button")<{ active?: boolean }>(({ active, theme }) => ({
+  appearance: "none",
+  border: active ? `2px solid ${theme.palette.primary.main}` : `1px solid ${theme.palette.divider}`,
+  padding: 0,
+  borderRadius: 12,
+  overflow: "hidden",
+  background: "transparent",
+  cursor: "pointer",
+  height: 72,
+}));
+
+export const GalleryThumbImage = styled("img")({
+  width: "100%",
+  height: "100%",
+  objectFit: "cover",
+  display: "block",
+});
+
 export const TipsBlock = styled(Box)(({ theme }) => ({
   display: "grid",
   gap: 8,
@@ -168,8 +209,8 @@ export const TimelineScrollArea = styled(Box)({
   flexDirection: "column",
   gap: 12,
   flex: 1,
-  overflowY: "auto",
   paddingRight: 8,
+  overflowY: "auto",
 });
 
 export const ActivityRow = styled(Box)(({ theme }) => ({
@@ -204,7 +245,7 @@ export const TypeChip = styled("span")<{
 }>(({ mainColor, bgColor, theme }) => ({
   padding: "6px 10px",
   borderRadius: 999,
-  fontSize: 12,
+  fontSize: 16,
   color: mainColor,
   background: bgColor,
   border: `1px solid ${mainColor === appPalette.textPrimary ? theme.palette.divider : alpha(mainColor, 0.35)}`,

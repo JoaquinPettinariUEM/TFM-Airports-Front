@@ -8,7 +8,7 @@ import type { RouteMapped } from "../../../types/routes";
 export function HomeRecommendationsSection() {
   const { data } = useGetPopularRoutes();
 
-  const airports = data?.airports ?? {};
+  const airports = useMemo(() => data?.airports ?? {}, [data]);
   const popularRoutesMapped = useMemo<RouteMapped[]>(
     () =>
       (data?.popularRoutes ?? []).map((route) => ({
@@ -24,7 +24,7 @@ export function HomeRecommendationsSection() {
   }, [popularRoutesMapped]);
 
   return (
-    <Section>
+    <Section id="#recommendations">
       <Container maxWidth="xl" sx={{ py: 6, display: "grid", gap: 4 }}>
         <section>
           <SectionHeader>

@@ -47,9 +47,20 @@ export function CityInfoCard({
   return (
     <>
       <StyledPaper elevation={0}>
-        <CityName variant="h4" mainColor={theme.mainColor}>
-          {city.name}
-        </CityName>
+        <ActionsRow>
+          <CityName variant="h4" mainColor={theme.mainColor}>
+            {city.name}
+          </CityName>
+          {showItineraryButton && (
+            <Button
+              variant="outlined"
+              startIcon={<AutoAwesomeOutlinedIcon />}
+              onClick={() => setOpenItinerary(true)}
+            >
+              View itinerary
+            </Button>
+          )}
+        </ActionsRow>
 
         <CityDescription>{city.description}</CityDescription>
 
@@ -72,18 +83,6 @@ export function CityInfoCard({
         <ContentDivider />
 
         <CitySummary>{city.summary}</CitySummary>
-
-        {showItineraryButton && (
-          <ActionsRow>
-            <Button
-              variant="outlined"
-              startIcon={<AutoAwesomeOutlinedIcon />}
-              onClick={() => setOpenItinerary(true)}
-            >
-              View itinerary
-            </Button>
-          </ActionsRow>
-        )}
 
         {!isLast && nextFlight && (
           <FlightBox mainColor={theme.mainColor} bgColor={theme.bgColor}>
@@ -173,9 +172,8 @@ const CitySummary = styled(Typography)(({ theme }) => ({
 }));
 
 const ActionsRow = styled(Box)({
-  marginTop: 24,
   display: "flex",
-  justifyContent: "flex-start",
+  justifyContent: "space-between",
 });
 
 const FlightBox = styled(Box)<{ mainColor: string; bgColor: string }>(({ mainColor, bgColor }) => ({

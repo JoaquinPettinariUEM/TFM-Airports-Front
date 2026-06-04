@@ -39,7 +39,7 @@ export const HeaderMain = styled(Box)({
 export const FlagImage = styled("img")({
   width: 36,
   height: 36,
-  borderRadius: 999,
+  borderRadius: 4,
   objectFit: "cover",
   flexShrink: 0,
   marginTop: 4,

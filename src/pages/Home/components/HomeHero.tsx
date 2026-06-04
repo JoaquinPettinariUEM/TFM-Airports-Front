@@ -83,6 +83,7 @@ export function HomeHero() {
                 variant="outlined"
                 color="inherit"
                 startIcon={<ExploreOutlinedIcon />}
+                onClick={() => navigate("#recommendations")}
                 sx={{ py: 2, px: 4 }}
               >
                 See recommendations
@@ -130,6 +131,12 @@ const HeroSection = styled("section")({
       to right,
       rgba(2,6,23,0.92) 0%,
       rgba(2,6,23,0.76) 30%,
+      rgba(2,6,23,0) 68%,
+      rgba(2,6,23,0) 100%
+    ), linear-gradient(
+      to top,
+      rgba(2,6,23,0.92) 0%,
+      rgba(2,6,23,0.76) 25%,
       rgba(2,6,23,0) 68%,
       rgba(2,6,23,0) 100%
     )`,

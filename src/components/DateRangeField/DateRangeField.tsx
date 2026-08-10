@@ -54,6 +54,7 @@ export function DateRangeField({ startDate, endDate, onChange, tripDays }: Reado
       <InputsRow>
         <DatePicker
           label={undefined}
+          format="DD/MM/YYYY"
           value={startDate ? dayjs(startDate) : null}
           onChange={handleStartDateChange}
           minDate={dayjs().startOf("day")}
@@ -64,6 +65,7 @@ export function DateRangeField({ startDate, endDate, onChange, tripDays }: Reado
         </ArrowWrap>
         <DatePicker
           label={undefined}
+          format="DD/MM/YYYY"
           value={endDate ? dayjs(endDate) : null}
           onChange={handleEndDateChange}
           minDate={startDate ? dayjs(startDate).startOf("day") : dayjs().startOf("day")}

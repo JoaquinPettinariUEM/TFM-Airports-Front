@@ -76,7 +76,7 @@ export function RouteCard({
         {showViewDetailsButton && (
           <>
             <ContentDivider />
-            <PathText variant="body2">{route.path.join(" -> ")}</PathText>
+            <PathText variant="body2">{route.path.join(" → ")}</PathText>
 
             <BottomAction>
               <ViewDetailsButton

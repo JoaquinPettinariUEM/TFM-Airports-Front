@@ -31,8 +31,8 @@ function RouteMainTitle({ from, to, budget, maxStops }: Readonly<Props>) {
 
 const MainTitleWrapper = styled(Box)({
   display: "flex",
-  flexDirection: "column",
-  gap: 16,
+  width: "100%",
+  justifyContent: "space-between",
   paddingBottom: 24,
 });
 

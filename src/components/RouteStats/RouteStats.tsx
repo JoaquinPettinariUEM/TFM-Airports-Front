@@ -10,7 +10,7 @@ export function RouteStat({ icon, label }: Readonly<Props>) {
     <StatRow>
       {icon}
 
-      <Typography variant="body1">{label}</Typography>
+      <Typography variant="h5">{label}</Typography>
     </StatRow>
   );
 }

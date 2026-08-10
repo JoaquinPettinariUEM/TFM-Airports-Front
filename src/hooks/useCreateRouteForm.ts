@@ -73,6 +73,7 @@ export function useCreateRouteForm() {
       endDate,
       pathTemplate,
       stayDaysTemplate,
+      maxStops: String(form.routePoints.length - 1),
     };
 
     const params = createSearchParams(queryParams);

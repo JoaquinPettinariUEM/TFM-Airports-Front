@@ -1,12 +1,22 @@
 import { styled } from "@mui/material";
+import { useRef } from "react";
 import { HomeHero } from "./components/HomeHero";
 import { HomeRecommendationsSection } from "./components/HomeRecommendationsSection";
 
 function Home() {
+  const recommendationsRef = useRef<HTMLElement | null>(null);
+
+  const scrollToRecommendations = () => {
+    recommendationsRef.current?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  };
+
   return (
     <HomeComponent>
-      <HomeHero />
-      <HomeRecommendationsSection />
+      <HomeHero onSeeRecommendations={scrollToRecommendations} />
+      <HomeRecommendationsSection sectionRef={recommendationsRef} />
     </HomeComponent>
   );
 }

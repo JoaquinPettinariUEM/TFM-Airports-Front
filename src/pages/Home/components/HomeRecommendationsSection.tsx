@@ -1,11 +1,16 @@
 import { Box, Container, Grid, Typography, styled } from "@mui/material";
+import type { Ref } from "react";
 import { useMemo } from "react";
 import { useGetPopularRoutes } from "../../../api/travelPlanApi";
 import { RouteCard } from "../../../components/RouteCard/RouteCard";
 import { appPalette, routeCardThemes } from "../../../theme";
 import type { RouteMapped } from "../../../types/routes";
 
-export function HomeRecommendationsSection() {
+type Props = {
+  sectionRef?: Ref<HTMLElement>;
+};
+
+export function HomeRecommendationsSection({ sectionRef }: Readonly<Props>) {
   const { data } = useGetPopularRoutes();
 
   const airports = data?.airports ?? {};
@@ -24,7 +29,7 @@ export function HomeRecommendationsSection() {
   }, [popularRoutesMapped]);
 
   return (
-    <Section>
+    <Section ref={sectionRef} id="home-recommendations">
       <Container maxWidth="xl" sx={{ py: 6, display: "grid", gap: 4 }}>
         <section>
           <SectionHeader>
@@ -80,6 +85,7 @@ export function HomeRecommendationsSection() {
 
 const Section = styled("section")({
   background: "#0B1020",
+  scrollMarginTop: "calc(var(--tp-header-height) + 16px)",
 });
 
 const SectionHeader = styled("div")({

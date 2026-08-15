@@ -57,8 +57,6 @@ function SearchedRoutes() {
   } = useSearchedRoutes(params);
 
   useEffect(() => {
-    if (!Object.keys(airports).length) return;
-
     const pathCodes = (params.pathTemplate || "")
       .split("->")
       .map((code) => code.trim())
@@ -73,15 +71,16 @@ function SearchedRoutes() {
 
         return {
           id: `route-point-${index + 1}-${code}`,
-          city: airport
-            ? {
-                id: airport._id,
-                name: airport.name,
-                city: airport.city,
-                country: airport.country,
-                label: `${airport.city}, ${airport.country} (${airport._id})`,
-              }
-            : null,
+          city:
+            code === "?"
+              ? null
+              : {
+                  id: airport?._id ?? code,
+                  name: airport?.name ?? code,
+                  city: airport?.city ?? code,
+                  country: airport?.country ?? "",
+                  label: airport ? `${airport.city}, ${airport.country} (${airport._id})` : code,
+                },
           stayDays: index === 0 ? 2 : Math.max(1, stayDays[index] || 2),
         };
       }),
@@ -127,7 +126,13 @@ function SearchedRoutes() {
   if (!bestRoute || !departure || !arrival) {
     return (
       <PageWrapper>
-        <Container maxWidth="md">
+        <Container
+          maxWidth="md"
+          sx={{
+            minHeight: "calc(100dvh - var(--tp-header-height) - 84px)",
+            display: "flex",
+          }}
+        >
           <NoRoutesWrap>
             <SearchOffOutlinedIcon color="warning" sx={{ fontSize: 40 }} />
             <Typography variant="h4">No routes found</Typography>
@@ -305,6 +310,8 @@ const NoRoutesWrap = styled(Box)(({ theme }) => ({
   borderRadius: 10,
   background: theme.palette.background.paper,
   minHeight: 280,
+  width: "100%",
+  height: "100%",
   display: "flex",
   flexDirection: "column",
   alignItems: "center",

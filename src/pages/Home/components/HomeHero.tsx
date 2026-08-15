@@ -12,7 +12,11 @@ import PositanoWallpaper from "../../../assets/positano_wallpaper.jpg";
 
 const iconStyle = { sx: { fontSize: 40 } };
 
-export function HomeHero() {
+type Props = {
+  onSeeRecommendations: () => void;
+};
+
+export function HomeHero({ onSeeRecommendations }: Readonly<Props>) {
   const navigate = useNavigate();
   const featureItems = [
     {
@@ -83,6 +87,7 @@ export function HomeHero() {
                 variant="outlined"
                 color="inherit"
                 startIcon={<ExploreOutlinedIcon />}
+                onClick={onSeeRecommendations}
                 sx={{ py: 2, px: 4 }}
               >
                 See recommendations

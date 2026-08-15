@@ -1,11 +1,15 @@
 import { Box, Button, Container, styled, Typography } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 function Header() {
   const navigate = useNavigate();
+  const { pathname } = useLocation();
+  const isEditingRoute =
+    pathname.startsWith("/searched/routes") || pathname.startsWith("/route/details");
+
   return (
     <HeaderComponent>
-      <Container maxWidth="lg" className="tp-header-container">
+      <Container maxWidth="xl" className="tp-header-container">
         <TitleClickArea onClick={() => navigate("/")}>
           <Typography variant="h5" className="tp-header-title">
             RouteWise
@@ -17,7 +21,7 @@ function Header() {
           color="secondary"
           onClick={() => navigate("/create/route")}
         >
-          Create your route
+          {isEditingRoute ? "Edit your route" : "Create your route"}
         </Button>
       </Container>
     </HeaderComponent>

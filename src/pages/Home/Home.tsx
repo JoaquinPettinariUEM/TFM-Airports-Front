@@ -1,6 +1,7 @@
 import { styled } from "@mui/material";
 import { useRef } from "react";
 import { HomeHero } from "./components/HomeHero";
+import { HomeHowItWorksPreview } from "./components/HomeHowItWorksPreview";
 import { HomeRecommendationsSection } from "./components/HomeRecommendationsSection";
 
 function Home() {
@@ -17,6 +18,7 @@ function Home() {
     <HomeComponent>
       <HomeHero onSeeRecommendations={scrollToRecommendations} />
       <HomeRecommendationsSection sectionRef={recommendationsRef} />
+      <HomeHowItWorksPreview />
     </HomeComponent>
   );
 }

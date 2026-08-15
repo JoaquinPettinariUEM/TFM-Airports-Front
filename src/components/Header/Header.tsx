@@ -6,6 +6,7 @@ function Header() {
   const { pathname } = useLocation();
   const isEditingRoute =
     pathname.startsWith("/searched/routes") || pathname.startsWith("/route/details");
+  const isHowItWorks = pathname.startsWith("/how-it-works");
 
   return (
     <HeaderComponent>
@@ -15,14 +16,24 @@ function Header() {
             RouteWise
           </Typography>
         </TitleClickArea>
-        <Button
-          size="small"
-          variant="text"
-          color="secondary"
-          onClick={() => navigate("/create/route")}
-        >
-          {isEditingRoute ? "Edit your route" : "Create your route"}
-        </Button>
+        <HeaderActions>
+          <Button
+            size="small"
+            variant="text"
+            color={isHowItWorks ? "primary" : "inherit"}
+            onClick={() => navigate("/how-it-works")}
+          >
+            How it works
+          </Button>
+          <Button
+            size="small"
+            variant="text"
+            color="secondary"
+            onClick={() => navigate("/create/route")}
+          >
+            {isEditingRoute ? "Edit your route" : "Create your route"}
+          </Button>
+        </HeaderActions>
       </Container>
     </HeaderComponent>
   );
@@ -44,6 +55,12 @@ const HeaderComponent = styled(Box)(({ theme }) => ({
     fontWeight: 700,
   },
 }));
+
+const HeaderActions = styled(Box)({
+  display: "flex",
+  alignItems: "center",
+  gap: 8,
+});
 
 const TitleClickArea = styled(Box)({
   cursor: "pointer",

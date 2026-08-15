@@ -156,7 +156,7 @@ const HeroContent = styled("section")(({ theme }) => ({
   display: "grid",
   gap: 20,
   ".tp-title": {
-    fontSize: "clamp(44px, 8vw, 86px)",
+    fontSize: "clamp(32px, 8vw, 60px)",
     fontWeight: 700,
     lineHeight: 1.02,
     letterSpacing: 0,

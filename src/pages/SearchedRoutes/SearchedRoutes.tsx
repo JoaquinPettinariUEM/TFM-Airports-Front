@@ -1,4 +1,5 @@
 import { Alert, Box, Button, Container, Grid, Grow, Typography, styled } from "@mui/material";
+import { useEffect } from "react";
 
 import EmojiEventsIcon from "@mui/icons-material/EmojiEvents";
 import DoneAllIcon from "@mui/icons-material/DoneAll";
@@ -25,7 +26,7 @@ const ROUTES_PER_LOAD = 4;
 
 function SearchedRoutes() {
   const [searchParams] = useSearchParams();
-  const { setSelectedRoute, setAirports } = useRouteStore();
+  const { setSelectedRoute, setAirports, setSearchForm } = useRouteStore();
   const { mutate: enrichRouteMutation, isPending } = useEnrichRoute();
 
   const navigate = useNavigate();
@@ -55,6 +56,48 @@ function SearchedRoutes() {
     arrival,
   } = useSearchedRoutes(params);
 
+  useEffect(() => {
+    const pathCodes = (params.pathTemplate || "")
+      .split("->")
+      .map((code) => code.trim())
+      .filter(Boolean);
+    const stayDays = (params.stayDaysTemplate || "").split(",").map((value) => Number(value));
+
+    if (pathCodes.length < 2) return;
+
+    setSearchForm({
+      routePoints: pathCodes.map((code, index) => {
+        const airport = airports[code];
+
+        return {
+          id: `route-point-${index + 1}-${code}`,
+          city:
+            code === "?"
+              ? null
+              : {
+                  id: airport?._id ?? code,
+                  name: airport?.name ?? code,
+                  city: airport?.city ?? code,
+                  country: airport?.country ?? "",
+                  label: airport ? `${airport.city}, ${airport.country} (${airport._id})` : code,
+                },
+          stayDays: index === 0 ? 2 : Math.max(1, stayDays[index] || 2),
+        };
+      }),
+      budget: params.budget,
+      startDate: params.startDate ? new Date(params.startDate) : undefined,
+      endDate: params.endDate ? new Date(params.endDate) : undefined,
+    });
+  }, [
+    airports,
+    params.budget,
+    params.endDate,
+    params.pathTemplate,
+    params.startDate,
+    params.stayDaysTemplate,
+    setSearchForm,
+  ]);
+
   const viewDetailsRoute = (route: RouteMapped) => {
     setAirports(airports);
     enrichRouteMutation(route, {
@@ -83,7 +126,13 @@ function SearchedRoutes() {
   if (!bestRoute || !departure || !arrival) {
     return (
       <PageWrapper>
-        <Container maxWidth="md">
+        <Container
+          maxWidth="md"
+          sx={{
+            minHeight: "calc(100dvh - var(--tp-header-height) - 84px)",
+            display: "flex",
+          }}
+        >
           <NoRoutesWrap>
             <SearchOffOutlinedIcon color="warning" sx={{ fontSize: 40 }} />
             <Typography variant="h4">No routes found</Typography>
@@ -91,7 +140,7 @@ function SearchedRoutes() {
               Try increasing budget, dates or max stops to discover more combinations.
             </Typography>
             <Button variant="contained" onClick={() => navigate("/create/route")}>
-              New search
+              Back to search
             </Button>
           </NoRoutesWrap>
         </Container>
@@ -261,6 +310,8 @@ const NoRoutesWrap = styled(Box)(({ theme }) => ({
   borderRadius: 10,
   background: theme.palette.background.paper,
   minHeight: 280,
+  width: "100%",
+  height: "100%",
   display: "flex",
   flexDirection: "column",
   alignItems: "center",

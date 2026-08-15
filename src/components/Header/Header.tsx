@@ -1,24 +1,39 @@
 import { Box, Button, Container, styled, Typography } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 function Header() {
   const navigate = useNavigate();
+  const { pathname } = useLocation();
+  const isEditingRoute =
+    pathname.startsWith("/searched/routes") || pathname.startsWith("/route/details");
+  const isHowItWorks = pathname.startsWith("/how-it-works");
+
   return (
     <HeaderComponent>
-      <Container maxWidth="lg" className="tp-header-container">
+      <Container maxWidth="xl" className="tp-header-container">
         <TitleClickArea onClick={() => navigate("/")}>
           <Typography variant="h5" className="tp-header-title">
             RouteWise
           </Typography>
         </TitleClickArea>
-        <Button
-          size="small"
-          variant="text"
-          color="secondary"
-          onClick={() => navigate("/create/route")}
-        >
-          Create your route
-        </Button>
+        <HeaderActions>
+          <Button
+            size="small"
+            variant="text"
+            color={isHowItWorks ? "primary" : "inherit"}
+            onClick={() => navigate("/how-it-works")}
+          >
+            How it works
+          </Button>
+          <Button
+            size="small"
+            variant="text"
+            color="secondary"
+            onClick={() => navigate("/create/route")}
+          >
+            {isEditingRoute ? "Edit your route" : "Create your route"}
+          </Button>
+        </HeaderActions>
       </Container>
     </HeaderComponent>
   );
@@ -40,6 +55,12 @@ const HeaderComponent = styled(Box)(({ theme }) => ({
     fontWeight: 700,
   },
 }));
+
+const HeaderActions = styled(Box)({
+  display: "flex",
+  alignItems: "center",
+  gap: 8,
+});
 
 const TitleClickArea = styled(Box)({
   cursor: "pointer",

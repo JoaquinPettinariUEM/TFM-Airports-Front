@@ -1,11 +1,21 @@
 import { Box, Container, Grid, Typography, styled } from "@mui/material";
+import { addDays } from "date-fns";
+import type { Ref } from "react";
 import { useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 import { useGetPopularRoutes } from "../../../api/travelPlanApi";
 import { RouteCard } from "../../../components/RouteCard/RouteCard";
+import { useRouteStore } from "../../../store/routeStore";
 import { appPalette, routeCardThemes } from "../../../theme";
 import type { RouteMapped } from "../../../types/routes";
 
-export function HomeRecommendationsSection() {
+type Props = {
+  sectionRef?: Ref<HTMLElement>;
+};
+
+export function HomeRecommendationsSection({ sectionRef }: Readonly<Props>) {
+  const navigate = useNavigate();
+  const { setSearchForm } = useRouteStore();
   const { data } = useGetPopularRoutes();
 
   const airports = data?.airports ?? {};
@@ -23,8 +33,38 @@ export function HomeRecommendationsSection() {
     return Math.min(...popularRoutesMapped.map((route) => route.cost));
   }, [popularRoutesMapped]);
 
+  const handlePopularRouteClick = (route: RouteMapped) => {
+    const startDate = startOfToday();
+    const endDate = addDays(startDate, 15);
+
+    setSearchForm({
+      routePoints: route.path.map((code, index) => {
+        const airport = airports[code];
+
+        return {
+          id: `popular-route-point-${index + 1}-${code}`,
+          city: airport
+            ? {
+                id: airport._id,
+                name: airport.name,
+                city: airport.city,
+                country: airport.country,
+                label: `${airport.city}, ${airport.country} (${airport._id})`,
+              }
+            : null,
+          stayDays: index === 0 ? 2 : Math.max(1, route.flights[index - 1]?.stayDays ?? 2),
+        };
+      }),
+      budget: route.cost,
+      startDate,
+      endDate,
+    });
+
+    navigate("/create/route");
+  };
+
   return (
-    <Section>
+    <Section ref={sectionRef} id="home-recommendations">
       <Container maxWidth="xl" sx={{ py: 6, display: "grid", gap: 4 }}>
         <section>
           <SectionHeader>
@@ -58,6 +98,7 @@ export function HomeRecommendationsSection() {
                         viewDetailsRoute={() => undefined}
                         showPriceDelta={false}
                         showViewDetailsButton={false}
+                        onCardClick={() => handlePopularRouteClick(route)}
                       />
                     </Box>
                   </Grid>
@@ -80,6 +121,7 @@ export function HomeRecommendationsSection() {
 
 const Section = styled("section")({
   background: "#0B1020",
+  scrollMarginTop: "calc(var(--tp-header-height) + 16px)",
 });
 
 const SectionHeader = styled("div")({
@@ -96,3 +138,9 @@ const EmptyRecommendations = styled("div")(({ theme }) => ({
   textAlign: "center",
   padding: 16,
 }));
+
+function startOfToday() {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  return today;
+}

@@ -26,6 +26,7 @@ type Props = {
   viewDetailsRoute: (routes: RouteMapped) => void;
   showPriceDelta?: boolean;
   showViewDetailsButton?: boolean;
+  onCardClick?: () => void;
 };
 
 export function RouteCard({
@@ -38,6 +39,7 @@ export function RouteCard({
   viewDetailsRoute,
   showPriceDelta = true,
   showViewDetailsButton = true,
+  onCardClick,
 }: Readonly<Props>) {
   const cities = getRouteCities(route, airports);
   const departure = cities[0];
@@ -47,7 +49,22 @@ export function RouteCard({
   const viaText = stopCities.length > 0 ? `Via ${stopCities.join(" & ")}` : "Direct flight";
 
   return (
-    <StyledRouteCard mainColor={mainColor}>
+    <StyledRouteCard
+      mainColor={mainColor}
+      onClick={onCardClick}
+      role={onCardClick ? "button" : undefined}
+      tabIndex={onCardClick ? 0 : undefined}
+      onKeyDown={
+        onCardClick
+          ? (event) => {
+              if (event.key === "Enter" || event.key === " ") {
+                event.preventDefault();
+                onCardClick();
+              }
+            }
+          : undefined
+      }
+    >
       <RouteCardImage city={previewCity} />
 
       <CardContent>
@@ -83,7 +100,10 @@ export function RouteCard({
                 variant="outlined"
                 fullWidth
                 endIcon={<EastIcon />}
-                onClick={() => viewDetailsRoute(route)}
+                onClick={(event) => {
+                  event.stopPropagation();
+                  viewDetailsRoute(route);
+                }}
                 mainColor={mainColor}
               >
                 View Details

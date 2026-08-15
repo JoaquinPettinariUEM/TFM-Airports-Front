@@ -41,9 +41,10 @@ function CreateRoute() {
       <Container
         maxWidth="md"
         sx={{
-          height: "100%",
+          minHeight: "inherit",
           display: "flex",
           gap: 2,
+          py: 4,
           flexDirection: "column",
           justifyContent: "center",
         }}
@@ -169,7 +170,8 @@ function CreateRoute() {
 }
 
 const BackgroundComponent = styled("section")(({ theme }) => ({
-  height: "calc(100dvh - var(--tp-header-height))",
+  position: "relative",
+  minHeight: "calc(100dvh - var(--tp-header-height))",
   width: "100%",
   backgroundImage: `url(${BackgroundImage})`,
   backgroundRepeat: "no-repeat",

@@ -22,8 +22,7 @@ const LayoutStyled = styled(Grid)({
 
 const MainContent = styled("main")({
   flex: 1,
-  height: "calc(100dvh - var(--tp-header-height))",
-  minHeight: 0,
+  minHeight: "calc(100dvh - var(--tp-header-height))",
 });
 
 export default Layout;

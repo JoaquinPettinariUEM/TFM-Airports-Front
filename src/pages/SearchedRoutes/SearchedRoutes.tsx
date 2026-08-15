@@ -1,4 +1,5 @@
 import { Alert, Box, Button, Container, Grid, Grow, Typography, styled } from "@mui/material";
+import { useEffect } from "react";
 
 import EmojiEventsIcon from "@mui/icons-material/EmojiEvents";
 import DoneAllIcon from "@mui/icons-material/DoneAll";
@@ -25,7 +26,7 @@ const ROUTES_PER_LOAD = 4;
 
 function SearchedRoutes() {
   const [searchParams] = useSearchParams();
-  const { setSelectedRoute, setAirports } = useRouteStore();
+  const { setSelectedRoute, setAirports, setSearchForm } = useRouteStore();
   const { mutate: enrichRouteMutation, isPending } = useEnrichRoute();
 
   const navigate = useNavigate();
@@ -54,6 +55,49 @@ function SearchedRoutes() {
     departure,
     arrival,
   } = useSearchedRoutes(params);
+
+  useEffect(() => {
+    if (!Object.keys(airports).length) return;
+
+    const pathCodes = (params.pathTemplate || "")
+      .split("->")
+      .map((code) => code.trim())
+      .filter(Boolean);
+    const stayDays = (params.stayDaysTemplate || "").split(",").map((value) => Number(value));
+
+    if (pathCodes.length < 2) return;
+
+    setSearchForm({
+      routePoints: pathCodes.map((code, index) => {
+        const airport = airports[code];
+
+        return {
+          id: `route-point-${index + 1}-${code}`,
+          city: airport
+            ? {
+                id: airport._id,
+                name: airport.name,
+                city: airport.city,
+                country: airport.country,
+                label: `${airport.city}, ${airport.country} (${airport._id})`,
+              }
+            : null,
+          stayDays: index === 0 ? 2 : Math.max(1, stayDays[index] || 2),
+        };
+      }),
+      budget: params.budget,
+      startDate: params.startDate ? new Date(params.startDate) : undefined,
+      endDate: params.endDate ? new Date(params.endDate) : undefined,
+    });
+  }, [
+    airports,
+    params.budget,
+    params.endDate,
+    params.pathTemplate,
+    params.startDate,
+    params.stayDaysTemplate,
+    setSearchForm,
+  ]);
 
   const viewDetailsRoute = (route: RouteMapped) => {
     setAirports(airports);
@@ -91,7 +135,7 @@ function SearchedRoutes() {
               Try increasing budget, dates or max stops to discover more combinations.
             </Typography>
             <Button variant="contained" onClick={() => navigate("/create/route")}>
-              New search
+              Back to search
             </Button>
           </NoRoutesWrap>
         </Container>

@@ -3,9 +3,15 @@ import { Alert, Button, Chip, Container, Stack, Typography } from "@mui/material
 import CheckCircleOutlineOutlinedIcon from "@mui/icons-material/CheckCircleOutlineOutlined";
 import MapOutlinedIcon from "@mui/icons-material/MapOutlined";
 import { useNavigate } from "react-router-dom";
+import { useI18n } from "../../i18n/i18nContext";
 import { routeCardThemes } from "../../theme";
 import { HowItWorksGraph } from "./components/HowItWorksGraph";
-import { algorithmNotes, exampleSearchPath, processSteps, resultCards } from "./howItWorks.data";
+import {
+  exampleSearchPath,
+  getAlgorithmNotes,
+  getProcessSteps,
+  getResultCards,
+} from "./howItWorks.data";
 import {
   Arrow,
   Eyebrow,
@@ -38,6 +44,10 @@ import {
 
 function HowItWorks() {
   const navigate = useNavigate();
+  const { t } = useI18n();
+  const processSteps = getProcessSteps(t);
+  const algorithmNotes = getAlgorithmNotes(t);
+  const resultCards = getResultCards(t);
 
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: "instant" as ScrollBehavior });
@@ -48,13 +58,12 @@ function HowItWorks() {
       <Container maxWidth="xl" sx={{ py: { xs: 4, md: 6 }, display: "grid", gap: 5 }}>
         <HeroSection>
           <HeroCopy>
-            <Eyebrow>How it works</Eyebrow>
+            <Eyebrow>{t("howItWorks.eyebrow")}</Eyebrow>
             <Typography variant="h2" className="tp-title">
-              How RouteWise builds a smarter multi-city trip
+              {t("howItWorks.title")}
             </Typography>
             <Typography variant="h5" color="text.secondary" className="tp-subtitle">
-              We combine your route template, dates, stay days and budget to surface the travel
-              paths that make the most sense.
+              {t("howItWorks.subtitle")}
             </Typography>
             <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5}>
               <Button
@@ -63,18 +72,18 @@ function HowItWorks() {
                 startIcon={<MapOutlinedIcon />}
                 onClick={() => navigate("/create/route")}
               >
-                Create your route
+                {t("howItWorks.createRoute")}
               </Button>
               <Button variant="outlined" size="large" onClick={() => navigate("/")}>
-                Back to home
+                {t("howItWorks.backToHome")}
               </Button>
             </Stack>
           </HeroCopy>
 
           <HeroPanel>
             <PanelHeader>
-              <Typography variant="h5">Example search</Typography>
-              <Chip size="small" color="secondary" label="Mock example" />
+              <Typography variant="h5">{t("howItWorks.exampleSearch")}</Typography>
+              <Chip size="small" color="secondary" label={t("howItWorks.mockExample")} />
             </PanelHeader>
 
             <PathWrap>
@@ -94,19 +103,19 @@ function HowItWorks() {
             <MetricsRow>
               <MetricCard>
                 <Typography variant="body2" color="text.secondary">
-                  Budget
+                  {t("howItWorks.budget")}
                 </Typography>
                 <Typography variant="h6">EUR 300</Typography>
               </MetricCard>
               <MetricCard>
                 <Typography variant="body2" color="text.secondary">
-                  Trip window
+                  {t("howItWorks.tripWindow")}
                 </Typography>
                 <Typography variant="h6">16 days</Typography>
               </MetricCard>
               <MetricCard>
                 <Typography variant="body2" color="text.secondary">
-                  Max stops
+                  {t("howItWorks.maxStops")}
                 </Typography>
                 <Typography variant="h6">3</Typography>
               </MetricCard>
@@ -134,12 +143,11 @@ function HowItWorks() {
         <LargePanel>
           <TwoColumnHeader>
             <div>
-              <Eyebrow>Inside the search</Eyebrow>
-              <Typography variant="h3">What the algorithm actually does</Typography>
+              <Eyebrow>{t("howItWorks.insideEyebrow")}</Eyebrow>
+              <Typography variant="h3">{t("howItWorks.insideTitle")}</Typography>
             </div>
             <Typography color="text.secondary" sx={{ maxWidth: 620 }}>
-              RouteWise does not just list flights. It explores possible city sequences, filters
-              weak candidates, then ranks the remaining routes according to the trip criteria.
+              {t("howItWorks.insideSubtitle")}
             </Typography>
           </TwoColumnHeader>
 
@@ -148,11 +156,8 @@ function HowItWorks() {
 
         <section>
           <SectionTitle>
-            <Typography variant="h3">How to read the results</Typography>
-            <Typography color="text.secondary">
-              The app highlights different winners so you can choose what matters most for this
-              trip.
-            </Typography>
+            <Typography variant="h3">{t("howItWorks.resultsTitle")}</Typography>
+            <Typography color="text.secondary">{t("howItWorks.resultsSubtitle")}</Typography>
           </SectionTitle>
 
           <ResultsGrid>
@@ -191,8 +196,7 @@ function HowItWorks() {
           icon={<CheckCircleOutlineOutlinedIcon />}
           sx={{ borderRadius: 2 }}
         >
-          This page currently uses mocked explanatory examples so the product flow is easy to
-          understand. We can later swap parts of it with live route examples from the backend.
+          {t("howItWorks.infoAlert")}
         </Alert>
       </Container>
     </PageSection>

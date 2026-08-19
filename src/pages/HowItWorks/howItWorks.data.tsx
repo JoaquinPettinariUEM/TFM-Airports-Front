@@ -42,81 +42,97 @@ export type GraphEdgeItem = {
 
 export const exampleSearchPath = ["Madrid", "Barcelona", "Rome", "Milan"] as const;
 
-export const processSteps: HowItWorksCardItem[] = [
-  {
-    step: "01",
-    title: "Choose your cities",
-    description:
-      "Start with origin and destination, then add the places you definitely want in between.",
-    icon: <FlightTakeoffOutlinedIcon />,
-  },
-  {
-    step: "02",
-    title: "Set dates and budget",
-    description:
-      "Pick your travel window, total budget and how many days you want to stay in each stop.",
-    icon: <CalendarMonthOutlinedIcon />,
-  },
-  {
-    step: "03",
-    title: "We explore combinations",
-    description:
-      "RouteWise generates and evaluates multi-city paths that match your trip constraints.",
-    icon: <HubOutlinedIcon />,
-  },
-  {
-    step: "04",
-    title: "Compare the best options",
-    description:
-      "You get a best overall route plus alternatives optimized for price, convenience or fewer stops.",
-    icon: <InsightsOutlinedIcon />,
-  },
-];
+type Translate = (key: string, values?: Record<string, string | number>) => string;
 
-export const algorithmNotes: HowItWorksCardItem[] = [
-  {
-    title: "Budget aware",
-    description: "Routes that clearly exceed the target budget are deprioritized early.",
-    icon: <SavingsOutlinedIcon />,
-  },
-  {
-    title: "Stop limit respected",
-    description: "The search stays inside your allowed number of intermediate cities.",
-    icon: <AltRouteOutlinedIcon />,
-  },
-  {
-    title: "Duration matters",
-    description: "Travel time and stay distribution are considered together with total price.",
-    icon: <ScheduleOutlinedIcon />,
-  },
-];
+export function getProcessSteps(t: Translate): HowItWorksCardItem[] {
+  return [
+    {
+      step: "01",
+      title: t("howItWorks.processChooseTitle"),
+      description: t("howItWorks.processChooseDescription"),
+      icon: <FlightTakeoffOutlinedIcon />,
+    },
+    {
+      step: "02",
+      title: t("howItWorks.processDatesTitle"),
+      description: t("howItWorks.processDatesDescription"),
+      icon: <CalendarMonthOutlinedIcon />,
+    },
+    {
+      step: "03",
+      title: t("howItWorks.processExploreTitle"),
+      description: t("howItWorks.processExploreDescription"),
+      icon: <HubOutlinedIcon />,
+    },
+    {
+      step: "04",
+      title: t("howItWorks.processCompareTitle"),
+      description: t("howItWorks.processCompareDescription"),
+      icon: <InsightsOutlinedIcon />,
+    },
+  ];
+}
 
-export const resultCards: HowItWorksResultCard[] = [
-  {
-    badge: "Best Balance",
-    accent: routeCardThemes[1],
-    price: "EUR 267",
-    subtitle: "The strongest mix of price, route quality and practical timing.",
-    path: ["Madrid", "Barcelona", "Rome", "Milan"],
-    meta: ["3 flights", "2 stops", "Within budget"],
-  },
-  {
-    badge: "Best Price",
-    accent: routeCardThemes[0],
-    price: "EUR 223",
-    subtitle: "The lowest total cost among the routes that still fit the trip template.",
-    path: ["Madrid", "Barcelona", "Marseille", "Milan"],
-    meta: ["3 flights", "2 stops", "Lowest cost"],
-  },
-  {
-    badge: "Fewer Stops",
-    accent: routeCardThemes[3],
-    price: "EUR 220",
-    subtitle: "A simpler route when reducing stops matters more than visiting more cities.",
-    path: ["Madrid", "Paris", "Milan"],
-    meta: ["2 flights", "1 stop", "Less moving"],
-  },
-];
+export function getAlgorithmNotes(t: Translate): HowItWorksCardItem[] {
+  return [
+    {
+      title: t("howItWorks.noteBudgetTitle"),
+      description: t("howItWorks.noteBudgetDescription"),
+      icon: <SavingsOutlinedIcon />,
+    },
+    {
+      title: t("howItWorks.noteStopTitle"),
+      description: t("howItWorks.noteStopDescription"),
+      icon: <AltRouteOutlinedIcon />,
+    },
+    {
+      title: t("howItWorks.noteDurationTitle"),
+      description: t("howItWorks.noteDurationDescription"),
+      icon: <ScheduleOutlinedIcon />,
+    },
+  ];
+}
+
+export function getResultCards(t: Translate): HowItWorksResultCard[] {
+  return [
+    {
+      badge: t("howItWorks.badgeBestBalance"),
+      accent: routeCardThemes[1],
+      price: "EUR 267",
+      subtitle: t("howItWorks.resultBestBalanceSubtitle"),
+      path: ["Madrid", "Barcelona", "Rome", "Milan"],
+      meta: [
+        t("howItWorks.resultMetaFlights3"),
+        t("howItWorks.resultMetaStops2"),
+        t("howItWorks.resultMetaWithinBudget"),
+      ],
+    },
+    {
+      badge: t("howItWorks.badgeBestPrice"),
+      accent: routeCardThemes[0],
+      price: "EUR 223",
+      subtitle: t("howItWorks.resultBestPriceSubtitle"),
+      path: ["Madrid", "Barcelona", "Marseille", "Milan"],
+      meta: [
+        t("howItWorks.resultMetaFlights3"),
+        t("howItWorks.resultMetaStops2"),
+        t("howItWorks.resultMetaLowestCost"),
+      ],
+    },
+    {
+      badge: t("howItWorks.badgeFewerStops"),
+      accent: routeCardThemes[3],
+      price: "EUR 220",
+      subtitle: t("howItWorks.resultFewerStopsSubtitle"),
+      path: ["Madrid", "Paris", "Milan"],
+      meta: [
+        t("howItWorks.resultMetaFlights2"),
+        t("howItWorks.resultMetaStops1"),
+        t("howItWorks.resultMetaLessMoving"),
+      ],
+    },
+  ];
+}
 
 export const graphNodes: GraphNodeItem[] = [
   { id: "MAD", label: "Madrid", x: 70, y: 180, kind: "origin" },
@@ -139,8 +155,10 @@ export const graphEdges: GraphEdgeItem[] = [
   { from: "LYS", to: "MXP", best: false },
 ];
 
-export const graphStats = [
-  { value: "7", label: "Cities considered" },
-  { value: "3", label: "Valid route candidates" },
-  { value: "1", label: "Best route selected" },
-] as const;
+export function getGraphStats(t: Translate) {
+  return [
+    { value: "7", label: t("howItWorks.statCities") },
+    { value: "3", label: t("howItWorks.statCandidates") },
+    { value: "1", label: t("howItWorks.statSelected") },
+  ] as const;
+}

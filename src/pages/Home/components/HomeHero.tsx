@@ -6,6 +6,7 @@ import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
 import WalletOutlinedIcon from "@mui/icons-material/WalletOutlined";
 import VerifiedUserOutlinedIcon from "@mui/icons-material/VerifiedUserOutlined";
 import { useNavigate } from "react-router-dom";
+import { useI18n } from "../../../i18n/i18nContext";
 import { appPalette, routeCardThemes } from "../../../theme";
 import { TripIcon } from "../../../components/TripIcon/TripIcon";
 import PositanoWallpaper from "../../../assets/positano_wallpaper.jpg";
@@ -18,25 +19,26 @@ type Props = {
 
 export function HomeHero({ onSeeRecommendations }: Readonly<Props>) {
   const navigate = useNavigate();
+  const { t } = useI18n();
   const featureItems = [
     {
-      title: "Smart routes",
-      description: "Optimized routes with the best connections",
+      title: t("home.featureSmartRoutesTitle"),
+      description: t("home.featureSmartRoutesDescription"),
       icon: <FlightIcon {...iconStyle} />,
     },
     {
-      title: "Multiple cities",
-      description: "Visit more places in one incredible trip",
+      title: t("home.featureMultipleCitiesTitle"),
+      description: t("home.featureMultipleCitiesDescription"),
       icon: <LocationOnOutlinedIcon {...iconStyle} />,
     },
     {
-      title: "Budget friendly",
-      description: "Find the best options within your budget",
+      title: t("home.featureBudgetTitle"),
+      description: t("home.featureBudgetDescription"),
       icon: <WalletOutlinedIcon {...iconStyle} />,
     },
     {
-      title: "Flexible planning",
-      description: "Adapt your trip to your time and preferences",
+      title: t("home.featureFlexibleTitle"),
+      description: t("home.featureFlexibleDescription"),
       icon: <VerifiedUserOutlinedIcon {...iconStyle} />,
     },
   ];
@@ -59,17 +61,16 @@ export function HomeHero({ onSeeRecommendations }: Readonly<Props>) {
             <TitleContainer>
               <TripIcon />
               <Typography variant="body1" color="secondary">
-                YOUR JOURNEY, YOUR WAY
+                {t("home.heroEyebrow")}
               </Typography>
             </TitleContainer>
             <Typography variant="h1" className="tp-title">
-              One trip,
+              {t("home.heroTitleLine1")}
               <br />
-              multiple cities
+              {t("home.heroTitleLine2")}
             </Typography>
             <Typography variant="h5" className="tp-subtitle">
-              Discover the best routes, combine amazing destinations and create unforgettable
-              memories along the way.
+              {t("home.heroSubtitle")}
             </Typography>
 
             <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5}>
@@ -80,7 +81,7 @@ export function HomeHero({ onSeeRecommendations }: Readonly<Props>) {
                 onClick={() => navigate("/create/route")}
                 sx={{ py: 2, px: 4 }}
               >
-                Plan your trip
+                {t("home.planTrip")}
               </Button>
               <Button
                 size="large"
@@ -90,7 +91,7 @@ export function HomeHero({ onSeeRecommendations }: Readonly<Props>) {
                 onClick={onSeeRecommendations}
                 sx={{ py: 2, px: 4 }}
               >
-                See recommendations
+                {t("home.seeRecommendations")}
               </Button>
             </Stack>
           </HeroContent>

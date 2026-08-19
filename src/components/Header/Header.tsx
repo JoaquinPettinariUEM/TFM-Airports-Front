@@ -1,9 +1,11 @@
-import { Box, Button, Container, styled, Typography } from "@mui/material";
+import { Box, Button, ButtonGroup, Container, styled, Typography } from "@mui/material";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useI18n } from "../../i18n/i18nContext";
 
 function Header() {
   const navigate = useNavigate();
   const { pathname } = useLocation();
+  const { language, setLanguage, t } = useI18n();
   const isEditingRoute =
     pathname.startsWith("/searched/routes") || pathname.startsWith("/route/details");
   const isHowItWorks = pathname.startsWith("/how-it-works");
@@ -23,16 +25,39 @@ function Header() {
             color={isHowItWorks ? "primary" : "inherit"}
             onClick={() => navigate("/how-it-works")}
           >
-            How it works
+            {t("header.howItWorks")}
           </Button>
           <Button
             size="small"
             variant="text"
-            color="secondary"
+            color="inherit"
             onClick={() => navigate("/create/route")}
           >
-            {isEditingRoute ? "Edit your route" : "Create your route"}
+            {isEditingRoute ? t("header.editRoute") : t("header.createRoute")}
           </Button>
+          <ButtonGroup
+            size="small"
+            aria-label={t("header.language")}
+            sx={{
+              "& .MuiButton-root": {
+                minWidth: 42,
+                fontWeight: 700,
+              },
+            }}
+          >
+            <Button
+              variant={language === "en" ? "contained" : "outlined"}
+              onClick={() => setLanguage("en")}
+            >
+              EN
+            </Button>
+            <Button
+              variant={language === "es" ? "contained" : "outlined"}
+              onClick={() => setLanguage("es")}
+            >
+              ES
+            </Button>
+          </ButtonGroup>
         </HeaderActions>
       </Container>
     </HeaderComponent>

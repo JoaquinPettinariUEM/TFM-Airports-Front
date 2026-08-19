@@ -5,6 +5,7 @@ import { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useGetPopularRoutes } from "../../../api/travelPlanApi";
 import { RouteCard } from "../../../components/RouteCard/RouteCard";
+import { useI18n } from "../../../i18n/i18nContext";
 import { useRouteStore } from "../../../store/routeStore";
 import { appPalette, routeCardThemes } from "../../../theme";
 import type { RouteMapped } from "../../../types/routes";
@@ -15,10 +16,11 @@ type Props = {
 
 export function HomeRecommendationsSection({ sectionRef }: Readonly<Props>) {
   const navigate = useNavigate();
+  const { t } = useI18n();
   const { setSearchForm } = useRouteStore();
   const { data } = useGetPopularRoutes();
 
-  const airports = data?.airports ?? {};
+  const airports = useMemo(() => data?.airports ?? {}, [data]);
   const popularRoutesMapped = useMemo<RouteMapped[]>(
     () =>
       (data?.popularRoutes ?? []).map((route) => ({
@@ -68,10 +70,8 @@ export function HomeRecommendationsSection({ sectionRef }: Readonly<Props>) {
       <Container maxWidth="xl" sx={{ py: 6, display: "grid", gap: 4 }}>
         <section>
           <SectionHeader>
-            <Typography variant="h3">Popular multi-city trips</Typography>
-            <Typography color="textSecondary">
-              Discover real routes planned by travelers like you
-            </Typography>
+            <Typography variant="h3">{t("home.popularTitle")}</Typography>
+            <Typography color="textSecondary">{t("home.popularSubtitle")}</Typography>
           </SectionHeader>
 
           {popularRoutesMapped.length ? (
@@ -107,10 +107,8 @@ export function HomeRecommendationsSection({ sectionRef }: Readonly<Props>) {
             </Grid>
           ) : (
             <EmptyRecommendations>
-              <Typography variant="h6">No popular routes yet</Typography>
-              <Typography color="textSecondary">
-                We are preparing popular trip combinations.
-              </Typography>
+              <Typography variant="h6">{t("home.popularEmptyTitle")}</Typography>
+              <Typography color="textSecondary">{t("home.popularEmptySubtitle")}</Typography>
             </EmptyRecommendations>
           )}
         </section>

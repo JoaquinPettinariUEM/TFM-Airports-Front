@@ -11,6 +11,7 @@ import {
 import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
 import ShareOutlinedIcon from "@mui/icons-material/ShareOutlined";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useI18n } from "../../i18n/i18nContext";
 
 interface Props {
   route: EnrichedRouteDetail;
@@ -22,6 +23,7 @@ interface Props {
 export function RouteHeader({ route, budget, requestedMaxStops, onShare }: Readonly<Props>) {
   const navigate = useNavigate();
   const location = useLocation();
+  const { t } = useI18n();
 
   const totalStops = Math.max(route.path.length - 2, 0);
   const totalCities = route.path.length;
@@ -31,7 +33,7 @@ export function RouteHeader({ route, budget, requestedMaxStops, onShare }: Reado
   return (
     <Box>
       <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-        <HeaderTitle variant="h2">Full Route Details</HeaderTitle>
+        <HeaderTitle variant="h2">{t("routeHeader.title")}</HeaderTitle>
         <HeaderActions>
           {onShare && (
             <Button
@@ -40,7 +42,7 @@ export function RouteHeader({ route, budget, requestedMaxStops, onShare }: Reado
               onClick={onShare}
               sx={{ height: 35 }}
             >
-              Share
+              {t("routeHeader.share")}
             </Button>
           )}
           <Button
@@ -53,37 +55,39 @@ export function RouteHeader({ route, budget, requestedMaxStops, onShare }: Reado
             }
             sx={{ height: 35 }}
           >
-            Back to results
+            {t("routeHeader.backToResults")}
           </Button>
         </HeaderActions>
       </Box>
-      <HeaderSubtitle>Every stop. Every detail. Your complete journey.</HeaderSubtitle>
+      <HeaderSubtitle>{t("routeHeader.subtitle")}</HeaderSubtitle>
 
       <SummaryCard elevation={0}>
         <MetricsRow>
           <MetricBlock>
             <MetricValue colorVariant="success">{formatEuro(route.cost)}</MetricValue>
-            <MetricLabel>Total Price</MetricLabel>
+            <MetricLabel>{t("routeHeader.totalPrice")}</MetricLabel>
           </MetricBlock>
           <MetricDivider orientation="vertical" flexItem />
           <MetricBlock>
-            <MetricValue colorVariant="secondary">{`${totalStops} stops`}</MetricValue>
-            <MetricLabel>{`${totalCities} cities`}</MetricLabel>
+            <MetricValue colorVariant="secondary">
+              {t("routeHeader.stops", { count: totalStops })}
+            </MetricValue>
+            <MetricLabel>{t("routeHeader.cities", { count: totalCities })}</MetricLabel>
           </MetricBlock>
           <MetricDivider orientation="vertical" flexItem />
           <MetricBlock>
             <MetricValue colorVariant="info">{`${formatCompactDistance(route.distance)} km`}</MetricValue>
-            <MetricLabel>Total Distance</MetricLabel>
+            <MetricLabel>{t("routeHeader.totalDistance")}</MetricLabel>
           </MetricBlock>
           <MetricDivider orientation="vertical" flexItem />
           <MetricBlock>
             <MetricValue colorVariant="warning">{`${score}/10`}</MetricValue>
-            <MetricLabel>Route Score</MetricLabel>
+            <MetricLabel>{t("routeHeader.routeScore")}</MetricLabel>
           </MetricBlock>
           <MetricDivider orientation="vertical" flexItem />
           <MetricBlock>
             <MetricValue>{totalDuration}</MetricValue>
-            <MetricLabel>Total Travel Time</MetricLabel>
+            <MetricLabel>{t("routeHeader.totalTravelTime")}</MetricLabel>
           </MetricBlock>
         </MetricsRow>
 

@@ -15,6 +15,7 @@ import {
   PriceRow,
   StyledRouteCard,
 } from "../../pages/SearchedRoutes/styled";
+import { useI18n } from "../../i18n/i18nContext";
 
 type Props = {
   route: RouteMapped;
@@ -41,12 +42,16 @@ export function RouteCard({
   showViewDetailsButton = true,
   onCardClick,
 }: Readonly<Props>) {
+  const { t } = useI18n();
   const cities = getRouteCities(route, airports);
   const departure = cities[0];
   const arrival = cities[cities.length - 1];
   const stopCities = cities.slice(1, -1);
   const difference = route.cost - bestPrice;
-  const viaText = stopCities.length > 0 ? `Via ${stopCities.join(" & ")}` : "Direct flight";
+  const viaText =
+    stopCities.length > 0
+      ? t("routeCard.via", { cities: stopCities.join(" & ") })
+      : t("routeCard.directFlight");
 
   return (
     <StyledRouteCard
@@ -86,7 +91,10 @@ export function RouteCard({
         </PriceRow>
 
         <StatsStack direction="row" spacing={1}>
-          <Chip icon={<FlightIcon />} label={`${route.path.length - 1} flights`} />
+          <Chip
+            icon={<FlightIcon />}
+            label={t("routeCard.flights", { count: route.path.length - 1 })}
+          />
           <Chip icon={<StraightenIcon />} label={`${formatCompactDistance(route.distance)} km`} />
         </StatsStack>
 
@@ -106,7 +114,7 @@ export function RouteCard({
                 }}
                 mainColor={mainColor}
               >
-                View Details
+                {t("routeCard.viewDetails")}
               </ViewDetailsButton>
             </BottomAction>
           </>

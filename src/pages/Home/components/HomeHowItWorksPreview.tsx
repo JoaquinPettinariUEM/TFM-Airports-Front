@@ -1,29 +1,30 @@
 import { Button, Chip, Container, Typography, styled } from "@mui/material";
 import ArrowOutwardOutlinedIcon from "@mui/icons-material/ArrowOutwardOutlined";
 import { useNavigate } from "react-router-dom";
+import { useI18n } from "../../../i18n/i18nContext";
 import { appPalette, routeCardThemes } from "../../../theme";
 import {
-  algorithmNotes,
   graphEdges,
   graphNodes,
-  processSteps,
+  getAlgorithmNotes,
+  getProcessSteps,
 } from "../../HowItWorks/howItWorks.data";
 
 export function HomeHowItWorksPreview() {
   const navigate = useNavigate();
-  const previewSteps = processSteps.slice(0, 3);
-  const previewNotes = algorithmNotes;
+  const { t } = useI18n();
+  const previewSteps = getProcessSteps(t).slice(0, 3);
+  const previewNotes = getAlgorithmNotes(t);
 
   return (
     <Section>
       <Container maxWidth="xl" sx={{ py: 6, display: "grid", gap: 3 }}>
         <HeaderRow>
           <div>
-            <Eyebrow>How it works</Eyebrow>
-            <Typography variant="h3">How RouteWise chooses better routes</Typography>
+            <Eyebrow>{t("home.howPreviewEyebrow")}</Eyebrow>
+            <Typography variant="h3">{t("home.howPreviewTitle")}</Typography>
             <Typography color="text.secondary" sx={{ mt: 1, maxWidth: 720 }}>
-              We use your cities, dates, stay days and budget to explore route combinations, filter
-              weak options and surface the most useful alternatives.
+              {t("home.howPreviewSubtitle")}
             </Typography>
           </div>
 
@@ -32,7 +33,7 @@ export function HomeHowItWorksPreview() {
             endIcon={<ArrowOutwardOutlinedIcon />}
             onClick={() => navigate("/how-it-works")}
           >
-            See how it works
+            {t("home.seeHowItWorks")}
           </Button>
         </HeaderRow>
 
@@ -80,15 +81,15 @@ export function HomeHowItWorksPreview() {
             <LegendRow>
               <LegendItem>
                 <LegendDot data-kind="origin" />
-                Origin
+                {t("home.legendOrigin")}
               </LegendItem>
               <LegendItem>
                 <LegendDot data-kind="best" />
-                Best path
+                {t("home.legendBestPath")}
               </LegendItem>
               <LegendItem>
                 <LegendDot data-kind="candidate" />
-                Explored
+                {t("home.legendExplored")}
               </LegendItem>
             </LegendRow>
           </PreviewPanel>

@@ -1,5 +1,5 @@
 import { Divider, Typography } from "@mui/material";
-import { graphEdges, graphNodes, graphStats } from "../howItWorks.data";
+import { graphEdges, graphNodes, getGraphStats } from "../howItWorks.data";
 import {
   AlgorithmLayout,
   GraphCanvas,
@@ -18,12 +18,16 @@ import {
 } from "../HowItWorks.styles";
 import type { HowItWorksCardItem } from "../howItWorks.data";
 import { routeCardThemes } from "../../../theme";
+import { useI18n } from "../../../i18n/i18nContext";
 
 type Props = {
   algorithmNotes: HowItWorksCardItem[];
 };
 
 export function HowItWorksGraph({ algorithmNotes }: Readonly<Props>) {
+  const { t } = useI18n();
+  const graphStats = getGraphStats(t);
+
   return (
     <>
       <AlgorithmLayout>
@@ -67,19 +71,19 @@ export function HowItWorksGraph({ algorithmNotes }: Readonly<Props>) {
           <LegendRow>
             <LegendItem>
               <LegendDot data-kind="origin" />
-              Origin
+              {t("howItWorks.graphOrigin")}
             </LegendItem>
             <LegendItem>
               <LegendDot data-kind="best" />
-              Best route
+              {t("howItWorks.graphBestRoute")}
             </LegendItem>
             <LegendItem>
               <LegendDot data-kind="candidate" />
-              Explored city
+              {t("howItWorks.graphExploredCity")}
             </LegendItem>
             <LegendItem>
               <LegendDot data-kind="destination" />
-              Destination
+              {t("howItWorks.graphDestination")}
             </LegendItem>
           </LegendRow>
         </GraphPanel>

@@ -12,6 +12,7 @@ export function DatePicker({ label, value, minDate, onChange }: Readonly<Props>)
   return (
     <MuiDatePicker
       label={label}
+      format="DD/MM/YYYY"
       value={value ? dayjs(value) : null}
       minDate={minDate ? dayjs(minDate) : dayjs()}
       onChange={(nextValue) => {

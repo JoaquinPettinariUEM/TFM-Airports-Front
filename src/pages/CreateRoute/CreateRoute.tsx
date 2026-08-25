@@ -13,8 +13,10 @@ import { SortableRoutePoint } from "./SortableRoutePoint";
 import { InfoChip } from "../../components/InfoChip/InfoChip";
 import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
+import { useI18n } from "../../i18n/i18nContext";
 
 function CreateRoute() {
+  const { t } = useI18n();
   const {
     form,
     maxRoutePoints,
@@ -41,17 +43,18 @@ function CreateRoute() {
       <Container
         maxWidth="md"
         sx={{
-          height: "100%",
+          minHeight: "inherit",
           display: "flex",
           gap: 2,
+          py: 4,
           flexDirection: "column",
           justifyContent: "center",
         }}
       >
         <TitleContainer>
-          <Typography variant="h2">Create your own route</Typography>
+          <Typography variant="h2">{t("createRoute.title")}</Typography>
           <Typography variant="h5" color="textSecondary">
-            Plan your multi-city adventure in just a few steps
+            {t("createRoute.subtitle")}
           </Typography>
         </TitleContainer>
 
@@ -70,7 +73,7 @@ function CreateRoute() {
             <BudgetFieldWrap>
               <FilterLabel>
                 <MonetizationOnOutlinedIcon color="primary" />
-                <Typography variant="h6">Budget</Typography>
+                <Typography variant="h6">{t("createRoute.budget")}</Typography>
               </FilterLabel>
               <NumberField
                 label={undefined}
@@ -88,7 +91,7 @@ function CreateRoute() {
           <RoutePreviewWrap>
             <RoutePreviewWrap>
               <Typography variant="body1" color="textSecondary">
-                Path preview:
+                {t("createRoute.pathPreview")}
               </Typography>
               <RoutePreviewPath>
                 {routePreview.map((segment, index) => (
@@ -106,7 +109,7 @@ function CreateRoute() {
             <RoutePreviewWrap>
               <InfoOutlinedIcon />
               <Typography variant="body2" color="textSecondary">
-                Up to 5 cities total
+                {t("createRoute.upToFiveCities")}
               </Typography>
             </RoutePreviewWrap>
           </RoutePreviewWrap>
@@ -140,8 +143,7 @@ function CreateRoute() {
 
           {!isStayDaysWithinTrip && (
             <Alert severity="error" variant="outlined">
-              Total trip days: {tripDays} | Assigned stay days: {totalStayDays} (assigned days
-              cannot exceed total trip days).
+              {t("createRoute.invalidStayDays", { tripDays, totalStayDays })}
             </Alert>
           )}
           <ActionContainer>
@@ -151,7 +153,7 @@ function CreateRoute() {
               startIcon={<AddIcon />}
               disabled={form.routePoints.length >= maxRoutePoints}
             >
-              Add city
+              {t("createRoute.addCity")}
             </Button>
             <Button
               startIcon={<SearchOutlinedIcon />}
@@ -159,7 +161,7 @@ function CreateRoute() {
               variant="contained"
               disabled={!isFormValid}
             >
-              Search
+              {t("createRoute.search")}
             </Button>
           </ActionContainer>
         </FormCard>
@@ -169,7 +171,8 @@ function CreateRoute() {
 }
 
 const BackgroundComponent = styled("section")(({ theme }) => ({
-  height: "calc(100dvh - var(--tp-header-height))",
+  position: "relative",
+  minHeight: "calc(100dvh - var(--tp-header-height))",
   width: "100%",
   backgroundImage: `url(${BackgroundImage})`,
   backgroundRepeat: "no-repeat",

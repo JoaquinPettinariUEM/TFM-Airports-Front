@@ -11,6 +11,7 @@ import { RoutePath } from "../RoutePath/RoutePath";
 import type { AirportResponse, RouteMapped } from "../../types/routes";
 import { appPalette } from "../../theme";
 import { formatCompactDistance, formatEuro } from "../../utils/format";
+import { useI18n } from "../../i18n/i18nContext";
 
 type Props = {
   route: RouteMapped;
@@ -29,6 +30,7 @@ export function BestRouteCard({
   airports,
   viewDetailsRoute,
 }: Readonly<Props>) {
+  const { t } = useI18n();
   return (
     <BestCard>
       <Grid container>
@@ -49,10 +51,7 @@ export function BestRouteCard({
               <BadgeChip label={route.badge} />
             </RouteTitleRow>
 
-            <RouteDescription variant="body1">
-              Our algorithm found the smartest route balancing price, travel time and interesting
-              stopovers.
-            </RouteDescription>
+            <RouteDescription variant="body1">{t("bestRouteCard.description")}</RouteDescription>
 
             <StatsWrap>
               <RouteStat icon={<PriceIcon />} label={formatEuro(route.cost)} />
@@ -73,7 +72,7 @@ export function BestRouteCard({
                 endIcon={<EastIcon />}
                 onClick={() => viewDetailsRoute(route)}
               >
-                View full details
+                {t("bestRouteCard.viewFullDetails")}
               </Button>
             </ActionWrap>
           </RightColumn>

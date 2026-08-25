@@ -9,6 +9,7 @@ import FlightTakeoffOutlinedIcon from "@mui/icons-material/FlightTakeoffOutlined
 import FlightLandOutlinedIcon from "@mui/icons-material/FlightLandOutlined";
 import RoomOutlinedIcon from "@mui/icons-material/RoomOutlined";
 import { blueCardTheme } from "../../theme";
+import { useI18n } from "../../i18n/i18nContext";
 
 type Props = {
   point: RoutePointInput;
@@ -31,6 +32,7 @@ export function SortableRoutePoint({
   onUpdateStayDays,
   onRemove,
 }: Readonly<Props>) {
+  const { t } = useI18n();
   const [element, setElement] = useState<Element | null>(null);
   const handleRef = useRef<HTMLButtonElement | null>(null);
   const { isDragging } = useSortable({
@@ -57,14 +59,16 @@ export function SortableRoutePoint({
         <AirportFinder
           value={point.city}
           onChange={(value) => onUpdateCity(point.id, value)}
-          label={`Select a city ${!isFirst && !isLast ? "(optional)" : ""}`}
+          label={t(
+            !isFirst && !isLast ? "createRoute.selectOptionalCity" : "createRoute.selectCity",
+          )}
         />
       </CityInputWrap>
       <Divider orientation="vertical" sx={{ margin: "0px 10px" }} />
       <DaysInputWrap>
         {!isFirst ? (
           <NumberField
-            label="Days"
+            label={t("createRoute.days")}
             min={1}
             max={maxStayDays}
             value={point.stayDays}
@@ -78,7 +82,7 @@ export function SortableRoutePoint({
       {canRemove ? (
         <IconButton
           onClick={() => onRemove(point.id)}
-          aria-label="Remove city"
+          aria-label={t("createRoute.removeCity")}
           color="error"
           sx={(theme) => ({
             border: `1px solid ${theme.palette.error.main}`,

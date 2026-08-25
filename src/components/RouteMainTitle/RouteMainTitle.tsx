@@ -4,6 +4,7 @@ import WalletIcon from "@mui/icons-material/Wallet";
 import AirlineStopsOutlinedIcon from "@mui/icons-material/AirlineStopsOutlined";
 import EastIcon from "@mui/icons-material/East";
 import { formatEuro } from "../../utils/format";
+import { useI18n } from "../../i18n/i18nContext";
 
 interface Props {
   from: string;
@@ -13,16 +14,20 @@ interface Props {
 }
 
 function RouteMainTitle({ from, to, budget, maxStops }: Readonly<Props>) {
+  const { t } = useI18n();
   return (
     <MainTitleWrapper>
       <TitleText variant="h3">
         {from} <EastIcon fontSize="inherit" /> {to}
       </TitleText>
       <StatsRow>
-        <RouteStat icon={<WalletIcon color="inherit" />} label={`Budget: ${formatEuro(budget)}`} />
+        <RouteStat
+          icon={<WalletIcon color="inherit" />}
+          label={t("routeMainTitle.budget", { value: formatEuro(budget) })}
+        />
         <RouteStat
           icon={<AirlineStopsOutlinedIcon color="inherit" />}
-          label={`Stops: ${maxStops}`}
+          label={t("routeMainTitle.stops", { count: maxStops })}
         />
       </StatsRow>
     </MainTitleWrapper>
@@ -31,8 +36,8 @@ function RouteMainTitle({ from, to, budget, maxStops }: Readonly<Props>) {
 
 const MainTitleWrapper = styled(Box)({
   display: "flex",
-  flexDirection: "column",
-  gap: 16,
+  width: "100%",
+  justifyContent: "space-between",
   paddingBottom: 24,
 });
 

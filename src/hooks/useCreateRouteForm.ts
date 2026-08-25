@@ -1,40 +1,31 @@
-import { useState } from "react";
-import type { CreateRouteForm, RouteByQueryResponse } from "../types/routes";
+import type { RouteByQueryResponse } from "../types/routes";
 import { createSearchParams, useNavigate } from "react-router-dom";
-import { addDays, differenceInDays, format } from "date-fns";
+import { differenceInDays, format } from "date-fns";
+import { useRouteStore } from "../store/routeStore";
 
 export function useCreateRouteForm() {
   const navigate = useNavigate();
-  const MAX_ROUTE_POINTS = 5;
-  const [form, setForm] = useState<CreateRouteForm>({
-    routePoints: [
-      {
-        id: "city-1",
-        city: null,
-        stayDays: 2,
-      },
-      {
-        id: "city-2",
-        city: null,
-        stayDays: 2,
-      },
-    ],
-    budget: 300,
-    startDate: new Date(),
-    endDate: addDays(new Date(), 15),
-  });
+  const {
+    searchForm: form,
+    updateSearchField,
+    addSearchRoutePoint,
+    removeSearchRoutePoint,
+    updateSearchRoutePointCity,
+    updateSearchRoutePointStayDays,
+    reorderSearchRoutePointsByIds,
+  } = useRouteStore();
 
-  const updateField = <K extends keyof CreateRouteForm>(field: K, value: CreateRouteForm[K]) => {
-    setForm((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
+  const MAX_ROUTE_POINTS = 5;
+
+  const updateField = <K extends keyof typeof form>(field: K, value: (typeof form)[K]) => {
+    updateSearchField(field, value);
   };
 
   const tripDays =
     form.startDate && form.endDate
       ? Math.max(0, differenceInDays(form.endDate, form.startDate) + 1)
       : 0;
+
   const lastIndex = form.routePoints.length - 1;
   const pointsWithStay = form.routePoints.filter((_, index) => index > 0);
   const totalStayDays = pointsWithStay.reduce((sum, point) => sum + (point.stayDays || 0), 0);
@@ -56,6 +47,7 @@ export function useCreateRouteForm() {
   const submit = () => {
     const start = form.routePoints[0];
     const end = form.routePoints[form.routePoints.length - 1];
+
     if (!start?.city || !end?.city || !form.startDate || !form.endDate || !isFormValid) return;
 
     const startDate = format(form.startDate, "yyyy-MM-dd");
@@ -64,6 +56,7 @@ export function useCreateRouteForm() {
     const stayDaysTemplate = form.routePoints
       .map((point, index) => (index === 0 ? "0" : String(point.stayDays)))
       .join(",");
+
     const queryParams: Record<string, string> = {
       from: start.city.id,
       to: end.city.id,
@@ -73,74 +66,26 @@ export function useCreateRouteForm() {
       endDate,
       pathTemplate,
       stayDaysTemplate,
+      maxStops: String(form.routePoints.length - 1),
     };
 
-    const params = createSearchParams(queryParams);
-
-    navigate(`/searched/routes?${params.toString()}`);
+    navigate(`/searched/routes?${createSearchParams(queryParams).toString()}`);
   };
 
   const addRoutePoint = () => {
-    setForm((prev) => {
-      if (prev.routePoints.length >= MAX_ROUTE_POINTS) return prev;
-      const next = [...prev.routePoints];
-      next.splice(next.length - 1, 0, {
-        id: `stop-${Date.now()}-${Math.round(Math.random() * 1000)}`,
-        city: null,
-        stayDays: 2,
-      });
-      return {
-        ...prev,
-        routePoints: next,
-      };
-    });
+    addSearchRoutePoint();
   };
 
   const removeRoutePoint = (id: string) => {
-    if (form.routePoints.length <= 2) return;
-    setForm((prev) => ({
-      ...prev,
-      routePoints: prev.routePoints.filter((item) => item.id !== id),
-    }));
+    removeSearchRoutePoint(id);
   };
 
   const updateRoutePointCity = (id: string, city: RouteByQueryResponse | null) => {
-    setForm((prev) => ({
-      ...prev,
-      routePoints: prev.routePoints.map((item) => (item.id === id ? { ...item, city } : item)),
-    }));
+    updateSearchRoutePointCity(id, city);
   };
 
   const updateRoutePointStayDays = (id: string, stayDays: number) => {
-    setForm((prev) => ({
-      ...prev,
-      routePoints: prev.routePoints.map((item) =>
-        item.id === id
-          ? {
-              ...item,
-              stayDays: Math.max(1, stayDays),
-            }
-          : item,
-      ),
-    }));
-  };
-
-  const reorderRoutePointsByIds = (sourceId?: string, targetId?: string) => {
-    if (!sourceId || !targetId || sourceId === targetId) return;
-    setForm((prev) => {
-      const fromIndex = prev.routePoints.findIndex((item) => item.id === sourceId);
-      const toIndex = prev.routePoints.findIndex((item) => item.id === targetId);
-      if (fromIndex === toIndex || fromIndex < 0 || toIndex < 0) return prev;
-
-      const next = [...prev.routePoints];
-      const [moved] = next.splice(fromIndex, 1);
-      if (!moved) return prev;
-      next.splice(toIndex, 0, moved);
-      return {
-        ...prev,
-        routePoints: next,
-      };
-    });
+    updateSearchRoutePointStayDays(id, stayDays);
   };
 
   return {
@@ -151,7 +96,7 @@ export function useCreateRouteForm() {
     removeRoutePoint,
     updateRoutePointCity,
     updateRoutePointStayDays,
-    reorderRoutePointsByIds,
+    reorderRoutePointsByIds: reorderSearchRoutePointsByIds,
     tripDays,
     totalStayDays,
     remainingStayDays,

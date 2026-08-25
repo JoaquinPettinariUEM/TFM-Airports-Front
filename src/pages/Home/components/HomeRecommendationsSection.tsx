@@ -1,11 +1,23 @@
 import { Box, Container, Grid, Typography, styled } from "@mui/material";
+import { addDays } from "date-fns";
+import type { Ref } from "react";
 import { useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 import { useGetPopularRoutes } from "../../../api/travelPlanApi";
 import { RouteCard } from "../../../components/RouteCard/RouteCard";
+import { useI18n } from "../../../i18n/i18nContext";
+import { useRouteStore } from "../../../store/routeStore";
 import { appPalette, routeCardThemes } from "../../../theme";
 import type { RouteMapped } from "../../../types/routes";
 
-export function HomeRecommendationsSection() {
+type Props = {
+  sectionRef?: Ref<HTMLElement>;
+};
+
+export function HomeRecommendationsSection({ sectionRef }: Readonly<Props>) {
+  const navigate = useNavigate();
+  const { t } = useI18n();
+  const { setSearchForm } = useRouteStore();
   const { data } = useGetPopularRoutes();
 
   const airports = useMemo(() => data?.airports ?? {}, [data]);
@@ -23,15 +35,43 @@ export function HomeRecommendationsSection() {
     return Math.min(...popularRoutesMapped.map((route) => route.cost));
   }, [popularRoutesMapped]);
 
+  const handlePopularRouteClick = (route: RouteMapped) => {
+    const startDate = startOfToday();
+    const endDate = addDays(startDate, 15);
+
+    setSearchForm({
+      routePoints: route.path.map((code, index) => {
+        const airport = airports[code];
+
+        return {
+          id: `popular-route-point-${index + 1}-${code}`,
+          city: airport
+            ? {
+                id: airport._id,
+                name: airport.name,
+                city: airport.city,
+                country: airport.country,
+                label: `${airport.city}, ${airport.country} (${airport._id})`,
+              }
+            : null,
+          stayDays: index === 0 ? 2 : Math.max(1, route.flights[index - 1]?.stayDays ?? 2),
+        };
+      }),
+      budget: route.cost,
+      startDate,
+      endDate,
+    });
+
+    navigate("/create/route");
+  };
+
   return (
-    <Section id="#recommendations">
+    <Section ref={sectionRef} id="home-recommendations">
       <Container maxWidth="xl" sx={{ py: 6, display: "grid", gap: 4 }}>
         <section>
           <SectionHeader>
-            <Typography variant="h3">Popular multi-city trips</Typography>
-            <Typography color="textSecondary">
-              Discover real routes planned by travelers like you
-            </Typography>
+            <Typography variant="h3">{t("home.popularTitle")}</Typography>
+            <Typography color="textSecondary">{t("home.popularSubtitle")}</Typography>
           </SectionHeader>
 
           {popularRoutesMapped.length ? (
@@ -58,6 +98,7 @@ export function HomeRecommendationsSection() {
                         viewDetailsRoute={() => undefined}
                         showPriceDelta={false}
                         showViewDetailsButton={false}
+                        onCardClick={() => handlePopularRouteClick(route)}
                       />
                     </Box>
                   </Grid>
@@ -66,10 +107,8 @@ export function HomeRecommendationsSection() {
             </Grid>
           ) : (
             <EmptyRecommendations>
-              <Typography variant="h6">No popular routes yet</Typography>
-              <Typography color="textSecondary">
-                We are preparing popular trip combinations.
-              </Typography>
+              <Typography variant="h6">{t("home.popularEmptyTitle")}</Typography>
+              <Typography color="textSecondary">{t("home.popularEmptySubtitle")}</Typography>
             </EmptyRecommendations>
           )}
         </section>
@@ -80,6 +119,7 @@ export function HomeRecommendationsSection() {
 
 const Section = styled("section")({
   background: "#0B1020",
+  scrollMarginTop: "calc(var(--tp-header-height) + 16px)",
 });
 
 const SectionHeader = styled("div")({
@@ -96,3 +136,9 @@ const EmptyRecommendations = styled("div")(({ theme }) => ({
   textAlign: "center",
   padding: 16,
 }));
+
+function startOfToday() {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  return today;
+}

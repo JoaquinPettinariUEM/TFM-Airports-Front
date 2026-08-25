@@ -1,4 +1,5 @@
 import { Alert, Box, Button, Container, Grid, Grow, Typography, styled } from "@mui/material";
+import { useEffect } from "react";
 
 import EmojiEventsIcon from "@mui/icons-material/EmojiEvents";
 import DoneAllIcon from "@mui/icons-material/DoneAll";
@@ -20,12 +21,14 @@ import type { RouteMapped } from "../../types/routes";
 import { useRouteStore } from "../../store/routeStore";
 import { useEnrichRoute } from "../../api/travelPlanApi";
 import { TravelLoadingScreen } from "../../components/TravelLoadingScreen/TravelLoadingScreen";
+import { useI18n } from "../../i18n/i18nContext";
 
 const ROUTES_PER_LOAD = 4;
 
 function SearchedRoutes() {
+  const { t } = useI18n();
   const [searchParams] = useSearchParams();
-  const { setSelectedRoute, setAirports } = useRouteStore();
+  const { setSelectedRoute, setAirports, setSearchForm } = useRouteStore();
   const { mutate: enrichRouteMutation, isPending } = useEnrichRoute();
 
   const navigate = useNavigate();
@@ -55,6 +58,48 @@ function SearchedRoutes() {
     arrival,
   } = useSearchedRoutes(params);
 
+  useEffect(() => {
+    const pathCodes = (params.pathTemplate || "")
+      .split("->")
+      .map((code) => code.trim())
+      .filter(Boolean);
+    const stayDays = (params.stayDaysTemplate || "").split(",").map((value) => Number(value));
+
+    if (pathCodes.length < 2) return;
+
+    setSearchForm({
+      routePoints: pathCodes.map((code, index) => {
+        const airport = airports[code];
+
+        return {
+          id: `route-point-${index + 1}-${code}`,
+          city:
+            code === "?"
+              ? null
+              : {
+                  id: airport?._id ?? code,
+                  name: airport?.name ?? code,
+                  city: airport?.city ?? code,
+                  country: airport?.country ?? "",
+                  label: airport ? `${airport.city}, ${airport.country} (${airport._id})` : code,
+                },
+          stayDays: index === 0 ? 2 : Math.max(1, stayDays[index] || 2),
+        };
+      }),
+      budget: params.budget,
+      startDate: params.startDate ? new Date(params.startDate) : undefined,
+      endDate: params.endDate ? new Date(params.endDate) : undefined,
+    });
+  }, [
+    airports,
+    params.budget,
+    params.endDate,
+    params.pathTemplate,
+    params.startDate,
+    params.stayDaysTemplate,
+    setSearchForm,
+  ]);
+
   const viewDetailsRoute = (route: RouteMapped) => {
     setAirports(airports);
     enrichRouteMutation(route, {
@@ -83,15 +128,21 @@ function SearchedRoutes() {
   if (!bestRoute || !departure || !arrival) {
     return (
       <PageWrapper>
-        <Container maxWidth="md">
+        <Container
+          maxWidth="md"
+          sx={{
+            minHeight: "calc(100dvh - var(--tp-header-height) - 84px)",
+            display: "flex",
+          }}
+        >
           <NoRoutesWrap>
             <SearchOffOutlinedIcon color="warning" sx={{ fontSize: 40 }} />
-            <Typography variant="h4">No routes found</Typography>
+            <Typography variant="h4">{t("searchedRoutes.noRoutesTitle")}</Typography>
             <Typography color="text.secondary" sx={{ textAlign: "center" }}>
-              Try increasing budget, dates or max stops to discover more combinations.
+              {t("searchedRoutes.noRoutesSubtitle")}
             </Typography>
             <Button variant="contained" onClick={() => navigate("/create/route")}>
-              New search
+              {t("searchedRoutes.backToSearch")}
             </Button>
           </NoRoutesWrap>
         </Container>
@@ -112,11 +163,11 @@ function SearchedRoutes() {
         <SectionHeader>
           <EmojiEventsIcon color="warning" />
 
-          <Typography variant="h4">Best route for you</Typography>
+          <Typography variant="h4">{t("searchedRoutes.bestRouteTitle")}</Typography>
         </SectionHeader>
 
         <Typography variant="body1" color="text.secondary" sx={{ mt: 1, mb: 2.5 }}>
-          Our algorithm found the best balance between price, distance and experience.
+          {t("searchedRoutes.bestRouteSubtitle")}
         </Typography>
 
         <BestRouteCard
@@ -136,7 +187,7 @@ function SearchedRoutes() {
             borderRadius: 2,
           }}
         >
-          Great Choice! This route offers the best balance of price, time and interesting cities.
+          {t("searchedRoutes.greatChoice")}
         </Alert>
 
         {notFoundCities.length > 0 && (
@@ -148,8 +199,7 @@ function SearchedRoutes() {
               borderRadius: 2,
             }}
           >
-            We could not find these cities: {notFoundCities.join(", ")}. We searched alternatives
-            for those stops.
+            {t("searchedRoutes.notFoundCities", { cities: notFoundCities.join(", ") })}
           </Alert>
         )}
 
@@ -159,7 +209,7 @@ function SearchedRoutes() {
               <SectionHeader>
                 <DoneAllIcon />
 
-                <Typography variant="h4">Other smart alternatives</Typography>
+                <Typography variant="h4">{t("searchedRoutes.otherAlternatives")}</Typography>
               </SectionHeader>
 
               {remainingRoutes > 0 && (
@@ -168,7 +218,7 @@ function SearchedRoutes() {
                   endIcon={<ArrowDownwardIcon />}
                   onClick={() => setVisibleRoutes((prev) => prev + ROUTES_PER_LOAD)}
                 >
-                  View all routes ({remainingRoutes})
+                  {t("searchedRoutes.viewAllRoutes", { count: remainingRoutes })}
                 </Button>
               )}
             </AlternativesHeader>
@@ -211,9 +261,7 @@ function SearchedRoutes() {
             <AlternativesHeader>
               <SectionHeader>
                 <DoneAllIcon />
-                <Typography variant="h5">
-                  If you want to spend a little more, these routes may fit you
-                </Typography>
+                <Typography variant="h5">{t("searchedRoutes.moreExpensiveTitle")}</Typography>
               </SectionHeader>
             </AlternativesHeader>
 
@@ -261,6 +309,8 @@ const NoRoutesWrap = styled(Box)(({ theme }) => ({
   borderRadius: 10,
   background: theme.palette.background.paper,
   minHeight: 280,
+  width: "100%",
+  height: "100%",
   display: "flex",
   flexDirection: "column",
   alignItems: "center",

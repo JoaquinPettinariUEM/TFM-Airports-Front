@@ -9,6 +9,7 @@ function Header() {
   const isEditingRoute =
     pathname.startsWith("/searched/routes") || pathname.startsWith("/route/details");
   const isHowItWorks = pathname.startsWith("/how-it-works");
+  const isCreateRoute = pathname.startsWith("/create/route");
 
   return (
     <HeaderComponent>
@@ -30,7 +31,7 @@ function Header() {
           <Button
             size="small"
             variant="text"
-            color="inherit"
+            color={isCreateRoute ? "primary" : "inherit"}
             onClick={() => navigate("/create/route")}
           >
             {isEditingRoute ? t("header.editRoute") : t("header.createRoute")}

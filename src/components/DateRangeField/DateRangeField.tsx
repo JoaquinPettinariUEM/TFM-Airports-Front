@@ -3,6 +3,7 @@ import EastIcon from "@mui/icons-material/East";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs, { type Dayjs } from "dayjs";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
+import { useI18n } from "../../i18n/i18nContext";
 
 type Props = {
   startDate?: Date;
@@ -17,6 +18,7 @@ const backgroundPaper = {
 };
 
 export function DateRangeField({ startDate, endDate, onChange, tripDays }: Readonly<Props>) {
+  const { t } = useI18n();
   const handleStartDateChange = (value: Dayjs | null) => {
     const nextStart = (value ?? dayjs()).startOf("day").toDate();
     const currentEnd = endDate ? dayjs(endDate).startOf("day") : null;
@@ -44,11 +46,11 @@ export function DateRangeField({ startDate, endDate, onChange, tripDays }: Reado
         <TitleContainer>
           <CalendarMonthIcon color="primary" />
           <Typography variant="h6" color="text.secondary">
-            Travel dates
+            {t("createRoute.travelDates")}
           </Typography>
         </TitleContainer>
         <Typography variant="body1" color="textSecondary">
-          {tripDays} trip days
+          {tripDays} {t("createRoute.tripDays")}
         </Typography>
       </TitleContainer>
       <InputsRow>

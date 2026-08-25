@@ -40,6 +40,8 @@ export const translations = {
     createRoute: {
       title: "Create your own route",
       subtitle: "Plan your multi-city adventure in just a few steps",
+      travelDates: "Travel Dates",
+      tripDays: "trip days",
       budget: "Budget",
       pathPreview: "Path preview:",
       upToFiveCities: "Up to 5 cities total",
@@ -199,6 +201,8 @@ export const translations = {
     createRoute: {
       title: "Crea tu propia ruta",
       subtitle: "Planifica tu aventura multi-ciudad en solo unos pasos",
+      travelDates: "Fechas del viaje",
+      tripDays: "dias de viaje",
       budget: "Presupuesto",
       pathPreview: "Vista previa del recorrido:",
       upToFiveCities: "Hasta 5 ciudades en total",
